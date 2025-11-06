@@ -224,7 +224,7 @@ I mentioned before that there is a fixed list of identifiers that are valid. Her
   `and`, `or`, `xor`, `count_ones`, `leading_zeros`, `trailing_zeros`, `rotate_left`, `rotate_right`, `shift_left`, `shift_right`
 - **Comparison**: `=`, `>`, `>=`, `<`, `<=`
 - **Control flow**: `jump`, `jump_if`
-- **Effects**: `abort`, `yield`
+- **Effects**: `yield`
 - **Memory**: `read`, `write`
 - **Stack shuffling**: `copy`, `drop`
 
@@ -235,7 +235,5 @@ Most arithmetic operations wrap on overflow,[^3] as I believe that provides the 
 [^3]: Except for `/`, which would overflow if you divide the minimum value by `-1`. I think this is unlikely to be intentional though, so it triggers an effect instead.
 
 There aren't any logical operations for now, as the bitwise ones can do double duty.
-
-The `abort` operator triggers an effect which signals that the script would like to conclude its evaluation.
 
 Evaluating any identifier that is not on this list triggers an effect.
