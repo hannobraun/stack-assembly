@@ -68,8 +68,6 @@ This simplicity comes at a price though. Stack-based code can be hard to follow.
 
 ## Stack Shuffling
 
-**TASK: Should I add some code examples here?**
-
 With a stack comes the need to access inputs that might not currently be on top. StackAssembly offers two operators to handle this problem: `copy` and `drop`.
 
 `copy` duplicates a value, pushing its copy to the top of the stack. It takes the index of that value as its input. If the index is `0`, it copies the top value; if the index is `1`, it copies the one below that; and so forth.
