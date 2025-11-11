@@ -175,7 +175,7 @@ loop:
 
 Here we pass `0` as `jump_if`'s condition, which makes it do nothing. As a result, this whole script ends after `jump_if` and leaves no values on the stack.
 
-Control flow is the most complex part of this design, and also one I easily could have overcomplicated. To counteract that, I made it as simple as I could, using an approach inspired by assembly languages. Here, StackAssembly derives the second part of its name.
+Control flow is the most complex part of this design, and also one I easily could have overcomplicated. To counteract that, I made it as simple as I could, using an approach inspired by assembly languages. From this and its untyped nature, StackAssembly derives the second part of its name.
 
 ## Memory
 
