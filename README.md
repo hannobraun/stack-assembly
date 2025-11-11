@@ -226,7 +226,7 @@ Any token that the language doesn't recognize as something more specific, ends u
 
 This is the full list of valid identifiers:
 
-- **Arithmetic**: `+`, `-`, `*` `/`, and `%`
+- **Arithmetic**: `+`, `-`, `*` `/`
 - **Bitwise**:
   `and`, `or`, `xor`, `count_ones`, `leading_zeros`, `trailing_zeros`, `rotate_left`, `rotate_right`, `shift_left`, `shift_right`
 - **Comparison**: `=`, `>`, `>=`, `<`, `<=`
@@ -235,10 +235,11 @@ This is the full list of valid identifiers:
 - **Memory**: `read`, `write`
 - **Stack shuffling**: `copy`, `drop`
 
-We've seen some of those already. All of them do what their name suggests, mostly following established conventions from other programming languages. Though there are a few details worth calling out.
+We've seen some of those already. All of them do what their name suggests, mostly following established conventions from other programming languages. Though there are a few details worth calling out:
 
-Most arithmetic operations wrap on overflow,[^3] as I believe that provides the most flexibility. Other special cases, like divide by zero, trigger a suitable effect. Where that makes a difference, they treat all values as signed (two's complement) integers.
-
-[^3]: Except for `/`, which would overflow if you divide the minimum value by `-1`. I think this is unlikely to be intentional though, so it triggers an effect instead.
-
-I've avoided adding any logical operations for now, as the bitwise ones can do double duty.
+- The arithmetic operations treat all values as signed (two's complement)
+  integers, where that makes a difference. Most of them wrap on overflow, as I believe that provides the most flexibility.
+- `/` outputs both the result of the division and the remainder.
+  It also triggers suitable effects on divide by zero and on overflow, as neither of those seem likely to be intentional and easily worked around.
+- I've avoided adding any logical operations for now,
+  as the bitwise ones can do double duty.
