@@ -85,7 +85,7 @@ This script finishes evaluation with the values `3`, `5`, `8`, and `5` on the st
 
 This script finishes evaluation with the values `3` and `8` on the stack.
 
-I could not come up with a more minimal, yet complete set of operators. Though using them may end up feeling awkward, possibly even painful, I don't want to implement a more complex solution before confirming that.
+I could not find a more minimal, yet complete set of operators. Though using them may end up feeling awkward, possibly even painful, I don't want to implement a more complex solution before confirming that.
 
 ## Effects
 
@@ -96,6 +96,20 @@ For example, what happens if an identifier in our code means nothing to the lang
 Those and all similar error conditions trigger an _effect_. Effects pause the evaluation of a script. They present as different types depending on the trigger, making it possible to distinguish between them.
 
 Not every effect originates from an error though. They can trigger as a regular part of evaluation, which may even resume afterwards. But we'll learn about that later. For now, we just need to understand that an error condition triggers an effect, which then pauses the evaluation.
+
+## Type System
+
+The simplest way of handling types in a programming language is to not do that at all, making the language untyped. This means that all values have the same structure and the language has no concept of what types are.
+
+All values are 32-bit _words_, which seems like a good compromise. It provides enough range for most applications and can be used to represent numbers along with other data, like characters. Most modern platforms support 32-bit values well.
+
+```stack
+3 5 -1 drop
+```
+
+Here we wanted to drop `3` from the stack, but accidentally put a `-` in front of the index. Only unsigned integers make valid indices, so the language treats this integer as unsigned. Since `-1` has the same bit pattern as `4294967295`, that's the index the language sees. It results in an out of bounds error.
+
+This is the simplest approach I could come up with, and it has the additional advantage of not incurring any runtime overhead.
 
 ## More Syntax
 
@@ -133,7 +147,7 @@ loop:
 
 Let's start with the label, `loop:`. Remember, labels are not operators. Those have inputs and outputs, and we can evaluate them. None of that applies to labels. A label just exists in the code, giving a name to the operator it precedes. That won't do anything, unless we pair the label with a reference.
 
-The reference, `@loop`, is tied to the `loop:` label. References have no inputs and one output, the address of the operator that the label names. Since labels name the next operator, in this case `@loop`, that has its own address as its output.
+The reference, `@loop`, is tied to the `loop:` label. References have no inputs and one output, the address of the operator that the label names. Since labels name the next operator, in this case `@loop`, that has its own address as its output. The value of that address is implementation-dependent.
 
 Finally, we have `jump`, an identifier that we haven't seen before. `jump` has one input, the address of an operator, and no outputs. It moves evaluation to the operator at that address, so it may continue from there.
 
@@ -161,21 +175,7 @@ loop:
 
 Here we pass `0` as `jump_if`'s condition, which makes it do nothing. As a result, this whole script ends after `jump_if` and leaves no values on the stack.
 
-Control flow is the most complex part of this design, and also one I easily could have overcomplicated. To counteract that, I made it as simple as I could, using an approach inspired by assembly languages. Here, StackAssembly derives the second part of its name.
-
-## Type System
-
-Taking more inspiration from assembly languages, I'm making StackAssembly untyped. This means all values have the same structure. The language has no concept of what types are.
-
-```stack
-3 jump
-```
-
-Here we use the integer `3` as the input to `jump`, even though `jump` expects to receive the address of an operator. Nothing in the language tracks or enforces this expectation though, and what this script does is completely dependent on the implementation and how that encodes addresses.
-
-All values are 32-bit words, which seems like a good compromise. It provides enough range for most applications and can be used to represent numbers along with other data, like characters. Most modern platforms support 32-bit values well.
-
-Here too, I went with the simplest approach I could find. And it has the additional advantage of not incurring any runtime overhead. That makes this solution quite close to a static type system, though without the compile-time protections.
+Control flow is the most complex part of this design, and also one I easily could have overcomplicated. To counteract that, I made it as simple as I could, using an approach inspired by assembly languages. From this and its untyped nature, StackAssembly derives the second part of its name.
 
 ## Memory
 
