@@ -101,7 +101,7 @@ Not every effect originates from an error though. They can trigger as a regular 
 
 The simplest way of handling types in a programming language is to not do that at all, making the language untyped. This means that all values have the same structure and the language has no concept of what types are.
 
-All values are 32-bit words, which seems like a good compromise. It provides enough range for most applications and can be used to represent numbers along with other data, like characters. Most modern platforms support 32-bit values well.
+All values are 32-bit _words_, which seems like a good compromise. It provides enough range for most applications and can be used to represent numbers along with other data, like characters. Most modern platforms support 32-bit values well.
 
 ```stack
 3 5 -1 drop
