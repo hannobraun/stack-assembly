@@ -147,7 +147,7 @@ loop:
 
 Let's start with the label, `loop:`. Remember, labels are not operators. Those have inputs and outputs, and we can evaluate them. None of that applies to labels. A label just exists in the code, giving a name to the operator it precedes. That won't do anything, unless we pair the label with a reference.
 
-The reference, `@loop`, is tied to the `loop:` label. References have no inputs and one output, the address of the operator that the label names. Since labels name the next operator, in this case `@loop`, that has its own address as its output.
+The reference, `@loop`, is tied to the `loop:` label. References have no inputs and one output, the address of the operator that the label names. Since labels name the next operator, in this case `@loop`, that has its own address as its output. The value of that address is implementation-dependent.
 
 Finally, we have `jump`, an identifier that we haven't seen before. `jump` has one input, the address of an operator, and no outputs. It moves evaluation to the operator at that address, so it may continue from there.
 
