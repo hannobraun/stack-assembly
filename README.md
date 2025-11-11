@@ -97,6 +97,20 @@ Those and all similar error conditions trigger an _effect_. Effects pause the ev
 
 Not every effect originates from an error though. They can trigger as a regular part of evaluation, which may even resume afterwards. But we'll learn about that later. For now, we just need to understand that an error condition triggers an effect, which then pauses the evaluation.
 
+## Type System
+
+The simplest way of handling types in a programming language is to not do that at all, making the language untyped. This means that all values have the same structure and the language has no concept of what types are.
+
+All values are 32-bit words, which seems like a good compromise. It provides enough range for most applications and can be used to represent numbers along with other data, like characters. Most modern platforms support 32-bit values well.
+
+```stack
+3 5 -1 drop
+```
+
+Here we wanted to drop `3` from the stack, but accidentally put a `-` in front of the index. Only unsigned integers make valid indices, so the language treats this integer as unsigned. Since `-1` has the same bit pattern as `4294967295`, that's the index the language sees. It results in an out of bounds error.
+
+This is the simplest approach I could come up with, and it has the additional advantage of not incurring any runtime overhead.
+
 ## More Syntax
 
 As I alluded to above, we haven't seen all there is to syntax yet.
@@ -162,20 +176,6 @@ loop:
 Here we pass `0` as `jump_if`'s condition, which makes it do nothing. As a result, this whole script ends after `jump_if` and leaves no values on the stack.
 
 Control flow is the most complex part of this design, and also one I easily could have overcomplicated. To counteract that, I made it as simple as I could, using an approach inspired by assembly languages. Here, StackAssembly derives the second part of its name.
-
-## Type System
-
-The simplest way of handling types in a programming language is to not do that at all, making the language untyped. This means that all values have the same structure and the language has no concept of what types are.
-
-All values are 32-bit words, which seems like a good compromise. It provides enough range for most applications and can be used to represent numbers along with other data, like characters. Most modern platforms support 32-bit values well.
-
-```stack
-3 5 -1 drop
-```
-
-Here we wanted to drop `3` from the stack, but accidentally put a `-` in front of the index. Only unsigned integers make valid indices, so the language treats this integer as unsigned. Since `-1` has the same bit pattern as `4294967295`, that's the index the language sees. It results in an out of bounds error.
-
-This is the simplest approach I could come up with, and it has the additional advantage of not incurring any runtime overhead.
 
 ## Memory
 
