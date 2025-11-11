@@ -85,7 +85,7 @@ This script finishes evaluation with the values `3`, `5`, `8`, and `5` on the st
 
 This script finishes evaluation with the values `3` and `8` on the stack.
 
-I could not come up with a more minimal, yet complete set of operators. Though using them may end up feeling awkward, possibly even painful, I don't want to implement a more complex solution before confirming that.
+I could not find a more minimal, yet complete set of operators. Though using them may end up feeling awkward, possibly even painful, I don't want to implement a more complex solution before confirming that.
 
 ## Effects
 
