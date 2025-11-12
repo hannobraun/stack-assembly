@@ -147,7 +147,7 @@ loop:
 
 Let's start with the label, `loop:`. Remember, labels are not operators. Those have inputs and outputs, and we can evaluate them. None of that applies to labels. A label just exists in the code, giving a name to the operator it precedes. That won't do anything, unless we pair the label with a reference.
 
-The reference, `@loop`, is tied to the `loop:` label. References have no inputs and one output, an _operator index_. That index belongs to the operator which the label names. Since labels name the next operator, `@loop` outputs its own index.
+The reference, `@loop`, is tied to the `loop:` label. References have no inputs and one output, a zero-based _operator index_. That index belongs to the operator which the label names. Since labels name the next operator, `@loop` outputs its own index, which is `0`.
 
 Finally, there's `jump`, an identifier that we haven't seen before. `jump` has one input, an operator index, and no outputs. It arranges for evaluation to continue with the operator at that index.
 
