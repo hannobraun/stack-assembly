@@ -9,7 +9,7 @@ I want to resume my personal research into programming language design and imple
 [Kari]: https://github.com/hannobraun/kari
 [Crosscut]: https://github.com/hannobraun/crosscut
 
-But I want to achieve this in an incremental manner, with self-contained (and satisfying!) milestones along the way. To that end, I present the design of StackAssembly, a programming language so minimal that I can implement it quickly, but hopefully complete enough to use for real code.
+I want to achieve this in an incremental manner, with self-contained (and satisfying!) milestones along the way. To that end, I present the design of StackAssembly, a programming language so minimal that I can implement it quickly, but hopefully complete enough to use for real code.
 
 I feel confident about the level of simplicity I achieved, and the speed of implementation that will enable.[^1] Whether this design enables real code though, that remains to be seen. At the very least, I expect it to support small experiments that can then inform the next steps.
 
@@ -31,11 +31,11 @@ StackAssembly code takes the form of _scripts_,[^2] each of which consists of UT
 
 [^2]: In this document, I _emphasize_ words that name specific language concepts for the first time.
 
-For the time being, we can't reference one script from another. If we need to share code between them, we must copy and paste.
+For the time being, scripts don't support referencing one another. If we need to share code between them, we must copy and paste.
 
 The characters in a script form whitespace-delimited _tokens_. It doesn't matter how much whitespace, or what kind. As long as whitespace separates two characters, they belong to different tokens. This means the script above has three tokens.
 
-The language ignore whitespace otherwise, so we could write that script in different ways without changing its behavior. Like this, for example:
+The language ignores whitespace otherwise, so we could write that script in different ways without changing its behavior. Like this, for example:
 
 ```stack
 1
@@ -45,7 +45,7 @@ The language ignore whitespace otherwise, so we could write that script in diffe
 
 All of these tokens are _operators_, which come in different flavors. So far, we've seen _integers_ (`1`, `2`) and _identifiers_ (`+`). Integers consist of base-10 digits and form numbers that represent 32-bit two's complement values. Identifiers consist of arbitrary characters.
 
-Let's move on now, as we learned enough about syntax for the next few sections to make sense. We'll revisit the topic later!
+Let's move on now, as we learned enough about syntax for the next few sections to make sense. We'll revisit the topic of syntax later.
 
 ## Evaluation
 
@@ -63,11 +63,11 @@ An implicit _stack_ ties the evaluation of those single operators together. Outp
 
 Likewise, inputs are _popped_ from the top of the stack. `+` has two inputs and one output, the sum of its inputs. So evaluating it pops `2` and `1` from the stack, then pushes `3`.
 
-Its simplicity makes this stack-based model a key ingredient in controlling the language's scope. It renders variables, operator precedence rules, or complex syntax redundant, thereby defining the language's flavor along with part of its name.
+Its simplicity makes this stack-based model a key ingredient in controlling the language's scope. It renders variables, operator precedence rules, or complex syntax redundant, thereby defining the language's flavor along with the first part of its name.
 
 ## Stack Shuffling
 
-With a stack comes the need to access inputs that might not currently sit on top of it. StackAssembly offers two operators to handle this problem: `copy` and `drop`.
+With a stack comes the need to access values that might not currently sit on top of it. StackAssembly offers two operators to handle this: `copy` and `drop`.
 
 `copy` duplicates a value, pushing a replica to the top of the stack. It takes the index of that value as its input. If the index is `0`, it copies the top value; if the index is `1`, it copies the one below that; and so forth.
 
@@ -85,7 +85,7 @@ This script finishes evaluation with the values `3`, `5`, `8`, and `5` on the st
 
 This script finishes evaluation with the values `3` and `8` on the stack.
 
-I could not find a more minimal, yet complete set of operators. Though using them may end up feeling awkward, possibly even painful, I don't want to implement a more complex solution before confirming that.
+I could not find a more minimal, yet still complete set of operators. Though using them may end up feeling awkward, possibly even painful, I don't want to implement a more complex solution before confirming that.
 
 ## Effects
 
@@ -93,7 +93,7 @@ So far, I carefully avoided mentioning the possibility of anything going wrong. 
 
 For example, what happens if an identifier in our code means nothing to the language? Or what if an operator has more inputs than we currently have values on the stack?
 
-Those and all similar error conditions trigger an _effect_. Effects pause the evaluation of a script. They present as different types depending on the trigger, making it possible to distinguish between them.
+Those and all similar error conditions trigger an _effect_. Effects pause the evaluation of a script. Each effect has a type, which depends on what triggered it, making it possible to distinguish between them.
 
 Not every effect originates from an error though. They can trigger as a regular part of evaluation, which may even resume afterwards. But we'll learn about that later. For now, we just need to understand that an error condition triggers an effect, which then pauses the evaluation.
 
@@ -101,7 +101,7 @@ Not every effect originates from an error though. They can trigger as a regular 
 
 The simplest way of handling types in a programming language is to not do that at all, making the language untyped. This means that all values have the same structure and the language has no concept of what types are.
 
-All values are 32-bit _words_, which seems like a good compromise. It provides enough range for most applications and can be used to represent numbers along with other data, like characters. Most modern platforms support 32-bit values well.
+Values are 32-bit _words_. This size seems like a good compromise. It provides enough range for most applications and can be used to represent numbers along with other data, like characters. Most modern platforms support 32-bit values well.
 
 ```stack
 3 5 -1 drop
@@ -109,7 +109,7 @@ All values are 32-bit _words_, which seems like a good compromise. It provides e
 
 Here we wanted to drop `3` from the stack, but accidentally put a `-` in front of the index. Only unsigned integers make valid indices, so the language treats this integer as unsigned. Since `-1` has the same bit pattern as `4294967295`, that's the index the language sees. It results in an out of bounds error.
 
-This is the simplest approach I could come up with, and it has the additional advantage of not incurring any runtime overhead.
+Again, I could not come up with a more minimal approach. It also has the additional advantage of not incurring any runtime overhead.
 
 ## More Syntax
 
@@ -125,7 +125,7 @@ This script introduces two new syntactic elements:
 - `loop:` is a _label_, another type of token distinct from operators.
   All tokens that end with `:` are labels.
 - `@loop` is a _reference_, the last kind of operator.
-  References start with `@` and are usually paired with labels.
+  References start with `@` and we usually pair them with labels.
 
 We'll be looking into how they work in a moment. But let's recap first, to make sure we understand the full picture:
 
@@ -147,9 +147,9 @@ loop:
 
 Let's start with the label, `loop:`. Remember, labels are not operators. Those have inputs and outputs, and we can evaluate them. None of that applies to labels. A label just exists in the code, giving a name to the operator it precedes. That won't do anything, unless we pair the label with a reference.
 
-The reference, `@loop`, is tied to the `loop:` label. References have no inputs and one output, the address of the operator that the label names. Since labels name the next operator, in this case `@loop`, that has its own address as its output. The value of that address is implementation-dependent.
+The reference, `@loop`, is tied to the `loop:` label. References have no inputs and one output, the address of the operator that the label names. Since labels name the next operator, in this case `@loop`, that outputs its own address. The value of that address is implementation-dependent.
 
-Finally, we have `jump`, an identifier that we haven't seen before. `jump` has one input, the address of an operator, and no outputs. It moves evaluation to the operator at that address, so it may continue from there.
+Finally, there's `jump`, an identifier that we haven't seen before. `jump` has one input, the address of an operator, and no outputs. It arranges for evaluation to continue with the operator at that address.
 
 Let's put all that together:
 
@@ -173,9 +173,9 @@ loop:
   0 @loop jump_if
 ```
 
-Here we pass `0` as `jump_if`'s condition, which makes it do nothing. As a result, this whole script ends after `jump_if` and leaves no values on the stack.
+Here we pass `0` as `jump_if`'s condition, which makes it do nothing. As a result, this script ends after `jump_if` and leaves no values on the stack.
 
-Control flow is the most complex part of this design, and also one I easily could have overcomplicated. To counteract that, I made it as simple as I could, using an approach inspired by assembly languages. From this and its untyped nature, StackAssembly derives the second part of its name.
+I consider control flow the most complex part of this design, and also one I easily could have overcomplicated. To counteract that, I made it as simple as I could, using an approach inspired by assembly languages. From this, StackAssembly derives the second part of its name.
 
 ## Memory
 
@@ -199,25 +199,23 @@ Likewise, for writing to memory, we have `write`.
 
 This writes the value `-1` to the second word in memory, at address `1`.
 
-I could have gone with the more flexible and traditional approach of organizing the memory into separately addressable bytes and providing operators to read/write 8-, 16-, and 32-bit words. What I went with is simpler though, and should do for now.
+I could have gone with the more flexible and traditional approach, of organizing the memory into separately addressable bytes and providing operators to read/write 8-, 16-, and 32-bit words. What I went with is simpler though, and should do for now.
 
 ## Hosts
 
-I am going to implement StackAssembly as a library in Rust. Doing anything with it will require a Rust application that provides a script and uses the library to evaluate that script. We call this application the _host_.
+I am going to implement StackAssembly as a library in Rust. Doing anything with it will require a Rust application that provides a script and uses the library to evaluate that script. This application is the _host_.
 
-Every user can write their own host, though they could also use an existing one. The host drives the evaluation and can communicate with the script throughout. This communication between host and script constitutes the only I/O facility that is available to StackAssembly code.
+A user can write their own host or reuse an existing one. The host drives the evaluation and can communicate with the script throughout. This communication between host and script constitutes the only I/O facility that is available to StackAssembly code.
 
 As a result, the host sandboxes scripts and retains full control over their effect on the outside world. This enables use cases that would not tolerate less restricted I/O.
 
-Though more importantly, the facility for communication between host and script can work quite simply (as we'll see). Given the user's ability to bring their own host, this approach combines flexibility with ease of implementation.
+Though more importantly, the facility for communication between host and script can work quite simply (as we'll see). This combines ease of implementation with flexibility, given the user's ability to bring their own host.
 
-While an FFI interface could offer a similar level of flexibility, implementing that would likely require much more work. And a purpose-built standard library would require an investment proportional to the power it provides. Neither would come with sandboxing for free, as the host-based approach does.
+While an FFI interface could offer a similar level of power, implementing that would likely require much more work. And a purpose-built standard library would require an investment proportional to the capability it provides. Neither would come with sandboxing for free, as the host-based approach does.
 
 ## I/O
 
-We've learned that all communication between a script and the outside world goes through the host. Let's take a look at how that works.
-
-The `yield` operator moderates communication between script and host.
+We've learned that all communication between a script and the outside world goes through the host. The `yield` operator moderates that interaction.
 
 ```stack
 0 1 yield
@@ -229,9 +227,9 @@ This approach is closely inspired by how system calls work. Together with the al
 
 ## Valid Identifiers
 
-Any token that the language doesn't recognize as something more specific, ends up as an identifier. But while an identifier can be an arbitrary string of characters, only specific identifiers are valid. Evaluating an invalid identifier is an error and triggers an effect.
+Any token that the language doesn't recognize as something more specific, ends up as an identifier. But while an identifier can consist of arbitrary characters, only specific identifiers are valid. Evaluating an invalid identifier is an error and triggers an effect.
 
-Here we have the full list of valid identifiers, grouped by category:
+This is the full list of valid identifiers, grouped by category:
 
 - **Arithmetic**: `+`, `-`, `*` `/`
 - **Bitwise**:
@@ -244,13 +242,8 @@ Here we have the full list of valid identifiers, grouped by category:
 
 We've seen some of those already. All of them do what their name suggests, mostly following established conventions from other programming languages. Though there are a few details worth calling out:
 
-- The arithmetic operations treat all values as signed (two's complement)
-  integers, where that makes a difference.
-- Most arithmetic operators wrap on overflow,
-  as that provides the most flexibility.
-- `/` outputs both the result of the division and the remainder.
-  This obviates the need for a dedicated modulo/remainder operator.
-- `/` triggers suitable effects on divide by zero and on overflow.
-  Neither of those cases seem likely to be intentional and we can easily work around them.
-- I've avoided adding any logical operations for now,
-  as the bitwise ones can do double duty.
+- The arithmetic operators treat all values as signed (two's complement) integers, where that makes a difference.
+- Most arithmetic operators wrap on overflow, as that provides the most flexibility.
+- `/` outputs both the result of the division and the remainder. This obviates the need for a dedicated modulo/remainder operator.
+- `/` triggers suitable effects on divide by zero and on overflow. Neither of those cases seem likely to be intentional and we can easily work around them.
+- I've avoided adding any logic operations for now, as the bitwise ones can do double duty.
