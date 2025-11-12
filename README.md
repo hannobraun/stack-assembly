@@ -19,7 +19,9 @@ I feel confident about the level of simplicity I achieved, and the speed of impl
 
 In writing this document, I assume that the reader knows basic computer science concepts. Please note that I'm not making this a complete specification. For the sake of convenience, I leave out many details that I expect to become apparent during implementation.
 
-## Basic Syntax
+## Design
+
+### Basic Syntax
 
 Let's start with a basic example:
 
@@ -47,7 +49,7 @@ All of these tokens are _operators_, which come in different flavors. So far, we
 
 Let's move on now, as we learned enough about syntax for the next few sections to make sense. We'll revisit the topic of syntax later.
 
-## Evaluation
+### Evaluation
 
 Here's that first script again:
 
@@ -65,7 +67,7 @@ Likewise, inputs are _popped_ from the top of the stack. `+` has two inputs and 
 
 Its simplicity makes this stack-based model a key ingredient in controlling the language's scope. It renders variables, operator precedence rules, or complex syntax redundant, thereby defining the language's flavor along with the first part of its name.
 
-## Stack Shuffling
+### Stack Shuffling
 
 With a stack comes the need to access values that might not currently sit on top of it. StackAssembly offers two operators to handle this: `copy` and `drop`.
 
@@ -87,7 +89,7 @@ This script finishes evaluation with the values `3` and `8` on the stack.
 
 I could not find a more minimal, yet still complete set of operators. Though using them may end up feeling awkward, possibly even painful, I don't want to implement a more complex solution before confirming that.
 
-## Effects
+### Effects
 
 So far, I carefully avoided mentioning the possibility of anything going wrong. And yet we've seen multiple examples that could.
 
@@ -97,7 +99,7 @@ Those and all similar error conditions trigger an _effect_. Effects pause the ev
 
 Not every effect originates from an error though. They can trigger as a regular part of evaluation, which may even resume afterwards. But we'll learn about that later. For now, we just need to understand that an error condition triggers an effect, which then pauses the evaluation.
 
-## Type System
+### Type System
 
 The simplest way of handling types in a programming language is to not do that at all, making the language untyped. This means that all values have the same structure and the language has no concept of what types are.
 
@@ -111,7 +113,7 @@ Here we wanted to drop `3` from the stack, but accidentally put a `-` in front o
 
 Again, I could not come up with a more minimal approach. It also has the additional advantage of not incurring any runtime overhead.
 
-## More Syntax
+### More Syntax
 
 As I alluded to above, we haven't seen all there is to syntax yet.
 
@@ -136,7 +138,7 @@ We'll be looking into how they work in a moment. But let's recap first, to make 
     - and **references**.
   - **Labels** are the other type of token.
 
-## Control Flow
+### Control Flow
 
 With all syntax now in place, we can learn about control flow. Here's the previous script again:
 
@@ -177,7 +179,7 @@ Here we pass `0` as `jump_if`'s condition, which makes it do nothing. As a resul
 
 I consider control flow the most complex part of this design, and also one I easily could have overcomplicated. To counteract that, I made it as simple as I could, using an approach inspired by assembly languages. From this, StackAssembly derives the second part of its name.
 
-## Memory
+### Memory
 
 While 32-bit words on a stack can already get us pretty far, we need an escape hatch for non-trivial data structures. A freely addressable, linear _memory_ should do the trick.
 
@@ -201,7 +203,7 @@ This writes the value `-1` to the second word in memory, at address `1`.
 
 I could have gone with the more flexible and traditional approach, of organizing the memory into separately addressable bytes and providing operators to read/write 8-, 16-, and 32-bit words. What I went with is simpler though, and should do for now.
 
-## Hosts
+### Hosts
 
 I am going to implement StackAssembly as a library in Rust. Doing anything with it will require a Rust application that provides a script and uses the library to evaluate that script. This application is the _host_.
 
@@ -213,7 +215,7 @@ Though more importantly, the facility for communication between host and script 
 
 While an FFI interface could offer a similar level of power, implementing that would likely require much more work. And a purpose-built standard library would require an investment proportional to the capability it provides. Neither would come with sandboxing for free, as the host-based approach does.
 
-## I/O
+### I/O
 
 We've learned that all communication between a script and the outside world goes through the host. The `yield` operator moderates that interaction.
 
@@ -225,7 +227,7 @@ We've learned that all communication between a script and the outside world goes
 
 This approach is closely inspired by how system calls work. Together with the already existing language facilities, and the host's access to them, it provides a lightweight channel for communication.
 
-## Valid Identifiers
+### Valid Identifiers
 
 Any token that the language doesn't recognize as something more specific, ends up as an identifier. But while an identifier can consist of arbitrary characters, only specific identifiers are valid. Evaluating an invalid identifier is an error and triggers an effect.
 
