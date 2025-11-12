@@ -11,12 +11,6 @@ I want to resume my personal research into programming language design and imple
 
 I want to achieve this in an incremental manner, with self-contained (and satisfying!) milestones along the way. To that end, I present the design of StackAssembly, a programming language so minimal that I can implement it quickly, but hopefully complete enough to use for real code.
 
-I feel confident about the level of simplicity I achieved, and the speed of implementation that will enable.[^1] Whether this design enables real code though, that remains to be seen. At the very least, I expect it to support small experiments that can then inform the next steps.
-
-[^1]: [This direct predecessor][predecessor] achieved a reasonable level of completeness, and I finished it within a few weeks.
-
-[predecessor]: https://github.com/hannobraun/playground/tree/main/archive/2025-10-27_stack-assembly
-
 In writing this document, I assume that the reader knows basic computer science concepts. Please note that I'm not making this a complete specification. For the sake of convenience, I leave out many details that I expect to become apparent during implementation.
 
 ## Design
@@ -249,3 +243,13 @@ We've seen some of those already. All of them do what their name suggests, mostl
 - `/` outputs both the result of the division and the remainder. This obviates the need for a dedicated modulo/remainder operator.
 - `/` triggers suitable effects on divide by zero and on overflow. Neither of those cases seem likely to be intentional and we can easily work around them.
 - I've avoided adding any logic operations for now, as the bitwise ones can do double duty.
+
+## Conclusion
+
+And that's it! This should be enough to implement the language.
+
+With this design, I did my best to err on the side of simplicity, and I'm confident that this will prove enough to allow for a quick implementation. For reference, [this direct predecessor][predecessor] ended up more complex, and I finished it within a few weeks.
+
+[predecessor]: https://github.com/hannobraun/playground/tree/main/archive/2025-10-27_stack-assembly
+
+Whether the resulting language will support real code though, that remains to be seen. At the very least, I expect it to support small experiments that can then inform the next steps.
