@@ -61,7 +61,7 @@ An implicit _stack_ ties the evaluation of those single operators together. Outp
 
 Likewise, inputs are _popped_ from the top of the stack. `+` has two inputs and one output (the sum of its inputs). So evaluating it pops `2` and `1` from the stack, then pushes `3`.
 
-The simplicity of this stack-based model makes it a key ingredient in controlling StackAssembly's scope. It renders variables, operator precedence rules, or complex syntax redundant, giving the language a peculiar flavor and providing the first part of its name.
+The simplicity of this stack-based model is a key ingredient in controlling StackAssembly's scope. It renders variables, operator precedence rules, or complex syntax redundant, giving the language a peculiar flavor and providing the first part of its name.
 
 ### Stack Shuffling
 
@@ -91,13 +91,13 @@ So far, I carefully avoided mentioning the possibility of anything going wrong. 
 
 What happens if we type an identifier that the language doesn't recognize? Or what if an operator has more inputs than we've pushed values to the stack?
 
-Those and all similar error conditions trigger an _effect_. Effects pause the evaluation. Each effect has a type, depending on what triggered it, making it possible to distinguish between them.
+Those and all similar error conditions trigger an _effect_, which pauses the evaluation. Each effect has a type, depending on what triggered it, making it possible to distinguish between them.
 
 Not every effect originates from an error though. They can trigger as a regular part of evaluation, which may even resume afterwards. But we'll learn about that later. For now, we just need to understand that an error condition triggers an effect, which then pauses the evaluation.
 
 ### Type System
 
-I don't know of a simpler way to handle types in a programming language, than to ignore them completely. This makes the language untyped, meaning that all values have the same structure. In StackAssembly's case, values are 32-bit _words_.
+I can imagine no simpler way to handle types in a programming language, than to ignore them completely. This makes the language untyped, meaning that all values have the same structure. In StackAssembly's case, values are 32-bit _words_.
 
 This size seems like a good compromise. It provides enough range for most applications and can be used to represent numbers along with other data, like characters. Most modern platforms support 32-bit values well.
 
@@ -199,7 +199,7 @@ I could have gone with the more flexible (and more traditional) approach, of org
 
 I am going to implement StackAssembly as a library in Rust. Using it for anything will require a Rust application which provides a script and employs said library to evaluate that script. We call such an application a _host_.
 
-A user can bring their own host or reuse an existing one. The host drives the evaluation and can communicate with the script throughout. This communication between host and script constitutes the only I/O facility that StackAssembly code can access.
+A user can bring their own host or reuse an existing one. The host drives the evaluation and can communicate with the script throughout. This communication between host and script is the only I/O facility that StackAssembly code can access.
 
 As a result, the host sandboxes scripts and retains full control over their effect on the outside world. This enables use cases that could not allow less restricted I/O.
 
@@ -249,4 +249,4 @@ With this design, I did my best to err on the side of simplicity, and I'm confid
 
 [predecessor]: https://github.com/hannobraun/playground/tree/main/archive/2025-10-27_stack-assembly
 
-Whether the resulting language will support real code though, that remains to be seen. At the very least, I expect it to enable small experiments that can inform the next steps.
+Whether the resulting language will support real code though, that remains to be seen. I didn't even add comments! At the very least though, I expect it to enable small experiments that can inform the next steps.
