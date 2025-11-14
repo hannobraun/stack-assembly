@@ -35,13 +35,13 @@ The language ignores whitespace otherwise, so we could write that script in diff
 
 ```stack
 1
-  2
-    +
+2
+  +
 ```
 
 All of the tokens here are _operators_, which come in different flavors. So far, we've seen _integers_ (`1`, `2`) and _identifiers_ (`+`). Integers consist of base-10 digits, while identifiers consist of arbitrary characters.
 
-Let's move on now, as we've learned enough to make sense of the next few sections. We'll revisit the topic of syntax again later.
+Let's move on now, as we've learned enough about syntax to make sense of the next few sections. We'll revisit the topic again later.
 
 ### Evaluation
 
@@ -61,7 +61,7 @@ An implicit _stack_ ties the evaluation of those single operators together. Outp
 
 Likewise, inputs are _popped_ from the top of the stack. `+` has two inputs and one output (the sum of its inputs). So evaluating it pops `2` and `1` from the stack, then pushes `3`.
 
-The simplicity of this stack-based model makes it a key ingredient in controlling StackAssembly's scope. It renders variables, operator precedence rules, or complex syntax redundant, giving the language a peculiar flavor and defining the first part of its name.
+The simplicity of this stack-based model makes it a key ingredient in controlling StackAssembly's scope. It renders variables, operator precedence rules, or complex syntax redundant, giving the language a peculiar flavor and providing the first part of its name.
 
 ### Stack Shuffling
 
@@ -89,7 +89,7 @@ I could not find a more minimal, yet still complete set of operators. Though usi
 
 So far, I carefully avoided mentioning the possibility of anything going wrong. And yet we've seen multiple examples that could.
 
-What happens if we type an identifier that the language doesn't know about? Or what if an operator has more inputs than we currently have values on the stack?
+What happens if we type an identifier that the language doesn't recognize? Or what if an operator has more inputs than we've pushed values to the stack?
 
 Those and all similar error conditions trigger an _effect_. Effects pause the evaluation. Each effect has a type, depending on what triggered it, making it possible to distinguish between them.
 
@@ -97,7 +97,7 @@ Not every effect originates from an error though. They can trigger as a regular 
 
 ### Type System
 
-The simplest way of handling types in a programming language is to ignore them completely, making the language untyped. This means that all values have the same structure. In StackAssembly's case, they are 32-bit _words_.
+I don't know of a simpler way to handle types in a programming language, than to ignore them completely. This makes the language untyped, meaning that all values have the same structure. In StackAssembly's case, values are 32-bit _words_.
 
 This size seems like a good compromise. It provides enough range for most applications and can be used to represent numbers along with other data, like characters. Most modern platforms support 32-bit values well.
 
@@ -149,7 +149,7 @@ Finally, there's `jump`, an identifier that we haven't seen before. `jump` has o
 
 Let's put all that together:
 
-1. `loop:` is not an operator and does not evaluate to anything. It just tells us the name of the operator it precedes.
+1. `loop:` is not an operator and we can't evaluate it. It just tells us the name of the operator it precedes.
 2. `@loop` has one output (its own index). It pushes that to the stack.
 3. Finally, `jump` pops that index from the stack and jumps back to `@loop`. From here, steps 2 and 3 keep repeating indefinitely.
 
@@ -197,11 +197,11 @@ I could have gone with the more flexible (and more traditional) approach, of org
 
 ### Hosts
 
-I am going to implement StackAssembly as a library in Rust. Using it for anything will require a Rust application that provides a script and employs said library to evaluate that script. Such an application is called a _host_.
+I am going to implement StackAssembly as a library in Rust. Using it for anything will require a Rust application which provides a script and employs said library to evaluate that script. We call such an application a _host_.
 
-A user can bring their own host or reuse an existing one. The host drives the evaluation and can communicate with the script throughout. This communication between host and script constitutes the only I/O facility that is available to StackAssembly code.
+A user can bring their own host or reuse an existing one. The host drives the evaluation and can communicate with the script throughout. This communication between host and script constitutes the only I/O facility that StackAssembly code can access.
 
-As a result, the host sandboxes scripts and retains full control over their effect on the outside world. This enables use cases that could not indulge less restricted I/O.
+As a result, the host sandboxes scripts and retains full control over their effect on the outside world. This enables use cases that could not allow less restricted I/O.
 
 Though more importantly, the facility for communication between host and script can work quite simply, as we'll see. This combines ease of implementation with flexibility, given the user's ability to bring their own host.
 
@@ -217,7 +217,7 @@ We've learned that all communication between a script and the outside world goes
 
 `yield` has no inputs or outputs. It only triggers an effect, transferring control to the host. The host can then inspect stack and memory, and decide how to react. In this example, the stack values `3` and `5` could define some type of request that the script makes of the host.
 
-This approach is closely inspired by how system calls work. Together with the already existing language facilities, and the host's access to them, it provides a lightweight channel for communication.
+I took inspiration from system calls when coming up with this approach. Together with the already existing language facilities, and the host's access to them, it provides a lightweight channel for communication.
 
 ### Known Identifiers
 
@@ -249,4 +249,4 @@ With this design, I did my best to err on the side of simplicity, and I'm confid
 
 [predecessor]: https://github.com/hannobraun/playground/tree/main/archive/2025-10-27_stack-assembly
 
-Whether the resulting language will support real code though, that remains to be seen. At the very least, I expect it to support small experiments that can inform the next steps.
+Whether the resulting language will support real code though, that remains to be seen. At the very least, I expect it to enable small experiments that can inform the next steps.
