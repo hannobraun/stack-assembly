@@ -2,13 +2,15 @@
 
 #![deny(missing_docs)]
 
+use std::collections::VecDeque;
+
 #[cfg(test)]
 mod tests;
 
 /// # The ongoing evaluation of a script
 pub struct Eval {
-    /// # The script that we're evaluating
-    pub script: String,
+    /// # The remaining tokens that we haven't evaluated yet
+    pub tokens: VecDeque<String>,
 
     /// # The operand stack
     pub stack: Vec<u32>,
@@ -21,14 +23,17 @@ impl Eval {
     /// provided script, you still have to explicitly call [`Eval::run`].
     pub fn start(script: &str) -> Self {
         Self {
-            script: script.to_string(),
+            tokens: script
+                .split_whitespace()
+                .map(|token| token.to_owned())
+                .collect(),
             stack: Vec::new(),
         }
     }
 
     /// # Advance the evaluation until it completes
     pub fn run(&mut self) {
-        for token in self.script.split_whitespace() {
+        while let Some(token) = self.tokens.pop_front() {
             if let Ok(value) = token.parse::<i32>() {
                 let value = u32::from_le_bytes(value.to_le_bytes());
                 self.stack.push(value);
