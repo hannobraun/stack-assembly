@@ -29,7 +29,8 @@ impl Eval {
     /// # Advance the evaluation until it completes
     pub fn run(&mut self) {
         for token in self.script.split_whitespace() {
-            if let Ok(value) = token.parse() {
+            if let Ok(value) = token.parse::<i32>() {
+                let value = u32::from_le_bytes(value.to_le_bytes());
                 self.stack.push(value);
             }
         }
