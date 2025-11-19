@@ -17,3 +17,12 @@ The purpose of StackAssembly is to serve as a foundation for my personal researc
 ## Status
 
 I finished the initial design and am currently preparing to start implementing the first version.
+
+## License
+
+This project is open source, licensed under the terms of the [Zero-Clause BSD License][0BSD] (0BSD, for short). This basically means you can do anything with the code, without restrictions, but you can't hold the authors liable for any problems.
+
+See [LICENSE.md] for details.
+
+[0BSD]: https://opensource.org/licenses/0BSD
+[LICENSE.md]: LICENSE.md
