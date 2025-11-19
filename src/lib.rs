@@ -14,6 +14,9 @@ pub struct Eval {
 
     /// # The operand stack
     pub stack: Vec<u32>,
+
+    /// # The active effect, if one has triggered
+    pub effect: Option<Effect>,
 }
 
 impl Eval {
@@ -29,6 +32,7 @@ impl Eval {
                 .map(|token| token.to_owned())
                 .collect(),
             stack: Vec::new(),
+            effect: None,
         }
     }
 
@@ -41,6 +45,8 @@ impl Eval {
         if let Ok(value) = token.parse::<i32>() {
             let value = u32::from_le_bytes(value.to_le_bytes());
             self.stack.push(value);
+        } else {
+            self.effect = Some(Effect::IntegerOverflow);
         }
 
         true
@@ -50,4 +56,11 @@ impl Eval {
     pub fn run(&mut self) {
         while self.step() {}
     }
+}
+
+/// # An effect
+#[derive(Debug, Eq, PartialEq)]
+pub enum Effect {
+    /// # The evaluation of an integer operator triggered an overflow
+    IntegerOverflow,
 }
