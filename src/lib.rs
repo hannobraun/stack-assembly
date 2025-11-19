@@ -38,6 +38,10 @@ impl Eval {
 
     /// # Advance the evaluation by one step
     pub fn step(&mut self) -> bool {
+        if self.effect.is_some() {
+            return false;
+        }
+
         let Some(token) = self.tokens.pop_front() else {
             return false;
         };
@@ -52,7 +56,7 @@ impl Eval {
         true
     }
 
-    /// # Advance the evaluation until it completes
+    /// # Advance the evaluation until it triggers an effect or completes
     pub fn run(&mut self) {
         while self.step() {}
     }
