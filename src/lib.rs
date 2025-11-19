@@ -20,7 +20,8 @@ impl Eval {
     /// # Start evaluating the provided script
     ///
     /// Returns an `Eval` instance that is ready. To evaluate any tokens in the
-    /// provided script, you still have to explicitly call [`Eval::run`].
+    /// provided script, you still have to explicitly call [`Eval::step`] or
+    /// [`Eval::run`].
     pub fn start(script: &str) -> Self {
         Self {
             tokens: script
@@ -31,13 +32,22 @@ impl Eval {
         }
     }
 
+    /// # Advance the evaluation by one step
+    pub fn step(&mut self) -> bool {
+        let Some(token) = self.tokens.pop_front() else {
+            return false;
+        };
+
+        if let Ok(value) = token.parse::<i32>() {
+            let value = u32::from_le_bytes(value.to_le_bytes());
+            self.stack.push(value);
+        }
+
+        true
+    }
+
     /// # Advance the evaluation until it completes
     pub fn run(&mut self) {
-        while let Some(token) = self.tokens.pop_front() {
-            if let Ok(value) = token.parse::<i32>() {
-                let value = u32::from_le_bytes(value.to_le_bytes());
-                self.stack.push(value);
-            }
-        }
+        while self.step() {}
     }
 }
