@@ -28,8 +28,10 @@ impl Eval {
 
     /// # Advance the evaluation until it completes
     pub fn run(&mut self) {
-        if let Ok(value) = self.script.parse() {
-            self.stack.push(value);
+        for token in self.script.split_whitespace() {
+            if let Ok(value) = token.parse() {
+                self.stack.push(value);
+            }
         }
     }
 }
