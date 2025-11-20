@@ -10,7 +10,7 @@ mod tests;
 #[derive(Debug)]
 pub struct Eval {
     /// # The tokens of the script we're evaluating
-    pub tokens: Vec<String>,
+    pub tokens: Vec<Operator>,
 
     /// # The index of the next token to evaluate
     pub next_token: usize,
@@ -32,7 +32,15 @@ impl Eval {
         let mut tokens = Vec::new();
 
         for token in script.split_whitespace() {
-            tokens.push(token.to_owned());
+            let operator = if let Ok(value) = token.parse::<i32>() {
+                Operator::Integer { value }
+            } else {
+                Operator::Identifier {
+                    name: token.to_string(),
+                }
+            };
+
+            tokens.push(operator);
         }
 
         Self {
@@ -53,26 +61,32 @@ impl Eval {
             return false;
         };
 
-        if let Ok(value) = token.parse::<i32>() {
-            let value = u32::from_le_bytes(value.to_le_bytes());
-            self.stack.push(value);
-        } else if token == "jump" {
-            let Some(index) = self.stack.pop() else {
-                panic!("Stack underflow");
-            };
-            let Ok(index) = index.try_into() else {
-                panic!("Operator index out of bounds");
-            };
+        match token {
+            Operator::Identifier { name } => {
+                if name == "yield" {
+                    self.effect = Some(Effect::Yield);
+                } else if name == "jump" {
+                    let Some(index) = self.stack.pop() else {
+                        panic!("Stack underflow");
+                    };
+                    let Ok(index) = index.try_into() else {
+                        panic!("Operator index out of bounds");
+                    };
 
-            self.next_token = index;
+                    self.next_token = index;
 
-            // By default, we increment `self.next_token` below. Since we just
-            // set that to the exact value we want, we need to bypass that.
-            return true;
-        } else if token == "yield" {
-            self.effect = Some(Effect::Yield);
-        } else {
-            self.effect = Some(Effect::UnknownIdentifier);
+                    // By default, we increment `self.next_token` below. Since
+                    // we just set that to the exact value we want, we need to
+                    // bypass that.
+                    return true;
+                } else {
+                    self.effect = Some(Effect::UnknownIdentifier);
+                }
+            }
+            Operator::Integer { value } => {
+                let value = u32::from_le_bytes(value.to_le_bytes());
+                self.stack.push(value);
+            }
         }
 
         self.next_token += 1;
@@ -84,6 +98,24 @@ impl Eval {
     pub fn run(&mut self) {
         while self.step() {}
     }
+}
+
+/// # An operator
+///
+/// Operators are a type of token that can be evaluated.
+#[derive(Debug)]
+pub enum Operator {
+    /// # The operator is an identifier
+    Identifier {
+        /// # The name of the identifier
+        name: String,
+    },
+
+    /// # The operator is an integer
+    Integer {
+        /// # The value of the integer
+        value: i32,
+    },
 }
 
 /// # An effect
