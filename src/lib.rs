@@ -16,8 +16,8 @@ pub struct Eval {
     /// # The operators of the script we're evaluating
     pub operators: Vec<Operator>,
 
-    /// # The index of the next token to evaluate
-    pub next_token: usize,
+    /// # The index of the next operator to evaluate
+    pub next_operator: usize,
 
     /// # The active effect, if one has triggered
     pub effect: Option<Effect>,
@@ -49,7 +49,7 @@ impl Eval {
 
         Self {
             operators,
-            next_token: 0,
+            next_operator: 0,
             effect: None,
             stack: Stack { values: Vec::new() },
         }
@@ -70,7 +70,7 @@ impl Eval {
     }
 
     fn evaluate_next_operator(&mut self) -> Result<(), Effect> {
-        let Some(operator) = self.operators.get(self.next_token) else {
+        let Some(operator) = self.operators.get(self.next_operator) else {
             return Err(Effect::OutOfTokens);
         };
 
@@ -109,7 +109,7 @@ impl Eval {
                     self.stack.push(remainder);
                 } else if identifier == "jump" {
                     let index = self.stack.pop()?.to_operator_index();
-                    self.next_token = index;
+                    self.next_operator = index;
 
                     // By default, we increment `self.next_token` below. Since
                     // we just set that to the exact value we want, we need to
@@ -126,7 +126,7 @@ impl Eval {
             }
         }
 
-        self.next_token += 1;
+        self.next_operator += 1;
 
         Ok(())
     }
