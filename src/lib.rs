@@ -1,6 +1,7 @@
 //! # The interpreter for the StackAssembly programming language
 
-#![deny(missing_docs)]
+#![warn(missing_debug_implementations)]
+#![warn(missing_docs)]
 
 use std::collections::VecDeque;
 
@@ -8,6 +9,7 @@ use std::collections::VecDeque;
 mod tests;
 
 /// # The ongoing evaluation of a script
+#[derive(Debug)]
 pub struct Eval {
     /// # The remaining tokens that we haven't evaluated yet
     pub tokens: VecDeque<String>,
