@@ -13,8 +13,8 @@ pub use self::stack::Stack;
 /// # The ongoing evaluation of a script
 #[derive(Debug)]
 pub struct Eval {
-    /// # The tokens of the script we're evaluating
-    pub tokens: Vec<Operator>,
+    /// # The operators of the script we're evaluating
+    pub operators: Vec<Operator>,
 
     /// # The index of the next token to evaluate
     pub next_token: usize,
@@ -48,7 +48,7 @@ impl Eval {
         }
 
         Self {
-            tokens,
+            operators: tokens,
             next_token: 0,
             effect: None,
             stack: Stack { values: Vec::new() },
@@ -70,7 +70,7 @@ impl Eval {
     }
 
     fn evaluate_token(&mut self) -> Result<(), Effect> {
-        let Some(token) = self.tokens.get(self.next_token) else {
+        let Some(token) = self.operators.get(self.next_token) else {
             return Err(Effect::OutOfTokens);
         };
 
