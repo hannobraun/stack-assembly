@@ -29,16 +29,22 @@ fn evaluate_negative_integer() {
 
 #[test]
 fn trigger_effect_on_integer_overflow() {
-    // If an integer is too large to fit in a signed (two's complement) 32-bit
-    // value, evaluating it triggers the corresponding effect.
+    // If a token could theoretically be an integer, but is too large to be a
+    // signed (two's complement) 32-bit one, we treat it as an unknown
+    // identifier.
+    //
+    // It would be more appropriate to trigger an "integer overflow" effect in
+    // this case, but that would complicate the implementation. For now, that
+    // would be the wrong trade-off, so this weirder but easier behavior has to
+    // do.
     //
     // In principle, since the language is untyped, we could support integers
     // that cover the full range of both signed and unsigned 32-bit values. That
     // would just mean that numbers larger than `2^31-1` would end up with bit
     // patterns that also represent negative numbers (and vice versa).
     //
-    // But to keep the initial implementation simple, we only support the range
-    // of signed values for now.
+    // But again, to keep the initial implementation simple, we only support the
+    // range of signed values for now.
 
     let mut eval = Eval::start("2147483647 2147483648");
 
@@ -48,5 +54,5 @@ fn trigger_effect_on_integer_overflow() {
 
     eval.step();
     assert_eq!(eval.stack, vec![2147483647]);
-    assert_eq!(eval.effect, Some(Effect::IntegerOverflow));
+    assert_eq!(eval.effect, Some(Effect::UnknownIdentifier));
 }
