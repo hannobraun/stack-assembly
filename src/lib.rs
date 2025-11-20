@@ -5,8 +5,12 @@
 
 use std::collections::VecDeque;
 
+mod stack;
+
 #[cfg(test)]
 mod tests;
+
+pub use self::stack::Stack;
 
 /// # The ongoing evaluation of a script
 #[derive(Debug)]
@@ -18,7 +22,7 @@ pub struct Eval {
     pub effect: Option<Effect>,
 
     /// # The stack
-    pub stack: Vec<u32>,
+    pub stack: Stack,
 }
 
 impl Eval {
@@ -34,7 +38,7 @@ impl Eval {
                 .map(|token| token.to_owned())
                 .collect(),
             effect: None,
-            stack: Vec::new(),
+            stack: Stack { values: Vec::new() },
         }
     }
 
@@ -74,16 +78,17 @@ pub enum Effect {
     Yield,
 }
 
-fn evaluate_token(token: &str, stack: &mut Vec<u32>) -> Result<(), Effect> {
+fn evaluate_token(token: &str, stack: &mut Stack) -> Result<(), Effect> {
     if let Ok(value) = token.parse::<i32>() {
         let value = u32::from_le_bytes(value.to_le_bytes());
-        stack.push(value);
+        stack.values.push(value);
     } else if token == "+" {
-        let (Some(b), Some(a)) = (stack.pop(), stack.pop()) else {
+        let (Some(b), Some(a)) = (stack.values.pop(), stack.values.pop())
+        else {
             return Err(Effect::StackUnderflow);
         };
 
-        stack.push(a.wrapping_add(b));
+        stack.values.push(a.wrapping_add(b));
     } else if token == "yield" {
         return Err(Effect::Yield);
     } else {

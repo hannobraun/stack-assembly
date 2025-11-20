@@ -8,7 +8,7 @@ fn add() {
     eval.run();
 
     assert_eq!(eval.effect, None);
-    assert_eq!(eval.stack, vec![3]);
+    assert_eq!(eval.stack.values, vec![3]);
 }
 
 #[test]
@@ -19,7 +19,7 @@ fn add_wraps_on_signed_overflow() {
     eval.run();
 
     assert_eq!(eval.effect, None);
-    assert_eq!(eval.stack, vec![2147483648]);
+    assert_eq!(eval.stack.values, vec![2147483648]);
 }
 
 #[test]
@@ -34,5 +34,5 @@ fn add_wraps_on_unsigned_overflow() {
     eval.run();
 
     assert_eq!(eval.effect, None);
-    assert_eq!(eval.stack, vec![0]);
+    assert_eq!(eval.stack.values, vec![0]);
 }
