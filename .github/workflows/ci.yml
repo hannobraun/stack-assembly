@@ -28,7 +28,7 @@ jobs:
       - name: Run test suite
         run: cargo test
 
-      - name: Check for warnings in documentation
+      - name: Build documentation
         env:
           RUSTDOCFLAGS: -D warnings
         run: cargo doc
