@@ -83,7 +83,7 @@ fn evaluate_token(token: &str, stack: &mut Vec<u32>) -> Result<(), Effect> {
             return Err(Effect::StackUnderflow);
         };
 
-        stack.push(a + b);
+        stack.push(a.wrapping_add(b));
     } else if token == "yield" {
         return Err(Effect::Yield);
     } else {
