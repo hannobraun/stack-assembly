@@ -12,8 +12,8 @@ pub struct Eval {
     /// # The operators of the script we're evaluating
     pub operators: Vec<Operator>,
 
-    /// # The index of the next token to evaluate
-    pub next_token: usize,
+    /// # The index of the next operator to evaluate
+    pub next_operator: usize,
 
     /// # The operand stack
     pub stack: Vec<u32>,
@@ -45,7 +45,7 @@ impl Eval {
 
         Self {
             operators,
-            next_token: 0,
+            next_operator: 0,
             stack: Vec::new(),
             effect: None,
         }
@@ -57,7 +57,7 @@ impl Eval {
             return false;
         }
 
-        let Some(operator) = self.operators.get(self.next_token) else {
+        let Some(operator) = self.operators.get(self.next_operator) else {
             return false;
         };
 
@@ -73,7 +73,7 @@ impl Eval {
                         panic!("Operator index out of bounds");
                     };
 
-                    self.next_token = index;
+                    self.next_operator = index;
 
                     // By default, we increment `self.next_token` below. Since
                     // we just set that to the exact value we want, we need to
@@ -89,7 +89,7 @@ impl Eval {
             }
         }
 
-        self.next_token += 1;
+        self.next_operator += 1;
 
         true
     }
