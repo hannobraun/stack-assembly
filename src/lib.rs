@@ -29,7 +29,7 @@ impl Eval {
     /// provided script, you still have to explicitly call [`Eval::step`] or
     /// [`Eval::run`].
     pub fn start(script: &str) -> Self {
-        let mut tokens = Vec::new();
+        let mut operators = Vec::new();
 
         for token in script.split_whitespace() {
             let operator = if let Ok(value) = token.parse::<i32>() {
@@ -40,11 +40,11 @@ impl Eval {
                 }
             };
 
-            tokens.push(operator);
+            operators.push(operator);
         }
 
         Self {
-            operators: tokens,
+            operators,
             next_token: 0,
             stack: Vec::new(),
             effect: None,
