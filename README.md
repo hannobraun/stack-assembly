@@ -16,7 +16,7 @@ The purpose of StackAssembly is to serve as a foundation for my personal researc
 
 ## Status
 
-I finished the initial design and am currently preparing to start implementing the first version.
+I'm currently implementing the initial design and have not released a first version yet.
 
 ## License
 
