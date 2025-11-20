@@ -16,6 +16,9 @@ pub struct Eval {
     /// # The operators of the script we're evaluating
     pub operators: Vec<Operator>,
 
+    /// # The labels of the script we're evaluating
+    pub labels: Vec<Label>,
+
     /// # The index of the next operator to evaluate
     pub next_operator: usize,
 
@@ -34,9 +37,16 @@ impl Eval {
     /// [`Eval::run`].
     pub fn start(script: &str) -> Self {
         let mut operators = Vec::new();
+        let mut labels = Vec::new();
 
         for token in script.split_whitespace() {
-            let operator = if let Ok(value) = token.parse::<i32>() {
+            let operator = if let Some((name, "")) = token.rsplit_once(":") {
+                labels.push(Label {
+                    name: name.to_string(),
+                    index: operators.len(),
+                });
+                continue;
+            } else if let Ok(value) = token.parse::<i32>() {
                 Operator::Integer { value }
             } else {
                 Operator::Identifier {
@@ -49,6 +59,7 @@ impl Eval {
 
         Self {
             operators,
+            labels,
             next_operator: 0,
             effect: None,
             stack: Stack { values: Vec::new() },
@@ -153,6 +164,19 @@ pub enum Operator {
         /// # The value of the integer
         value: i32,
     },
+}
+
+/// # A label
+///
+/// Labels are a type of token that exist in the code, but not at runtime. They
+/// assign a name to the operator they precede.
+#[derive(Debug)]
+pub struct Label {
+    /// # The name that the label assigns to the operator it precedes
+    pub name: String,
+
+    /// # The index of the operator that the label precedes
+    pub index: usize,
 }
 
 /// # An effect
