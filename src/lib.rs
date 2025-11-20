@@ -8,6 +8,7 @@ use std::collections::VecDeque;
 mod tests;
 
 /// # The ongoing evaluation of a script
+#[derive(Debug)]
 pub struct Eval {
     /// # The remaining tokens that we haven't evaluated yet
     pub tokens: VecDeque<String>,
