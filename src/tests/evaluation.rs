@@ -6,8 +6,8 @@ fn starting_evaluation_does_not_evaluate_any_operators() {
     // operators.
 
     let eval = Eval::start("yield");
-    assert_eq!(eval.stack, vec![]);
     assert_eq!(eval.effect, None);
+    assert_eq!(eval.stack, vec![]);
 }
 
 #[test]
@@ -19,8 +19,8 @@ fn yield_operator_triggers_the_respective_effect() {
     let mut eval = Eval::start("yield");
     eval.run();
 
-    assert_eq!(eval.stack, vec![]);
     assert_eq!(eval.effect, Some(Effect::Yield));
+    assert_eq!(eval.stack, vec![]);
 }
 
 #[test]
@@ -31,6 +31,6 @@ fn active_effect_prevents_evaluation_from_advancing() {
     eval.effect = Some(Effect::Yield);
 
     eval.run();
-    assert_eq!(eval.stack, vec![]);
     assert_eq!(eval.effect, Some(Effect::Yield));
+    assert_eq!(eval.stack, vec![]);
 }
