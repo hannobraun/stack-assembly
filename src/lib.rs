@@ -17,7 +17,7 @@ pub struct Eval {
     /// # The active effect, if one has triggered
     pub effect: Option<Effect>,
 
-    /// # The operand stack
+    /// # The stack
     pub stack: Vec<u32>,
 }
 
