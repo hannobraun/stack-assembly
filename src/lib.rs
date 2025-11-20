@@ -42,6 +42,10 @@ impl Eval {
                     index: operators.len(),
                 });
                 continue;
+            } else if let Some(("", name)) = token.split_once("@") {
+                Operator::Reference {
+                    name: name.to_string(),
+                }
             } else if let Ok(value) = token.parse::<i32>() {
                 Operator::Integer { value }
             } else {
@@ -98,6 +102,20 @@ impl Eval {
                 let value = u32::from_le_bytes(value.to_le_bytes());
                 self.stack.push(value);
             }
+            Operator::Reference { name } => {
+                let label =
+                    self.labels.iter().find(|label| &label.name == name);
+
+                if let Some(label) = label {
+                    let Ok(index) = label.index.try_into() else {
+                        panic!("Operator index out of bounds");
+                    };
+
+                    self.stack.push(index);
+                } else {
+                    panic!("Invalid reference");
+                }
+            }
         }
 
         self.next_operator += 1;
@@ -126,6 +144,12 @@ pub enum Operator {
     Integer {
         /// # The value of the integer
         value: i32,
+    },
+
+    /// # The operator is a reference
+    Reference {
+        /// # The name of the label the reference refers to
+        name: String,
     },
 }
 
