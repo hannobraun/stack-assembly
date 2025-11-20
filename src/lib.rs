@@ -14,11 +14,11 @@ pub struct Eval {
     /// # The remaining tokens that we haven't evaluated yet
     pub tokens: VecDeque<String>,
 
-    /// # The operand stack
-    pub stack: Vec<u32>,
-
     /// # The active effect, if one has triggered
     pub effect: Option<Effect>,
+
+    /// # The operand stack
+    pub stack: Vec<u32>,
 }
 
 impl Eval {
@@ -33,8 +33,8 @@ impl Eval {
                 .split_whitespace()
                 .map(|token| token.to_owned())
                 .collect(),
-            stack: Vec::new(),
             effect: None,
+            stack: Vec::new(),
         }
     }
 
