@@ -81,9 +81,22 @@ impl Eval {
                 if name == "yield" {
                     self.effect = Some(Effect::Yield);
                 } else if name == "jump" {
+                    // TASK: Stack underflow should trigger an effect.
+                    //
+                    //       It might be better to implement the arithmetic
+                    //       operators first. Those would require the same
+                    //       capability, but would make for a smaller pull
+                    //       request that wouldn't be as overloaded by this.
                     let Some(index) = self.stack.pop() else {
                         panic!("Stack underflow");
                     };
+                    // TASK: Open issue about this check.
+                    //
+                    //       This should probably trigger an effect instead.
+                    //       Once this library supports `no_std`, having values
+                    //       that exceed the available resources (like in this
+                    //       case, the maximum number of operators), could
+                    //       become a common occurrence.
                     let Ok(index) = index.try_into() else {
                         panic!("Operator index out of bounds");
                     };
@@ -107,12 +120,15 @@ impl Eval {
                     self.labels.iter().find(|label| &label.name == name);
 
                 if let Some(label) = label {
+                    // TASK: See task above. Also, unify the handling of both
+                    //       cases.
                     let Ok(index) = label.index.try_into() else {
                         panic!("Operator index out of bounds");
                     };
 
                     self.stack.push(index);
                 } else {
+                    // TASK: This should trigger an effect.
                     panic!("Invalid reference");
                 }
             }
