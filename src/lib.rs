@@ -11,8 +11,11 @@ mod tests;
 /// # The ongoing evaluation of a script
 #[derive(Debug)]
 pub struct Eval {
-    /// # The remaining tokens that we haven't evaluated yet
+    /// # The tokens of the script we're evaluating
     pub tokens: VecDeque<String>,
+
+    /// # The index of the next token to evaluate
+    pub next_token: usize,
 
     /// # The operand stack
     pub stack: Vec<u32>,
@@ -33,6 +36,7 @@ impl Eval {
                 .split_whitespace()
                 .map(|token| token.to_owned())
                 .collect(),
+            next_token: 0,
             stack: Vec::new(),
             effect: None,
         }
@@ -44,7 +48,7 @@ impl Eval {
             return false;
         }
 
-        let Some(token) = self.tokens.pop_front() else {
+        let Some(token) = self.tokens.get(self.next_token) else {
             return false;
         };
 
@@ -56,6 +60,8 @@ impl Eval {
         } else {
             self.effect = Some(Effect::UnknownIdentifier);
         }
+
+        self.next_token += 1;
 
         true
     }
