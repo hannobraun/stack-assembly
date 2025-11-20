@@ -53,6 +53,19 @@ impl Eval {
         if let Ok(value) = token.parse::<i32>() {
             let value = u32::from_le_bytes(value.to_le_bytes());
             self.stack.push(value);
+        } else if token == "jump" {
+            let Some(index) = self.stack.pop() else {
+                panic!("Stack underflow");
+            };
+            let Ok(index) = index.try_into() else {
+                panic!("Operator index out of bounds");
+            };
+
+            self.next_token = index;
+
+            // By default, we increment `self.next_token` below. Since we just
+            // set that to the exact value we want, we need to bypass that.
+            return true;
         } else if token == "yield" {
             self.effect = Some(Effect::Yield);
         } else {
