@@ -9,8 +9,8 @@ mod tests;
 /// # The ongoing evaluation of a script
 #[derive(Debug)]
 pub struct Eval {
-    /// # The tokens of the script we're evaluating
-    pub tokens: Vec<Operator>,
+    /// # The operators of the script we're evaluating
+    pub operators: Vec<Operator>,
 
     /// # The index of the next token to evaluate
     pub next_token: usize,
@@ -44,7 +44,7 @@ impl Eval {
         }
 
         Self {
-            tokens,
+            operators: tokens,
             next_token: 0,
             stack: Vec::new(),
             effect: None,
@@ -57,7 +57,7 @@ impl Eval {
             return false;
         }
 
-        let Some(token) = self.tokens.get(self.next_token) else {
+        let Some(token) = self.operators.get(self.next_token) else {
             return false;
         };
 
