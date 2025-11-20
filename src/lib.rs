@@ -67,4 +67,7 @@ impl Eval {
 pub enum Effect {
     /// # The evaluation of an integer operator triggered an overflow
     IntegerOverflow,
+
+    /// # The evaluating script has yielded control to the host
+    Yield,
 }
