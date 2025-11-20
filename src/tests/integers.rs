@@ -6,10 +6,8 @@ fn evaluate_positive_integers() {
     // pushes the value it represents to the stack.
 
     let mut eval = Eval::start("3 5");
-    assert_eq!(eval.stack, vec![]);
-    assert_eq!(eval.effect, None);
-
     eval.run();
+
     assert_eq!(eval.stack, vec![3, 5]);
     assert_eq!(eval.effect, None);
 }

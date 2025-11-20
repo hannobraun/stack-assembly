@@ -1,6 +1,16 @@
 use crate::{Effect, Eval};
 
 #[test]
+fn starting_evaluation_does_not_evaluate_any_operators() {
+    // Starting the evaluation readies it, but does not yet evaluate any
+    // operators.
+
+    let eval = Eval::start("yield");
+    assert_eq!(eval.stack, vec![]);
+    assert_eq!(eval.effect, None);
+}
+
+#[test]
 fn yield_operator_triggers_the_respective_effect() {
     // `yield` exists to moderate the communication between the evaluating
     // script and the host. It triggers an effect, that the host may interpret
