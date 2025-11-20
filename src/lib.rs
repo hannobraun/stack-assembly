@@ -57,11 +57,11 @@ impl Eval {
             return false;
         }
 
-        let Some(token) = self.operators.get(self.next_token) else {
+        let Some(operator) = self.operators.get(self.next_token) else {
             return false;
         };
 
-        match token {
+        match operator {
             Operator::Identifier { name } => {
                 if name == "yield" {
                     self.effect = Some(Effect::Yield);
