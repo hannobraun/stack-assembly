@@ -83,10 +83,8 @@ fn evaluate_token(token: &str, stack: &mut Stack) -> Result<(), Effect> {
         let value = u32::from_le_bytes(value.to_le_bytes());
         stack.values.push(value);
     } else if token == "+" {
-        let (Some(b), Some(a)) = (stack.values.pop(), stack.values.pop())
-        else {
-            return Err(Effect::StackUnderflow);
-        };
+        let b = stack.pop()?;
+        let a = stack.pop()?;
 
         stack.values.push(a.wrapping_add(b));
     } else if token == "yield" {
