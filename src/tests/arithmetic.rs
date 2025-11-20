@@ -36,3 +36,37 @@ fn add_wraps_on_unsigned_overflow() {
     assert_eq!(eval.effect, None);
     assert_eq!(eval.stack.values, vec![0]);
 }
+
+#[test]
+fn subtract() {
+    // The `-` operator consumes two inputs and pushes their difference.
+
+    let mut eval = Eval::start("2 1 -");
+    eval.run();
+
+    assert_eq!(eval.effect, None);
+    assert_eq!(eval.stack.values, vec![1]);
+}
+
+#[test]
+fn subtract_wraps_on_signed_overflow() {
+    // A subtraction that overflows the range of a signed 32-bit integer wraps.
+
+    let mut eval = Eval::start("-2147483648 1 -");
+    eval.run();
+
+    assert_eq!(eval.effect, None);
+    assert_eq!(eval.stack.values, vec![2147483647]);
+}
+
+#[test]
+fn subtract_wraps_on_unsigned_overflow() {
+    // A subtraction that overflows the range of an unsigned 32-bit integer
+    // wraps.
+
+    let mut eval = Eval::start("0 1 -");
+    eval.run();
+
+    assert_eq!(eval.effect, None);
+    assert_eq!(eval.stack.values, vec![4294967295]);
+}
