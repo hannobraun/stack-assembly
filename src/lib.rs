@@ -1,5 +1,6 @@
 //! # The interpreter for the StackAssembly programming language
 
+#![warn(missing_debug_implementations)]
 #![warn(missing_docs)]
 
 use std::collections::VecDeque;
