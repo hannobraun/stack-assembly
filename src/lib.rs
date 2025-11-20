@@ -33,11 +33,14 @@ impl Eval {
     /// provided script, you still have to explicitly call [`Eval::step`] or
     /// [`Eval::run`].
     pub fn start(script: &str) -> Self {
+        let mut tokens = Vec::new();
+
+        for token in script.split_whitespace() {
+            tokens.push(token.to_owned());
+        }
+
         Self {
-            tokens: script
-                .split_whitespace()
-                .map(|token| token.to_owned())
-                .collect(),
+            tokens,
             next_token: 0,
             effect: None,
             stack: Stack { values: Vec::new() },
