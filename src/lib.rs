@@ -3,8 +3,6 @@
 #![warn(missing_debug_implementations)]
 #![warn(missing_docs)]
 
-use std::collections::VecDeque;
-
 #[cfg(test)]
 mod tests;
 
@@ -12,7 +10,7 @@ mod tests;
 #[derive(Debug)]
 pub struct Eval {
     /// # The tokens of the script we're evaluating
-    pub tokens: VecDeque<String>,
+    pub tokens: Vec<String>,
 
     /// # The index of the next token to evaluate
     pub next_token: usize,
