@@ -70,11 +70,11 @@ impl Eval {
     }
 
     fn evaluate_token(&mut self) -> Result<(), Effect> {
-        let Some(token) = self.operators.get(self.next_token) else {
+        let Some(operator) = self.operators.get(self.next_token) else {
             return Err(Effect::OutOfTokens);
         };
 
-        match token {
+        match operator {
             Operator::Identifier { value: identifier } => {
                 if identifier == "*" {
                     let b = self.stack.pop()?.to_u32();
