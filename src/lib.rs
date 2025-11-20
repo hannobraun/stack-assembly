@@ -48,13 +48,8 @@ impl Eval {
             return false;
         };
 
-        if let Ok(value) = token.parse::<i32>() {
-            let value = u32::from_le_bytes(value.to_le_bytes());
-            self.stack.push(value);
-        } else if token == "yield" {
-            self.effect = Some(Effect::Yield);
-        } else {
-            self.effect = Some(Effect::UnknownIdentifier);
+        if let Err(effect) = evaluate_token(&token, &mut self.stack) {
+            self.effect = Some(effect);
         }
 
         true
@@ -74,4 +69,17 @@ pub enum Effect {
 
     /// # The evaluating script has yielded control to the host
     Yield,
+}
+
+fn evaluate_token(token: &str, stack: &mut Vec<u32>) -> Result<(), Effect> {
+    if let Ok(value) = token.parse::<i32>() {
+        let value = u32::from_le_bytes(value.to_le_bytes());
+        stack.push(value);
+    } else if token == "yield" {
+        return Err(Effect::Yield);
+    } else {
+        return Err(Effect::UnknownIdentifier);
+    }
+
+    Ok(())
 }
