@@ -46,6 +46,10 @@ impl Eval {
                     index: operators.len(),
                 });
                 continue;
+            } else if let Some(("", name)) = token.split_once("@") {
+                Operator::Reference {
+                    name: name.to_string(),
+                }
             } else if let Ok(value) = token.parse::<i32>() {
                 Operator::Integer { value }
             } else {
@@ -135,6 +139,33 @@ impl Eval {
             Operator::Integer { value } => {
                 self.stack.push(*value);
             }
+            Operator::Reference { name } => {
+                let label =
+                    self.labels.iter().find(|label| &label.name == name);
+
+                if let Some(&Label { ref name, index }) = label {
+                    let Ok(index) = index.try_into() else {
+                        panic!(
+                            "Operator index `{index}` of label `{name}` is out \
+                            of bounds. This can only happen on platforms where \
+                            the width of Rust's `usize` is wider than 32 bits, \
+                            with a script that consists of at least 2^32 \
+                            operators.\n\
+                            \n\
+                            Scripts that large seem barely realistic in the \
+                            first place, more so on a 32-bit platform. At \
+                            best, this is a niche use case that StackAssembly \
+                            happens to not support, making this panic an \
+                            acceptable outcome."
+                        );
+                    };
+                    let index: u32 = index;
+
+                    self.stack.push(index);
+                } else {
+                    panic!("Invalid reference.");
+                }
+            }
         }
 
         self.next_operator += 1;
@@ -163,6 +194,12 @@ pub enum Operator {
     Integer {
         /// # The value of the integer
         value: i32,
+    },
+
+    /// # The operator is a reference
+    Reference {
+        /// # The name of the operator that the reference refers to
+        name: String,
     },
 }
 
