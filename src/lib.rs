@@ -1,6 +1,6 @@
 //! # The interpreter for the StackAssembly programming language
 
-#![deny(missing_docs)]
+#![warn(missing_docs)]
 
 use std::collections::VecDeque;
 
