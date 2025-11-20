@@ -64,6 +64,9 @@ impl Eval {
 /// # An effect
 #[derive(Debug, Eq, PartialEq)]
 pub enum Effect {
+    /// # Tried popping a value from an empty stack
+    StackUnderflow,
+
     /// # Evaluated an identifier that the language does not recognize
     UnknownIdentifier,
 
@@ -77,7 +80,7 @@ fn evaluate_token(token: &str, stack: &mut Vec<u32>) -> Result<(), Effect> {
         stack.push(value);
     } else if token == "+" {
         let (Some(b), Some(a)) = (stack.pop(), stack.pop()) else {
-            panic!("Stack underflow");
+            return Err(Effect::StackUnderflow);
         };
 
         stack.push(a + b);
