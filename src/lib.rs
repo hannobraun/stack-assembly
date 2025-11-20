@@ -49,8 +49,10 @@ impl Eval {
         if let Ok(value) = token.parse::<i32>() {
             let value = u32::from_le_bytes(value.to_le_bytes());
             self.stack.push(value);
+        } else if token == "yield" {
+            self.effect = Some(Effect::Yield);
         } else {
-            self.effect = Some(Effect::IntegerOverflow);
+            self.effect = Some(Effect::UnknownIdentifier);
         }
 
         true
@@ -65,6 +67,9 @@ impl Eval {
 /// # An effect
 #[derive(Debug, Eq, PartialEq)]
 pub enum Effect {
-    /// # The evaluation of an integer operator triggered an overflow
-    IntegerOverflow,
+    /// # Evaluated an identifier that the language does not recognize
+    UnknownIdentifier,
+
+    /// # The evaluating script has yielded control to the host
+    Yield,
 }
