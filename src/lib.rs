@@ -75,6 +75,12 @@ fn evaluate_token(token: &str, stack: &mut Vec<u32>) -> Result<(), Effect> {
     if let Ok(value) = token.parse::<i32>() {
         let value = u32::from_le_bytes(value.to_le_bytes());
         stack.push(value);
+    } else if token == "+" {
+        let (Some(b), Some(a)) = (stack.pop(), stack.pop()) else {
+            panic!("Stack underflow");
+        };
+
+        stack.push(a + b);
     } else if token == "yield" {
         return Err(Effect::Yield);
     } else {
