@@ -15,8 +15,11 @@ pub use self::stack::Stack;
 /// # The ongoing evaluation of a script
 #[derive(Debug)]
 pub struct Eval {
-    /// # The remaining tokens that we haven't evaluated yet
+    /// # The tokens of the script we're evaluating
     pub tokens: VecDeque<String>,
+
+    /// # The index of the next token to evaluate
+    pub next_token: usize,
 
     /// # The active effect, if one has triggered
     pub effect: Option<Effect>,
@@ -37,6 +40,7 @@ impl Eval {
                 .split_whitespace()
                 .map(|token| token.to_owned())
                 .collect(),
+            next_token: 0,
             effect: None,
             stack: Stack { values: Vec::new() },
         }
@@ -57,7 +61,7 @@ impl Eval {
     }
 
     fn evaluate_token(&mut self) -> Result<(), Effect> {
-        let Some(token) = self.tokens.pop_front() else {
+        let Some(token) = self.tokens.get(self.next_token) else {
             return Err(Effect::OutOfTokens);
         };
 
@@ -99,6 +103,8 @@ impl Eval {
         } else {
             return Err(Effect::UnknownIdentifier);
         }
+
+        self.next_token += 1;
 
         Ok(())
     }
