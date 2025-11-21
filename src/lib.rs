@@ -97,6 +97,15 @@ fn evaluate_token(token: &str, stack: &mut Stack) -> Result<(), Effect> {
         let a = stack.pop()?;
 
         stack.values.push(a.wrapping_sub(b));
+    } else if token == "/" {
+        let b = stack.pop()?;
+        let a = stack.pop()?;
+
+        let quotient = a / b;
+        let remainder = a % b;
+
+        stack.values.push(quotient);
+        stack.values.push(remainder);
     } else if token == "yield" {
         return Err(Effect::Yield);
     } else {

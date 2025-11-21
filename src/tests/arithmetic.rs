@@ -109,3 +109,15 @@ fn multiply_wraps_on_unsigned_overflow() {
     assert_eq!(eval.effect, None);
     assert_eq!(eval.stack.values, vec![4294967294]);
 }
+
+#[test]
+fn divide() {
+    // The `/` operator consumes two inputs and performs integer division,
+    // pushing their quotient and the remainder.
+
+    let mut eval = Eval::start("5 2 /");
+    eval.run();
+
+    assert_eq!(eval.effect, None);
+    assert_eq!(eval.stack.values, vec![2, 1]);
+}
