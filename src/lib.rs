@@ -82,6 +82,11 @@ fn evaluate_token(token: &str, stack: &mut Stack) -> Result<(), Effect> {
     if let Ok(value) = token.parse::<i32>() {
         let value = u32::from_le_bytes(value.to_le_bytes());
         stack.values.push(value);
+    } else if token == "*" {
+        let b = stack.pop()?;
+        let a = stack.pop()?;
+
+        stack.values.push(a.wrapping_mul(b));
     } else if token == "+" {
         let b = stack.pop()?;
         let a = stack.pop()?;
