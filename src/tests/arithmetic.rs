@@ -121,3 +121,21 @@ fn divide() {
     assert_eq!(eval.effect, None);
     assert_eq!(eval.stack.values, vec![2, 1]);
 }
+
+#[test]
+fn divide_treats_its_inputs_as_signed() {
+    // For most arithmetic operations, it makes no difference whether their
+    // inputs are considered to be unsigned or signed in two's complement
+    // representation. In terms of what happens with the bits, both are mostly
+    // treated the same.
+    //
+    // Not so for division. Here, either case requires a dedicated algorithm
+    // that won't work for the other. The `/` operator treats its inputs as
+    // signed.
+
+    let mut eval = Eval::start("5 -2 /");
+    eval.run();
+
+    assert_eq!(eval.effect, None);
+    assert_eq!(eval.stack.values, vec![4294967294, 1]);
+}

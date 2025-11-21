@@ -101,8 +101,14 @@ fn evaluate_token(token: &str, stack: &mut Stack) -> Result<(), Effect> {
         let b = stack.pop()?;
         let a = stack.pop()?;
 
+        let [a, b] =
+            [a, b].map(|value| i32::from_le_bytes(value.to_le_bytes()));
+
         let quotient = a / b;
         let remainder = a % b;
+
+        let [quotient, remainder] = [quotient, remainder]
+            .map(|value| u32::from_le_bytes(value.to_le_bytes()));
 
         stack.values.push(quotient);
         stack.values.push(remainder);
