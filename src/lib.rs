@@ -68,6 +68,9 @@ impl Eval {
 /// # An effect
 #[derive(Debug, Eq, PartialEq)]
 pub enum Effect {
+    /// # Tried to divide by zero
+    DivisionByZero,
+
     /// # Tried popping a value from an empty stack
     StackUnderflow,
 
@@ -103,6 +106,10 @@ fn evaluate_token(token: &str, stack: &mut Stack) -> Result<(), Effect> {
 
         let [a, b] =
             [a, b].map(|value| i32::from_le_bytes(value.to_le_bytes()));
+
+        if b == 0 {
+            return Err(Effect::DivisionByZero);
+        }
 
         let quotient = a / b;
         let remainder = a % b;

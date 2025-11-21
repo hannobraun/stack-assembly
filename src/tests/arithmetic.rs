@@ -1,4 +1,4 @@
-use crate::Eval;
+use crate::{Effect, Eval};
 
 #[test]
 fn add() {
@@ -138,4 +138,16 @@ fn divide_treats_its_inputs_as_signed() {
 
     assert_eq!(eval.effect, None);
     assert_eq!(eval.stack.values, vec![4294967294, 1]);
+}
+
+#[test]
+fn divide_by_zero_triggers_effect() {
+    // A division by zero cannot be reasonably handled and triggers the
+    // respective effect.
+
+    let mut eval = Eval::start("1 0 /");
+    eval.run();
+
+    assert_eq!(eval.effect, Some(Effect::DivisionByZero));
+    assert_eq!(eval.stack.values, vec![]);
 }
