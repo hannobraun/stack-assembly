@@ -71,6 +71,9 @@ pub enum Effect {
     /// # Tried to divide by zero
     DivisionByZero,
 
+    /// # Evaluating an operation resulted in integer overflow
+    IntegerOverflow,
+
     /// # Tried popping a value from an empty stack
     StackUnderflow,
 
@@ -109,6 +112,9 @@ fn evaluate_token(token: &str, stack: &mut Stack) -> Result<(), Effect> {
 
         if b == 0 {
             return Err(Effect::DivisionByZero);
+        }
+        if a == i32::MIN && b == -1 {
+            return Err(Effect::IntegerOverflow);
         }
 
         let quotient = a / b;

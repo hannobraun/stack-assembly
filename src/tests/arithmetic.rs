@@ -151,3 +151,19 @@ fn divide_by_zero_triggers_effect() {
     assert_eq!(eval.effect, Some(Effect::DivisionByZero));
     assert_eq!(eval.stack.values, vec![]);
 }
+
+#[test]
+fn divide_triggers_effect_on_overflow() {
+    // In contrast to other arithmetic operations, division overflow only in one
+    // specific circumstance, and that circumstance is unlikely to be
+    // intentional. Therefore it triggers an effect.
+    //
+    // If it is, the user can work around it quite easily, by watching for the
+    // inputs that trigger the overflow and not doing the division then.
+
+    let mut eval = Eval::start("-2147483648 -1 /");
+    eval.run();
+
+    assert_eq!(eval.effect, Some(Effect::IntegerOverflow));
+    assert_eq!(eval.stack.values, vec![]);
+}
