@@ -7,7 +7,7 @@ fn starting_evaluation_does_not_evaluate_any_operators() {
 
     let eval = Eval::start("yield");
     assert_eq!(eval.effect, None);
-    assert_eq!(eval.stack, vec![]);
+    assert_eq!(eval.stack.values, vec![]);
 }
 
 #[test]
@@ -20,7 +20,7 @@ fn yield_operator_triggers_the_respective_effect() {
     eval.run();
 
     assert_eq!(eval.effect, Some(Effect::Yield));
-    assert_eq!(eval.stack, vec![]);
+    assert_eq!(eval.stack.values, vec![]);
 }
 
 #[test]
@@ -32,5 +32,17 @@ fn active_effect_prevents_evaluation_from_advancing() {
 
     eval.run();
     assert_eq!(eval.effect, Some(Effect::Yield));
-    assert_eq!(eval.stack, vec![]);
+    assert_eq!(eval.stack.values, vec![]);
+}
+
+#[test]
+fn stack_underflow_triggers_effect() {
+    // Popping a value from an empty stack is a stack underflow and triggers an
+    // effect.
+
+    let mut eval = Eval::start("1 +");
+    eval.run();
+
+    assert_eq!(eval.effect, Some(Effect::StackUnderflow));
+    assert_eq!(eval.stack.values, vec![]);
 }

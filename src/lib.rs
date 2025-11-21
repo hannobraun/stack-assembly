@@ -5,8 +5,12 @@
 
 use std::collections::VecDeque;
 
+mod stack;
+
 #[cfg(test)]
 mod tests;
+
+pub use self::stack::Stack;
 
 /// # The ongoing evaluation of a script
 #[derive(Debug)]
@@ -17,8 +21,8 @@ pub struct Eval {
     /// # The active effect, if one has triggered
     pub effect: Option<Effect>,
 
-    /// # The operand stack
-    pub stack: Vec<u32>,
+    /// # The stack
+    pub stack: Stack,
 }
 
 impl Eval {
@@ -34,7 +38,7 @@ impl Eval {
                 .map(|token| token.to_owned())
                 .collect(),
             effect: None,
-            stack: Vec::new(),
+            stack: Stack { values: Vec::new() },
         }
     }
 
@@ -48,13 +52,8 @@ impl Eval {
             return false;
         };
 
-        if let Ok(value) = token.parse::<i32>() {
-            let value = u32::from_le_bytes(value.to_le_bytes());
-            self.stack.push(value);
-        } else if token == "yield" {
-            self.effect = Some(Effect::Yield);
-        } else {
-            self.effect = Some(Effect::UnknownIdentifier);
+        if let Err(effect) = evaluate_token(&token, &mut self.stack) {
+            self.effect = Some(effect);
         }
 
         true
@@ -69,9 +68,68 @@ impl Eval {
 /// # An effect
 #[derive(Debug, Eq, PartialEq)]
 pub enum Effect {
+    /// # Tried to divide by zero
+    DivisionByZero,
+
+    /// # Evaluating an operation resulted in integer overflow
+    IntegerOverflow,
+
+    /// # Tried popping a value from an empty stack
+    StackUnderflow,
+
     /// # Evaluated an identifier that the language does not recognize
     UnknownIdentifier,
 
     /// # The evaluating script has yielded control to the host
     Yield,
+}
+
+fn evaluate_token(token: &str, stack: &mut Stack) -> Result<(), Effect> {
+    if let Ok(value) = token.parse::<i32>() {
+        let value = u32::from_le_bytes(value.to_le_bytes());
+        stack.values.push(value);
+    } else if token == "*" {
+        let b = stack.pop()?;
+        let a = stack.pop()?;
+
+        stack.values.push(a.wrapping_mul(b));
+    } else if token == "+" {
+        let b = stack.pop()?;
+        let a = stack.pop()?;
+
+        stack.values.push(a.wrapping_add(b));
+    } else if token == "-" {
+        let b = stack.pop()?;
+        let a = stack.pop()?;
+
+        stack.values.push(a.wrapping_sub(b));
+    } else if token == "/" {
+        let b = stack.pop()?;
+        let a = stack.pop()?;
+
+        let [a, b] =
+            [a, b].map(|value| i32::from_le_bytes(value.to_le_bytes()));
+
+        if b == 0 {
+            return Err(Effect::DivisionByZero);
+        }
+        if a == i32::MIN && b == -1 {
+            return Err(Effect::IntegerOverflow);
+        }
+
+        let quotient = a / b;
+        let remainder = a % b;
+
+        let [quotient, remainder] = [quotient, remainder]
+            .map(|value| u32::from_le_bytes(value.to_le_bytes()));
+
+        stack.values.push(quotient);
+        stack.values.push(remainder);
+    } else if token == "yield" {
+        return Err(Effect::Yield);
+    } else {
+        return Err(Effect::UnknownIdentifier);
+    }
+
+    Ok(())
 }

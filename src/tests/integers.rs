@@ -9,7 +9,7 @@ fn evaluate_positive_integers() {
     eval.run();
 
     assert_eq!(eval.effect, None);
-    assert_eq!(eval.stack, vec![3, 5]);
+    assert_eq!(eval.stack.values, vec![3, 5]);
 }
 
 #[test]
@@ -22,7 +22,7 @@ fn evaluate_negative_integer() {
     eval.run();
 
     assert_eq!(eval.effect, None);
-    assert_eq!(eval.stack, vec![4294967295]);
+    assert_eq!(eval.stack.values, vec![4294967295]);
 }
 
 #[test]
@@ -48,9 +48,9 @@ fn trigger_effect_on_integer_overflow() {
 
     eval.step();
     assert_eq!(eval.effect, None);
-    assert_eq!(eval.stack, vec![2147483647]);
+    assert_eq!(eval.stack.values, vec![2147483647]);
 
     eval.step();
     assert_eq!(eval.effect, Some(Effect::UnknownIdentifier));
-    assert_eq!(eval.stack, vec![2147483647]);
+    assert_eq!(eval.stack.values, vec![2147483647]);
 }
