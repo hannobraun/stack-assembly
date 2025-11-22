@@ -53,11 +53,61 @@ impl Eval {
             return false;
         };
 
-        if let Err(effect) = evaluate_token(&token, &mut self.stack) {
+        if let Err(effect) = self.evaluate_token(&token) {
             self.effect = Some(effect);
         }
 
         true
+    }
+
+    fn evaluate_token(&mut self, token: &str) -> Result<(), Effect> {
+        if let Ok(value) = token.parse::<i32>() {
+            let value = u32::from_le_bytes(value.to_le_bytes());
+            self.stack.values.push(value);
+        } else if token == "*" {
+            let b = self.stack.pop()?;
+            let a = self.stack.pop()?;
+
+            self.stack.values.push(a.wrapping_mul(b));
+        } else if token == "+" {
+            let b = self.stack.pop()?;
+            let a = self.stack.pop()?;
+
+            self.stack.values.push(a.wrapping_add(b));
+        } else if token == "-" {
+            let b = self.stack.pop()?;
+            let a = self.stack.pop()?;
+
+            self.stack.values.push(a.wrapping_sub(b));
+        } else if token == "/" {
+            let b = self.stack.pop()?;
+            let a = self.stack.pop()?;
+
+            let [a, b] =
+                [a, b].map(|value| i32::from_le_bytes(value.to_le_bytes()));
+
+            if b == 0 {
+                return Err(Effect::DivisionByZero);
+            }
+            if a == i32::MIN && b == -1 {
+                return Err(Effect::IntegerOverflow);
+            }
+
+            let quotient = a / b;
+            let remainder = a % b;
+
+            let [quotient, remainder] = [quotient, remainder]
+                .map(|value| u32::from_le_bytes(value.to_le_bytes()));
+
+            self.stack.values.push(quotient);
+            self.stack.values.push(remainder);
+        } else if token == "yield" {
+            return Err(Effect::Yield);
+        } else {
+            return Err(Effect::UnknownIdentifier);
+        }
+
+        Ok(())
     }
 
     /// # Advance the evaluation until it triggers an effect or completes
@@ -86,54 +136,4 @@ pub enum Effect {
 
     /// # The evaluating script has yielded control to the host
     Yield,
-}
-
-fn evaluate_token(token: &str, stack: &mut Stack) -> Result<(), Effect> {
-    if let Ok(value) = token.parse::<i32>() {
-        let value = u32::from_le_bytes(value.to_le_bytes());
-        stack.values.push(value);
-    } else if token == "*" {
-        let b = stack.pop()?;
-        let a = stack.pop()?;
-
-        stack.values.push(a.wrapping_mul(b));
-    } else if token == "+" {
-        let b = stack.pop()?;
-        let a = stack.pop()?;
-
-        stack.values.push(a.wrapping_add(b));
-    } else if token == "-" {
-        let b = stack.pop()?;
-        let a = stack.pop()?;
-
-        stack.values.push(a.wrapping_sub(b));
-    } else if token == "/" {
-        let b = stack.pop()?;
-        let a = stack.pop()?;
-
-        let [a, b] =
-            [a, b].map(|value| i32::from_le_bytes(value.to_le_bytes()));
-
-        if b == 0 {
-            return Err(Effect::DivisionByZero);
-        }
-        if a == i32::MIN && b == -1 {
-            return Err(Effect::IntegerOverflow);
-        }
-
-        let quotient = a / b;
-        let remainder = a % b;
-
-        let [quotient, remainder] = [quotient, remainder]
-            .map(|value| u32::from_le_bytes(value.to_le_bytes()));
-
-        stack.values.push(quotient);
-        stack.values.push(remainder);
-    } else if token == "yield" {
-        return Err(Effect::Yield);
-    } else {
-        return Err(Effect::UnknownIdentifier);
-    }
-
-    Ok(())
 }
