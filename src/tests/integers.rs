@@ -8,7 +8,7 @@ fn evaluate_positive_integers() {
     let mut eval = Eval::start("3 5");
     eval.run();
 
-    assert_eq!(eval.effect, None);
+    assert_eq!(eval.effect, Some(Effect::OutOfTokens));
     assert_eq!(eval.stack.values, vec![3, 5]);
 }
 
@@ -21,7 +21,7 @@ fn evaluate_negative_integer() {
     let mut eval = Eval::start("-1");
     eval.run();
 
-    assert_eq!(eval.effect, None);
+    assert_eq!(eval.effect, Some(Effect::OutOfTokens));
     assert_eq!(eval.stack.values, vec![4294967295]);
 }
 

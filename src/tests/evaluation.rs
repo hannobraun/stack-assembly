@@ -1,6 +1,17 @@
 use crate::{Effect, Eval};
 
 #[test]
+fn empty_script_triggers_out_of_tokens() {
+    // Running an empty script does nothing.
+
+    let mut eval = Eval::start("");
+    eval.run();
+
+    assert_eq!(eval.effect, Some(Effect::OutOfTokens));
+    assert_eq!(eval.stack.values, vec![]);
+}
+
+#[test]
 fn starting_evaluation_does_not_evaluate_any_operators() {
     // Starting the evaluation readies it, but does not yet evaluate any
     // operators.
