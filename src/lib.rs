@@ -61,7 +61,7 @@ impl Eval {
             return false;
         }
 
-        if let Err(effect) = self.evaluate_token() {
+        if let Err(effect) = self.evaluate_next_operator() {
             self.effect = Some(effect);
             return false;
         }
@@ -69,7 +69,7 @@ impl Eval {
         true
     }
 
-    fn evaluate_token(&mut self) -> Result<(), Effect> {
+    fn evaluate_next_operator(&mut self) -> Result<(), Effect> {
         let Some(operator) = self.operators.get(self.next_token) else {
             return Err(Effect::OutOfTokens);
         };
