@@ -1,1 +1,8 @@
 max_width = 80
+
+# This option is unstable. Tracking issue:
+# https://github.com/rust-lang/rustfmt/issues/3347
+#
+# When run on stable, this results in a warning and has no effect, but it can
+# help when working with nightly.
+wrap_comments = true
