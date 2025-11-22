@@ -7,7 +7,7 @@ fn add() {
     let mut eval = Eval::start("1 2 +");
     eval.run();
 
-    assert_eq!(eval.effect, None);
+    assert_eq!(eval.effect, Some(Effect::OutOfTokens));
     assert_eq!(eval.stack.values, vec![3]);
 }
 
@@ -18,7 +18,7 @@ fn add_wraps_on_signed_overflow() {
     let mut eval = Eval::start("2147483647 1 +");
     eval.run();
 
-    assert_eq!(eval.effect, None);
+    assert_eq!(eval.effect, Some(Effect::OutOfTokens));
     assert_eq!(eval.stack.values, vec![2147483648]);
 }
 
@@ -33,7 +33,7 @@ fn add_wraps_on_unsigned_overflow() {
     let mut eval = Eval::start("-1 1 +");
     eval.run();
 
-    assert_eq!(eval.effect, None);
+    assert_eq!(eval.effect, Some(Effect::OutOfTokens));
     assert_eq!(eval.stack.values, vec![0]);
 }
 
@@ -44,7 +44,7 @@ fn subtract() {
     let mut eval = Eval::start("2 1 -");
     eval.run();
 
-    assert_eq!(eval.effect, None);
+    assert_eq!(eval.effect, Some(Effect::OutOfTokens));
     assert_eq!(eval.stack.values, vec![1]);
 }
 
@@ -55,7 +55,7 @@ fn subtract_wraps_on_signed_overflow() {
     let mut eval = Eval::start("-2147483648 1 -");
     eval.run();
 
-    assert_eq!(eval.effect, None);
+    assert_eq!(eval.effect, Some(Effect::OutOfTokens));
     assert_eq!(eval.stack.values, vec![2147483647]);
 }
 
@@ -67,7 +67,7 @@ fn subtract_wraps_on_unsigned_overflow() {
     let mut eval = Eval::start("0 1 -");
     eval.run();
 
-    assert_eq!(eval.effect, None);
+    assert_eq!(eval.effect, Some(Effect::OutOfTokens));
     assert_eq!(eval.stack.values, vec![4294967295]);
 }
 
@@ -78,7 +78,7 @@ fn multiply() {
     let mut eval = Eval::start("2 3 *");
     eval.run();
 
-    assert_eq!(eval.effect, None);
+    assert_eq!(eval.effect, Some(Effect::OutOfTokens));
     assert_eq!(eval.stack.values, vec![6]);
 }
 
@@ -90,7 +90,7 @@ fn multiply_wraps_on_signed_overflow() {
     let mut eval = Eval::start("2147483647 2 *");
     eval.run();
 
-    assert_eq!(eval.effect, None);
+    assert_eq!(eval.effect, Some(Effect::OutOfTokens));
     assert_eq!(eval.stack.values, vec![4294967294]);
 }
 
@@ -106,7 +106,7 @@ fn multiply_wraps_on_unsigned_overflow() {
     let mut eval = Eval::start("-1 2 *");
     eval.run();
 
-    assert_eq!(eval.effect, None);
+    assert_eq!(eval.effect, Some(Effect::OutOfTokens));
     assert_eq!(eval.stack.values, vec![4294967294]);
 }
 
@@ -118,7 +118,7 @@ fn divide() {
     let mut eval = Eval::start("5 2 /");
     eval.run();
 
-    assert_eq!(eval.effect, None);
+    assert_eq!(eval.effect, Some(Effect::OutOfTokens));
     assert_eq!(eval.stack.values, vec![2, 1]);
 }
 
@@ -136,7 +136,7 @@ fn divide_treats_its_inputs_as_signed() {
     let mut eval = Eval::start("5 -2 /");
     eval.run();
 
-    assert_eq!(eval.effect, None);
+    assert_eq!(eval.effect, Some(Effect::OutOfTokens));
     assert_eq!(eval.stack.values, vec![4294967294, 1]);
 }
 

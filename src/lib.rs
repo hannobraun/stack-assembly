@@ -49,6 +49,7 @@ impl Eval {
         }
 
         let Some(token) = self.tokens.pop_front() else {
+            self.effect = Some(Effect::OutOfTokens);
             return false;
         };
 
@@ -73,6 +74,9 @@ pub enum Effect {
 
     /// # Evaluating an operation resulted in integer overflow
     IntegerOverflow,
+
+    /// # The evaluation ran out of tokens to evaluate
+    OutOfTokens,
 
     /// # Tried popping a value from an empty stack
     StackUnderflow,

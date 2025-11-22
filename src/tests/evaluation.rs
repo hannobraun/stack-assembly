@@ -1,13 +1,13 @@
 use crate::{Effect, Eval};
 
 #[test]
-fn empty_script_does_nothing() {
+fn empty_script_triggers_out_of_tokens() {
     // Running an empty script does nothing.
 
     let mut eval = Eval::start("");
     eval.run();
 
-    assert_eq!(eval.effect, None);
+    assert_eq!(eval.effect, Some(Effect::OutOfTokens));
     assert_eq!(eval.stack.values, vec![]);
 }
 
