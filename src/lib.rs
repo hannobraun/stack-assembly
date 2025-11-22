@@ -48,19 +48,19 @@ impl Eval {
             return false;
         }
 
-        let Some(token) = self.tokens.pop_front() else {
-            self.effect = Some(Effect::OutOfTokens);
-            return false;
-        };
-
-        if let Err(effect) = self.evaluate_token(&token) {
+        if let Err(effect) = self.evaluate_token() {
             self.effect = Some(effect);
+            return false;
         }
 
         true
     }
 
-    fn evaluate_token(&mut self, token: &str) -> Result<(), Effect> {
+    fn evaluate_token(&mut self) -> Result<(), Effect> {
+        let Some(token) = self.tokens.pop_front() else {
+            return Err(Effect::OutOfTokens);
+        };
+
         if let Ok(value) = token.parse::<i32>() {
             let value = u32::from_le_bytes(value.to_le_bytes());
             self.stack.values.push(value);
