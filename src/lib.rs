@@ -163,7 +163,7 @@ impl Eval {
 
                     self.stack.push(index);
                 } else {
-                    panic!("Invalid reference.");
+                    return Err(Effect::InvalidReference);
                 }
             }
         }
@@ -224,6 +224,9 @@ pub enum Effect {
 
     /// # Evaluating an operation resulted in integer overflow
     IntegerOverflow,
+
+    /// # Evaluated a reference that is not paired with a matching label
+    InvalidReference,
 
     /// # The evaluation ran out of tokens to evaluate
     OutOfTokens,
