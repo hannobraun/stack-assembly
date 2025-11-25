@@ -63,22 +63,22 @@ impl Eval {
 
         if let Ok(value) = token.parse::<i32>() {
             let value = u32::from_le_bytes(value.to_le_bytes());
-            self.stack.values.push(value);
+            self.stack.push(value);
         } else if token == "*" {
             let b = self.stack.pop()?;
             let a = self.stack.pop()?;
 
-            self.stack.values.push(a.wrapping_mul(b));
+            self.stack.push(a.wrapping_mul(b));
         } else if token == "+" {
             let b = self.stack.pop()?;
             let a = self.stack.pop()?;
 
-            self.stack.values.push(a.wrapping_add(b));
+            self.stack.push(a.wrapping_add(b));
         } else if token == "-" {
             let b = self.stack.pop()?;
             let a = self.stack.pop()?;
 
-            self.stack.values.push(a.wrapping_sub(b));
+            self.stack.push(a.wrapping_sub(b));
         } else if token == "/" {
             let b = self.stack.pop()?;
             let a = self.stack.pop()?;
@@ -99,8 +99,8 @@ impl Eval {
             let [quotient, remainder] = [quotient, remainder]
                 .map(|value| u32::from_le_bytes(value.to_le_bytes()));
 
-            self.stack.values.push(quotient);
-            self.stack.values.push(remainder);
+            self.stack.push(quotient);
+            self.stack.push(remainder);
         } else if token == "yield" {
             return Err(Effect::Yield);
         } else {

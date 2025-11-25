@@ -8,6 +8,11 @@ pub struct Stack {
 }
 
 impl Stack {
+    /// # Push a value to the stack
+    pub fn push(&mut self, value: u32) {
+        self.values.push(value);
+    }
+
     /// # Pop a value from the stack
     pub fn pop(&mut self) -> Result<u32, StackUnderflow> {
         self.values.pop().ok_or(StackUnderflow)
