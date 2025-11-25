@@ -14,7 +14,7 @@ pub use self::stack::Stack;
 #[derive(Debug)]
 pub struct Eval {
     /// # The tokens of the script we're evaluating
-    pub tokens: Vec<String>,
+    pub tokens: Vec<Operator>,
 
     /// # The index of the next token to evaluate
     pub next_token: usize,
@@ -36,7 +36,15 @@ impl Eval {
         let mut tokens = Vec::new();
 
         for token in script.split_whitespace() {
-            tokens.push(token.to_owned());
+            let operator = if let Ok(value) = token.parse::<i32>() {
+                Operator::Integer { value }
+            } else {
+                Operator::Identifier {
+                    value: token.to_string(),
+                }
+            };
+
+            tokens.push(operator);
         }
 
         Self {
@@ -66,50 +74,56 @@ impl Eval {
             return Err(Effect::OutOfTokens);
         };
 
-        if let Ok(value) = token.parse::<i32>() {
-            self.stack.push(value);
-        } else if token == "*" {
-            let b = self.stack.pop()?.to_u32();
-            let a = self.stack.pop()?.to_u32();
+        match token {
+            Operator::Identifier { value: identifier } => {
+                if identifier == "*" {
+                    let b = self.stack.pop()?.to_u32();
+                    let a = self.stack.pop()?.to_u32();
 
-            self.stack.push(a.wrapping_mul(b));
-        } else if token == "+" {
-            let b = self.stack.pop()?.to_u32();
-            let a = self.stack.pop()?.to_u32();
+                    self.stack.push(a.wrapping_mul(b));
+                } else if identifier == "+" {
+                    let b = self.stack.pop()?.to_u32();
+                    let a = self.stack.pop()?.to_u32();
 
-            self.stack.push(a.wrapping_add(b));
-        } else if token == "-" {
-            let b = self.stack.pop()?.to_u32();
-            let a = self.stack.pop()?.to_u32();
+                    self.stack.push(a.wrapping_add(b));
+                } else if identifier == "-" {
+                    let b = self.stack.pop()?.to_u32();
+                    let a = self.stack.pop()?.to_u32();
 
-            self.stack.push(a.wrapping_sub(b));
-        } else if token == "/" {
-            let b = self.stack.pop()?.to_i32();
-            let a = self.stack.pop()?.to_i32();
+                    self.stack.push(a.wrapping_sub(b));
+                } else if identifier == "/" {
+                    let b = self.stack.pop()?.to_i32();
+                    let a = self.stack.pop()?.to_i32();
 
-            if b == 0 {
-                return Err(Effect::DivisionByZero);
+                    if b == 0 {
+                        return Err(Effect::DivisionByZero);
+                    }
+                    if a == i32::MIN && b == -1 {
+                        return Err(Effect::IntegerOverflow);
+                    }
+
+                    let quotient = a / b;
+                    let remainder = a % b;
+
+                    self.stack.push(quotient);
+                    self.stack.push(remainder);
+                } else if identifier == "jump" {
+                    let index = self.stack.pop()?.to_operator_index();
+                    self.next_token = index;
+
+                    // By default, we increment `self.next_token` below. Since
+                    // we just set that to the exact value we want, we need to
+                    // bypass that.
+                    return Ok(());
+                } else if identifier == "yield" {
+                    return Err(Effect::Yield);
+                } else {
+                    return Err(Effect::UnknownIdentifier);
+                }
             }
-            if a == i32::MIN && b == -1 {
-                return Err(Effect::IntegerOverflow);
+            Operator::Integer { value } => {
+                self.stack.push(*value);
             }
-
-            let quotient = a / b;
-            let remainder = a % b;
-
-            self.stack.push(quotient);
-            self.stack.push(remainder);
-        } else if token == "jump" {
-            let index = self.stack.pop()?.to_operator_index();
-            self.next_token = index;
-
-            // By default, we increment `self.next_token` below. Since we just
-            // set that to the exact value we want, we need to bypass that.
-            return Ok(());
-        } else if token == "yield" {
-            return Err(Effect::Yield);
-        } else {
-            return Err(Effect::UnknownIdentifier);
         }
 
         self.next_token += 1;
@@ -121,6 +135,24 @@ impl Eval {
     pub fn run(&mut self) {
         while self.step() {}
     }
+}
+
+/// # An operator
+///
+/// Operators are a type of token that can be evaluated.
+#[derive(Debug)]
+pub enum Operator {
+    /// # The operator is an identifier
+    Identifier {
+        /// # The value of the identifier
+        value: String,
+    },
+
+    /// # The operator is an integer
+    Integer {
+        /// # The value of the integer
+        value: i32,
+    },
 }
 
 /// # An effect
