@@ -3,8 +3,6 @@
 #![warn(missing_debug_implementations)]
 #![warn(missing_docs)]
 
-use std::collections::VecDeque;
-
 mod stack;
 
 #[cfg(test)]
@@ -15,8 +13,14 @@ pub use self::stack::Stack;
 /// # The ongoing evaluation of a script
 #[derive(Debug)]
 pub struct Eval {
-    /// # The remaining tokens that we haven't evaluated yet
-    pub tokens: VecDeque<String>,
+    /// # The operators of the script we're evaluating
+    pub operators: Vec<Operator>,
+
+    /// # The labels of the script we're evaluating
+    pub labels: Vec<Label>,
+
+    /// # The index of the next operator to evaluate
+    pub next_operator: usize,
 
     /// # The active effect, if one has triggered
     pub effect: Option<Effect>,
@@ -32,11 +36,35 @@ impl Eval {
     /// provided script, you still have to explicitly call [`Eval::step`] or
     /// [`Eval::run`].
     pub fn start(script: &str) -> Self {
+        let mut operators = Vec::new();
+        let mut labels = Vec::new();
+
+        for token in script.split_whitespace() {
+            let operator = if let Some((name, "")) = token.rsplit_once(":") {
+                labels.push(Label {
+                    name: name.to_string(),
+                    index: operators.len(),
+                });
+                continue;
+            } else if let Some(("", name)) = token.split_once("@") {
+                Operator::Reference {
+                    name: name.to_string(),
+                }
+            } else if let Ok(value) = token.parse::<i32>() {
+                Operator::Integer { value }
+            } else {
+                Operator::Identifier {
+                    value: token.to_string(),
+                }
+            };
+
+            operators.push(operator);
+        }
+
         Self {
-            tokens: script
-                .split_whitespace()
-                .map(|token| token.to_owned())
-                .collect(),
+            operators,
+            labels,
+            next_operator: 0,
             effect: None,
             stack: Stack { values: Vec::new() },
         }
@@ -48,7 +76,7 @@ impl Eval {
             return false;
         }
 
-        if let Err(effect) = self.evaluate_token() {
+        if let Err(effect) = self.evaluate_next_operator() {
             self.effect = Some(effect);
             return false;
         }
@@ -56,49 +84,103 @@ impl Eval {
         true
     }
 
-    fn evaluate_token(&mut self) -> Result<(), Effect> {
-        let Some(token) = self.tokens.pop_front() else {
+    fn evaluate_next_operator(&mut self) -> Result<(), Effect> {
+        let Some(operator) = self.operators.get(self.next_operator) else {
             return Err(Effect::OutOfTokens);
         };
 
-        if let Ok(value) = token.parse::<i32>() {
-            self.stack.push(value);
-        } else if token == "*" {
-            let b = self.stack.pop()?.to_u32();
-            let a = self.stack.pop()?.to_u32();
+        match operator {
+            Operator::Identifier { value: identifier } => {
+                if identifier == "*" {
+                    let b = self.stack.pop()?.to_u32();
+                    let a = self.stack.pop()?.to_u32();
 
-            self.stack.push(a.wrapping_mul(b));
-        } else if token == "+" {
-            let b = self.stack.pop()?.to_u32();
-            let a = self.stack.pop()?.to_u32();
+                    self.stack.push(a.wrapping_mul(b));
+                } else if identifier == "+" {
+                    let b = self.stack.pop()?.to_u32();
+                    let a = self.stack.pop()?.to_u32();
 
-            self.stack.push(a.wrapping_add(b));
-        } else if token == "-" {
-            let b = self.stack.pop()?.to_u32();
-            let a = self.stack.pop()?.to_u32();
+                    self.stack.push(a.wrapping_add(b));
+                } else if identifier == "-" {
+                    let b = self.stack.pop()?.to_u32();
+                    let a = self.stack.pop()?.to_u32();
 
-            self.stack.push(a.wrapping_sub(b));
-        } else if token == "/" {
-            let b = self.stack.pop()?.to_i32();
-            let a = self.stack.pop()?.to_i32();
+                    self.stack.push(a.wrapping_sub(b));
+                } else if identifier == "/" {
+                    let b = self.stack.pop()?.to_i32();
+                    let a = self.stack.pop()?.to_i32();
 
-            if b == 0 {
-                return Err(Effect::DivisionByZero);
+                    if b == 0 {
+                        return Err(Effect::DivisionByZero);
+                    }
+                    if a == i32::MIN && b == -1 {
+                        return Err(Effect::IntegerOverflow);
+                    }
+
+                    let quotient = a / b;
+                    let remainder = a % b;
+
+                    self.stack.push(quotient);
+                    self.stack.push(remainder);
+                } else if identifier == "jump" {
+                    let index = self.stack.pop()?.to_operator_index();
+                    self.next_operator = index;
+
+                    // By default, we increment `self.next_token` below. Since
+                    // we just set that to the exact value we want, we need to
+                    // bypass that.
+                    return Ok(());
+                } else if identifier == "jump_if" {
+                    let index = self.stack.pop()?.to_operator_index();
+                    let condition = self.stack.pop()?.to_u32();
+
+                    if condition != 0 {
+                        self.next_operator = index;
+
+                        // By default, we increment `self.next_token` below.
+                        // Since we just set that to the exact value we want, we
+                        // need to bypass that.
+                        return Ok(());
+                    }
+                } else if identifier == "yield" {
+                    return Err(Effect::Yield);
+                } else {
+                    return Err(Effect::UnknownIdentifier);
+                }
             }
-            if a == i32::MIN && b == -1 {
-                return Err(Effect::IntegerOverflow);
+            Operator::Integer { value } => {
+                self.stack.push(*value);
             }
+            Operator::Reference { name } => {
+                let label =
+                    self.labels.iter().find(|label| &label.name == name);
 
-            let quotient = a / b;
-            let remainder = a % b;
+                if let Some(&Label { ref name, index }) = label {
+                    let Ok(index) = index.try_into() else {
+                        panic!(
+                            "Operator index `{index}` of label `{name}` is out \
+                            of bounds. This can only happen on platforms where \
+                            the width of Rust's `usize` is wider than 32 bits, \
+                            with a script that consists of at least 2^32 \
+                            operators.\n\
+                            \n\
+                            Scripts that large seem barely realistic in the \
+                            first place, more so on a 32-bit platform. At \
+                            best, this is a niche use case that StackAssembly \
+                            happens to not support, making this panic an \
+                            acceptable outcome."
+                        );
+                    };
+                    let index: u32 = index;
 
-            self.stack.push(quotient);
-            self.stack.push(remainder);
-        } else if token == "yield" {
-            return Err(Effect::Yield);
-        } else {
-            return Err(Effect::UnknownIdentifier);
+                    self.stack.push(index);
+                } else {
+                    return Err(Effect::InvalidReference);
+                }
+            }
         }
+
+        self.next_operator += 1;
 
         Ok(())
     }
@@ -109,6 +191,43 @@ impl Eval {
     }
 }
 
+/// # An operator
+///
+/// Operators are a type of token that can be evaluated.
+#[derive(Debug)]
+pub enum Operator {
+    /// # The operator is an identifier
+    Identifier {
+        /// # The value of the identifier
+        value: String,
+    },
+
+    /// # The operator is an integer
+    Integer {
+        /// # The value of the integer
+        value: i32,
+    },
+
+    /// # The operator is a reference
+    Reference {
+        /// # The name of the operator that the reference refers to
+        name: String,
+    },
+}
+
+/// # A label
+///
+/// Labels are a type of token that exist in the code, but not at runtime. They
+/// assign a name to the operator they precede.
+#[derive(Debug)]
+pub struct Label {
+    /// # The name that the label assigns to the operator it precedes
+    pub name: String,
+
+    /// # The index of the operator that the label precedes
+    pub index: usize,
+}
+
 /// # An effect
 #[derive(Debug, Eq, PartialEq)]
 pub enum Effect {
@@ -117,6 +236,9 @@ pub enum Effect {
 
     /// # Evaluating an operation resulted in integer overflow
     IntegerOverflow,
+
+    /// # Evaluated a reference that is not paired with a matching label
+    InvalidReference,
 
     /// # The evaluation ran out of tokens to evaluate
     OutOfTokens,
