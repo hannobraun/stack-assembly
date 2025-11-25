@@ -32,6 +32,10 @@ pub struct Value {
 }
 
 impl Value {
+    pub fn to_i32(self) -> i32 {
+        i32::from_le_bytes(self.inner.to_le_bytes())
+    }
+
     pub fn to_u32(self) -> u32 {
         self.inner
     }

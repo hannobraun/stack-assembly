@@ -79,11 +79,8 @@ impl Eval {
 
             self.stack.push(a.wrapping_sub(b));
         } else if token == "/" {
-            let b = self.stack.pop()?.to_u32();
-            let a = self.stack.pop()?.to_u32();
-
-            let [a, b] =
-                [a, b].map(|value| i32::from_le_bytes(value.to_le_bytes()));
+            let b = self.stack.pop()?.to_i32();
+            let a = self.stack.pop()?.to_i32();
 
             if b == 0 {
                 return Err(Effect::DivisionByZero);
