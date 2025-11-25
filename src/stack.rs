@@ -17,6 +17,11 @@ impl Stack {
     pub fn pop(&mut self) -> Result<u32, StackUnderflow> {
         self.values.pop().ok_or(StackUnderflow)
     }
+
+    /// # Access the stack as a slice of `u32` values
+    pub fn to_u32_slice(&self) -> &[u32] {
+        &self.values
+    }
 }
 
 /// # A stack underflow error

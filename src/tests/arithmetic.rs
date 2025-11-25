@@ -8,7 +8,7 @@ fn add() {
     eval.run();
 
     assert_eq!(eval.effect, Some(Effect::OutOfTokens));
-    assert_eq!(eval.stack.values, vec![3]);
+    assert_eq!(eval.stack.to_u32_slice(), &[3]);
 }
 
 #[test]
@@ -19,7 +19,7 @@ fn add_wraps_on_signed_overflow() {
     eval.run();
 
     assert_eq!(eval.effect, Some(Effect::OutOfTokens));
-    assert_eq!(eval.stack.values, vec![2147483648]);
+    assert_eq!(eval.stack.to_u32_slice(), &[2147483648]);
 }
 
 #[test]
@@ -34,7 +34,7 @@ fn add_wraps_on_unsigned_overflow() {
     eval.run();
 
     assert_eq!(eval.effect, Some(Effect::OutOfTokens));
-    assert_eq!(eval.stack.values, vec![0]);
+    assert_eq!(eval.stack.to_u32_slice(), &[0]);
 }
 
 #[test]
@@ -45,7 +45,7 @@ fn subtract() {
     eval.run();
 
     assert_eq!(eval.effect, Some(Effect::OutOfTokens));
-    assert_eq!(eval.stack.values, vec![1]);
+    assert_eq!(eval.stack.to_u32_slice(), &[1]);
 }
 
 #[test]
@@ -56,7 +56,7 @@ fn subtract_wraps_on_signed_overflow() {
     eval.run();
 
     assert_eq!(eval.effect, Some(Effect::OutOfTokens));
-    assert_eq!(eval.stack.values, vec![2147483647]);
+    assert_eq!(eval.stack.to_u32_slice(), &[2147483647]);
 }
 
 #[test]
@@ -68,7 +68,7 @@ fn subtract_wraps_on_unsigned_overflow() {
     eval.run();
 
     assert_eq!(eval.effect, Some(Effect::OutOfTokens));
-    assert_eq!(eval.stack.values, vec![4294967295]);
+    assert_eq!(eval.stack.to_u32_slice(), &[4294967295]);
 }
 
 #[test]
@@ -79,7 +79,7 @@ fn multiply() {
     eval.run();
 
     assert_eq!(eval.effect, Some(Effect::OutOfTokens));
-    assert_eq!(eval.stack.values, vec![6]);
+    assert_eq!(eval.stack.to_u32_slice(), &[6]);
 }
 
 #[test]
@@ -91,7 +91,7 @@ fn multiply_wraps_on_signed_overflow() {
     eval.run();
 
     assert_eq!(eval.effect, Some(Effect::OutOfTokens));
-    assert_eq!(eval.stack.values, vec![4294967294]);
+    assert_eq!(eval.stack.to_u32_slice(), &[4294967294]);
 }
 
 #[test]
@@ -107,7 +107,7 @@ fn multiply_wraps_on_unsigned_overflow() {
     eval.run();
 
     assert_eq!(eval.effect, Some(Effect::OutOfTokens));
-    assert_eq!(eval.stack.values, vec![4294967294]);
+    assert_eq!(eval.stack.to_u32_slice(), &[4294967294]);
 }
 
 #[test]
@@ -119,7 +119,7 @@ fn divide() {
     eval.run();
 
     assert_eq!(eval.effect, Some(Effect::OutOfTokens));
-    assert_eq!(eval.stack.values, vec![2, 1]);
+    assert_eq!(eval.stack.to_u32_slice(), &[2, 1]);
 }
 
 #[test]
@@ -137,7 +137,7 @@ fn divide_treats_its_inputs_as_signed() {
     eval.run();
 
     assert_eq!(eval.effect, Some(Effect::OutOfTokens));
-    assert_eq!(eval.stack.values, vec![4294967294, 1]);
+    assert_eq!(eval.stack.to_u32_slice(), &[4294967294, 1]);
 }
 
 #[test]
@@ -149,7 +149,7 @@ fn divide_by_zero_triggers_effect() {
     eval.run();
 
     assert_eq!(eval.effect, Some(Effect::DivisionByZero));
-    assert_eq!(eval.stack.values, vec![]);
+    assert_eq!(eval.stack.to_u32_slice(), &[]);
 }
 
 #[test]
@@ -165,5 +165,5 @@ fn divide_triggers_effect_on_overflow() {
     eval.run();
 
     assert_eq!(eval.effect, Some(Effect::IntegerOverflow));
-    assert_eq!(eval.stack.values, vec![]);
+    assert_eq!(eval.stack.to_u32_slice(), &[]);
 }

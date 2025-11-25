@@ -8,7 +8,7 @@ fn empty_script_triggers_out_of_tokens() {
     eval.run();
 
     assert_eq!(eval.effect, Some(Effect::OutOfTokens));
-    assert_eq!(eval.stack.values, vec![]);
+    assert_eq!(eval.stack.to_u32_slice(), &[]);
 }
 
 #[test]
@@ -18,7 +18,7 @@ fn starting_evaluation_does_not_evaluate_any_operators() {
 
     let eval = Eval::start("yield");
     assert_eq!(eval.effect, None);
-    assert_eq!(eval.stack.values, vec![]);
+    assert_eq!(eval.stack.to_u32_slice(), &[]);
 }
 
 #[test]
@@ -31,7 +31,7 @@ fn yield_operator_triggers_the_respective_effect() {
     eval.run();
 
     assert_eq!(eval.effect, Some(Effect::Yield));
-    assert_eq!(eval.stack.values, vec![]);
+    assert_eq!(eval.stack.to_u32_slice(), &[]);
 }
 
 #[test]
@@ -43,7 +43,7 @@ fn active_effect_prevents_evaluation_from_advancing() {
 
     eval.run();
     assert_eq!(eval.effect, Some(Effect::Yield));
-    assert_eq!(eval.stack.values, vec![]);
+    assert_eq!(eval.stack.to_u32_slice(), &[]);
 }
 
 #[test]
@@ -55,5 +55,5 @@ fn stack_underflow_triggers_effect() {
     eval.run();
 
     assert_eq!(eval.effect, Some(Effect::StackUnderflow));
-    assert_eq!(eval.stack.values, vec![]);
+    assert_eq!(eval.stack.to_u32_slice(), &[]);
 }
