@@ -130,6 +130,18 @@ impl Eval {
                     // we just set that to the exact value we want, we need to
                     // bypass that.
                     return Ok(());
+                } else if identifier == "jump_if" {
+                    let index = self.stack.pop()?.to_operator_index();
+                    let condition = self.stack.pop()?.to_u32();
+
+                    if condition != 0 {
+                        self.next_operator = index;
+
+                        // By default, we increment `self.next_token` below.
+                        // Since we just set that to the exact value we want, we
+                        // need to bypass that.
+                        return Ok(());
+                    }
                 } else if identifier == "yield" {
                     return Err(Effect::Yield);
                 } else {
