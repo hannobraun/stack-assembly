@@ -64,23 +64,23 @@ impl Eval {
         if let Ok(value) = token.parse::<i32>() {
             self.stack.push(value);
         } else if token == "*" {
-            let b = self.stack.pop()?;
-            let a = self.stack.pop()?;
+            let b = self.stack.pop()?.to_u32();
+            let a = self.stack.pop()?.to_u32();
 
             self.stack.push(a.wrapping_mul(b));
         } else if token == "+" {
-            let b = self.stack.pop()?;
-            let a = self.stack.pop()?;
+            let b = self.stack.pop()?.to_u32();
+            let a = self.stack.pop()?.to_u32();
 
             self.stack.push(a.wrapping_add(b));
         } else if token == "-" {
-            let b = self.stack.pop()?;
-            let a = self.stack.pop()?;
+            let b = self.stack.pop()?.to_u32();
+            let a = self.stack.pop()?.to_u32();
 
             self.stack.push(a.wrapping_sub(b));
         } else if token == "/" {
-            let b = self.stack.pop()?;
-            let a = self.stack.pop()?;
+            let b = self.stack.pop()?.to_u32();
+            let a = self.stack.pop()?.to_u32();
 
             let [a, b] =
                 [a, b].map(|value| i32::from_le_bytes(value.to_le_bytes()));

@@ -14,11 +14,8 @@ impl Stack {
     }
 
     /// # Pop a value from the stack
-    pub fn pop(&mut self) -> Result<u32, StackUnderflow> {
-        self.values
-            .pop()
-            .ok_or(StackUnderflow)
-            .map(|value| value.inner)
+    pub fn pop(&mut self) -> Result<Value, StackUnderflow> {
+        self.values.pop().ok_or(StackUnderflow)
     }
 
     /// # Access the stack as a slice of `u32` values
@@ -32,6 +29,12 @@ impl Stack {
 #[repr(transparent)]
 pub struct Value {
     inner: u32,
+}
+
+impl Value {
+    pub fn to_u32(self) -> u32 {
+        self.inner
+    }
 }
 
 impl From<i32> for Value {
