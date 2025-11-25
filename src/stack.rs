@@ -39,6 +39,25 @@ impl Value {
     pub fn to_u32(self) -> u32 {
         self.inner
     }
+
+    pub fn to_operator_index(self) -> usize {
+        let Ok(index) = self.inner.try_into() else {
+            panic!(
+                "Operator index `{index}` is out of bounds. This should only \
+                be possible on platforms where Rust's `usize` is less than 32 \
+                bits wide. This is a niche use case that isn't fully \
+                supported, making this panic an acceptable outcome.\n\
+                \n\
+                Additionally, the index was invalid in the first place \
+                (meaning the StackAssembly program has a bug), as it wouldn't \
+                be possible to store as many operators as the index implies \
+                should be there.",
+                index = self.inner,
+            );
+        };
+
+        index
+    }
 }
 
 impl From<i32> for Value {
