@@ -62,7 +62,6 @@ impl Eval {
         };
 
         if let Ok(value) = token.parse::<i32>() {
-            let value = u32::from_le_bytes(value.to_le_bytes());
             self.stack.push(value);
         } else if token == "*" {
             let b = self.stack.pop()?;
@@ -95,9 +94,6 @@ impl Eval {
 
             let quotient = a / b;
             let remainder = a % b;
-
-            let [quotient, remainder] = [quotient, remainder]
-                .map(|value| u32::from_le_bytes(value.to_le_bytes()));
 
             self.stack.push(quotient);
             self.stack.push(remainder);

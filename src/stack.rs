@@ -9,8 +9,8 @@ pub struct Stack {
 
 impl Stack {
     /// # Push a value to the stack
-    pub fn push(&mut self, value: u32) {
-        self.values.push(Value::from(value));
+    pub fn push(&mut self, value: impl Into<Value>) {
+        self.values.push(value.into());
     }
 
     /// # Pop a value from the stack
@@ -32,6 +32,13 @@ impl Stack {
 #[repr(transparent)]
 pub struct Value {
     inner: u32,
+}
+
+impl From<i32> for Value {
+    fn from(value: i32) -> Self {
+        let inner = u32::from_le_bytes(value.to_le_bytes());
+        Self { inner }
+    }
 }
 
 impl From<u32> for Value {
