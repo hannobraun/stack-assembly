@@ -40,7 +40,7 @@ impl Value {
         self.inner
     }
 
-    pub fn to_operator_index(self) -> usize {
+    pub fn to_usize(self) -> usize {
         let Ok(index) = self.inner.try_into() else {
             panic!(
                 "Can't convert value `{value}` to `usize`. This should only be \

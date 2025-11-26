@@ -123,7 +123,7 @@ impl Eval {
                     self.stack.push(quotient);
                     self.stack.push(remainder);
                 } else if identifier == "jump" {
-                    let index = self.stack.pop()?.to_operator_index();
+                    let index = self.stack.pop()?.to_usize();
                     self.next_operator = index;
 
                     // By default, we increment `self.next_token` below. Since
@@ -131,7 +131,7 @@ impl Eval {
                     // bypass that.
                     return Ok(());
                 } else if identifier == "jump_if" {
-                    let index = self.stack.pop()?.to_operator_index();
+                    let index = self.stack.pop()?.to_usize();
                     let condition = self.stack.pop()?.to_u32();
 
                     if condition != 0 {
