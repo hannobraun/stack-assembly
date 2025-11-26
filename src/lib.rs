@@ -122,6 +122,21 @@ impl Eval {
 
                     self.stack.push(quotient);
                     self.stack.push(remainder);
+                } else if identifier == "copy" {
+                    let index_from_top = self.stack.pop()?.to_usize();
+                    let index = self.stack.values.len() - 1 - index_from_top;
+
+                    let Some(value) = self.stack.values.get(index).copied()
+                    else {
+                        unreachable!(
+                            "We computed the index from the top, based on the \
+                            number of values on the stack. Since that did not \
+                            result in an integer overflow, it's not possible \
+                            that we ended up with an out-of-range index."
+                        );
+                    };
+
+                    self.stack.push(value);
                 } else if identifier == "jump" {
                     let index = self.stack.pop()?.to_usize();
                     self.next_operator = index;
