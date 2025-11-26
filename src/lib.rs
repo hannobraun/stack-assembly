@@ -124,7 +124,13 @@ impl Eval {
                     self.stack.push(remainder);
                 } else if identifier == "copy" {
                     let index_from_top = self.stack.pop()?.to_usize();
-                    let index = self.stack.values.len() - 1 - index_from_top;
+                    let index =
+                        self.stack.values.len().checked_sub(1).and_then(
+                            |index| index.checked_sub(index_from_top),
+                        );
+                    let Some(index) = index else {
+                        return Err(Effect::InvalidStackIndex);
+                    };
 
                     let Some(value) = self.stack.values.get(index).copied()
                     else {
@@ -254,6 +260,9 @@ pub enum Effect {
 
     /// # Evaluated a reference that is not paired with a matching label
     InvalidReference,
+
+    /// # An index that supposedly refers to a value on the stack doesn't
+    InvalidStackIndex,
 
     /// # The evaluation ran out of tokens to evaluate
     OutOfTokens,
