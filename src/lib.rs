@@ -124,24 +124,7 @@ impl Eval {
                     self.stack.push(remainder);
                 } else if identifier == "copy" {
                     let index_from_top = self.stack.pop()?.to_usize();
-                    let index =
-                        self.stack.values.len().checked_sub(1).and_then(
-                            |index| index.checked_sub(index_from_top),
-                        );
-                    let Some(index) = index else {
-                        return Err(Effect::InvalidStackIndex);
-                    };
-
-                    let Some(value) = self.stack.values.get(index).copied()
-                    else {
-                        unreachable!(
-                            "We computed the index from the top, based on the \
-                            number of values on the stack. Since that did not \
-                            result in an integer overflow, it's not possible \
-                            that we ended up with an out-of-range index."
-                        );
-                    };
-
+                    let value = self.stack.get(index_from_top)?;
                     self.stack.push(value);
                 } else if identifier == "jump" {
                     let index = self.stack.pop()?.to_usize();
