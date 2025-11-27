@@ -63,3 +63,16 @@ fn leading_zeros() {
     assert_eq!(eval.effect, Some(Effect::OutOfTokens));
     assert_eq!(eval.stack.to_u32_slice(), &[4]);
 }
+
+#[test]
+fn trailing_zeros() {
+    // The `trailing_zeros` operator outputs the number of trailing zero bits in
+    // its input.
+
+    // `-252645136` = `0xf0f0f0f0`
+    let mut eval = Eval::start("-252645136 trailing_zeros");
+    eval.run();
+
+    assert_eq!(eval.effect, Some(Effect::OutOfTokens));
+    assert_eq!(eval.stack.to_u32_slice(), &[4]);
+}
