@@ -71,17 +71,14 @@ impl Eval {
     }
 
     /// # Advance the evaluation by one step
-    pub fn step(&mut self) -> bool {
+    pub fn step(&mut self) {
         if self.effect.is_some() {
-            return false;
+            return;
         }
 
         if let Err(effect) = self.evaluate_next_operator() {
             self.effect = Some(effect);
-            return false;
         }
-
-        true
     }
 
     fn evaluate_next_operator(&mut self) -> Result<(), Effect> {
@@ -290,7 +287,9 @@ impl Eval {
 
     /// # Advance the evaluation until it triggers an effect or completes
     pub fn run(&mut self) {
-        while self.step() {}
+        while self.effect.is_none() {
+            self.step();
+        }
     }
 }
 
