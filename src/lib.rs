@@ -164,6 +164,13 @@ impl Eval {
                     let c = a & b;
 
                     self.stack.push(c);
+                } else if identifier == "or" {
+                    let b = self.stack.pop()?.to_i32();
+                    let a = self.stack.pop()?.to_i32();
+
+                    let c = a | b;
+
+                    self.stack.push(c);
                 } else if identifier == "copy" {
                     let index_from_top = self.stack.pop()?.to_usize();
                     let value = self.stack.get(index_from_top)?;
