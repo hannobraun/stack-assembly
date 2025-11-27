@@ -117,3 +117,32 @@ fn shift_left() {
     assert_eq!(eval.effect, Some(Effect::OutOfTokens));
     assert_eq!(eval.stack.to_u32_slice(), &[0xf0000000]);
 }
+
+#[test]
+fn shift_right_unsigned() {
+    // The `shift_right` operator shifts the bits of its first input to the
+    // right, by the number of positions defined by its second input. With an
+    // unsigned input, there is no meaningful distinction between arithmetic and
+    // logical shift.
+
+    // `255` = `0x000000ff`
+    let mut eval = Eval::start("255 4 shift_right");
+    eval.run();
+
+    assert_eq!(eval.effect, Some(Effect::OutOfTokens));
+    assert_eq!(eval.stack.to_u32_slice(), &[0x0000000f]);
+}
+
+#[test]
+fn shift_right_signed() {
+    // The `shift_right` operator shifts the bits of its first input to the
+    // right, by the number of positions defined by its second input. This is an
+    // arithmetic shift, meaning the sign of the input is preserved.
+
+    // `-268435201` = `0xf00000ff`
+    let mut eval = Eval::start("-268435201 4 shift_right");
+    eval.run();
+
+    assert_eq!(eval.effect, Some(Effect::OutOfTokens));
+    assert_eq!(eval.stack.to_u32_slice(), &[0xff00000f]);
+}
