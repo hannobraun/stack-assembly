@@ -102,3 +102,18 @@ fn rotate_right() {
     assert_eq!(eval.effect, Some(Effect::OutOfTokens));
     assert_eq!(eval.stack.to_u32_slice(), &[0xf0000000]);
 }
+
+#[test]
+fn shift_left() {
+    // The `shift_left` operator shifts the bits of its first input to the left,
+    // by the number of positions defined by its second input. Since this is a
+    // shift to the left, there is no meaningful distinction between arithmetic
+    // and logical shift.
+
+    // `-16777216` = `0xff000000`
+    let mut eval = Eval::start("-16777216 4 shift_left");
+    eval.run();
+
+    assert_eq!(eval.effect, Some(Effect::OutOfTokens));
+    assert_eq!(eval.stack.to_u32_slice(), &[0xf0000000]);
+}

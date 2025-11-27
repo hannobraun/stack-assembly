@@ -204,6 +204,13 @@ impl Eval {
                     let b = a.rotate_right(num_positions);
 
                     self.stack.push(b);
+                } else if identifier == "shift_left" {
+                    let num_positions = self.stack.pop()?.to_i32();
+                    let a = self.stack.pop()?.to_i32();
+
+                    let b = a << num_positions;
+
+                    self.stack.push(b);
                 } else if identifier == "copy" {
                     let index_from_top = self.stack.pop()?.to_usize();
                     let value = self.stack.get(index_from_top)?;
