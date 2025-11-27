@@ -23,3 +23,14 @@ fn copy_trigger_effect_on_invalid_index() {
     assert_eq!(eval.effect, Some(Effect::InvalidStackIndex));
     assert_eq!(eval.stack.to_u32_slice(), &[]);
 }
+
+#[test]
+fn drop() {
+    // The `drop` operator removes any value from the stack.
+
+    let mut eval = Eval::start("3 5 8 1 drop");
+    eval.run();
+
+    assert_eq!(eval.effect, Some(Effect::OutOfTokens));
+    assert_eq!(eval.stack.to_u32_slice(), &[3, 8]);
+}

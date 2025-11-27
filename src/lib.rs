@@ -126,6 +126,9 @@ impl Eval {
                     let index_from_top = self.stack.pop()?.to_usize();
                     let value = self.stack.get(index_from_top)?;
                     self.stack.push(value);
+                } else if identifier == "drop" {
+                    let index_from_top = self.stack.pop()?.to_usize();
+                    self.stack.remove(index_from_top)?;
                 } else if identifier == "jump" {
                     let index = self.stack.pop()?.to_usize();
                     self.next_operator = index;

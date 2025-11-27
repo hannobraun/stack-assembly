@@ -40,6 +40,23 @@ impl Stack {
         Ok(value)
     }
 
+    /// # Remove the value at the given index
+    ///
+    /// Stack indices start at the top, meaning `0` refers to the topmost value
+    /// on the stack.
+    pub fn remove(
+        &mut self,
+        index_from_top: usize,
+    ) -> Result<(), InvalidStackIndex> {
+        let index_from_bottom = self.convert_index(index_from_top)?;
+
+        // This could theoretically panic, but actually won't, for the same
+        // reason that the index must be valid in `get`.
+        self.values.remove(index_from_bottom);
+
+        Ok(())
+    }
+
     fn convert_index(
         &self,
         index_from_top: usize,
