@@ -157,6 +157,67 @@ impl Eval {
                     let c = if a >= b { 1 } else { 0 };
 
                     self.stack.push(c);
+                } else if identifier == "and" {
+                    let b = self.stack.pop()?.to_i32();
+                    let a = self.stack.pop()?.to_i32();
+
+                    let c = a & b;
+
+                    self.stack.push(c);
+                } else if identifier == "or" {
+                    let b = self.stack.pop()?.to_i32();
+                    let a = self.stack.pop()?.to_i32();
+
+                    let c = a | b;
+
+                    self.stack.push(c);
+                } else if identifier == "xor" {
+                    let b = self.stack.pop()?.to_i32();
+                    let a = self.stack.pop()?.to_i32();
+
+                    let c = a ^ b;
+
+                    self.stack.push(c);
+                } else if identifier == "count_ones" {
+                    let a = self.stack.pop()?.to_u32();
+                    let b = a.count_ones();
+                    self.stack.push(b);
+                } else if identifier == "leading_zeros" {
+                    let a = self.stack.pop()?.to_u32();
+                    let b = a.leading_zeros();
+                    self.stack.push(b);
+                } else if identifier == "trailing_zeros" {
+                    let a = self.stack.pop()?.to_u32();
+                    let b = a.trailing_zeros();
+                    self.stack.push(b);
+                } else if identifier == "rotate_left" {
+                    let num_positions = self.stack.pop()?.to_u32();
+                    let a = self.stack.pop()?.to_u32();
+
+                    let b = a.rotate_left(num_positions);
+
+                    self.stack.push(b);
+                } else if identifier == "rotate_right" {
+                    let num_positions = self.stack.pop()?.to_u32();
+                    let a = self.stack.pop()?.to_u32();
+
+                    let b = a.rotate_right(num_positions);
+
+                    self.stack.push(b);
+                } else if identifier == "shift_left" {
+                    let num_positions = self.stack.pop()?.to_i32();
+                    let a = self.stack.pop()?.to_i32();
+
+                    let b = a << num_positions;
+
+                    self.stack.push(b);
+                } else if identifier == "shift_right" {
+                    let num_positions = self.stack.pop()?.to_i32();
+                    let a = self.stack.pop()?.to_i32();
+
+                    let b = a >> num_positions;
+
+                    self.stack.push(b);
                 } else if identifier == "copy" {
                     let index_from_top = self.stack.pop()?.to_usize();
                     let value = self.stack.get(index_from_top)?;
