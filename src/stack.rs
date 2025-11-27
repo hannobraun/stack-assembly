@@ -26,15 +26,7 @@ impl Stack {
         &self,
         index_from_top: usize,
     ) -> Result<Value, InvalidStackIndex> {
-        let index_from_bottom = self
-            .values
-            .len()
-            .checked_sub(1)
-            .and_then(|index| index.checked_sub(index_from_top));
-
-        let Some(index_from_bottom) = index_from_bottom else {
-            return Err(InvalidStackIndex);
-        };
+        let index_from_bottom = self.convert_index(index_from_top)?;
 
         let Some(value) = self.values.get(index_from_bottom).copied() else {
             unreachable!(
@@ -46,6 +38,19 @@ impl Stack {
         };
 
         Ok(value)
+    }
+
+    fn convert_index(
+        &self,
+        index_from_top: usize,
+    ) -> Result<usize, InvalidStackIndex> {
+        let index_from_bottom = self
+            .values
+            .len()
+            .checked_sub(1)
+            .and_then(|index| index.checked_sub(index_from_top));
+
+        index_from_bottom.ok_or(InvalidStackIndex)
     }
 
     /// # Access the stack as a slice of `u32` values
