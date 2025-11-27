@@ -150,6 +150,13 @@ impl Eval {
                     let c = if a > b { 1 } else { 0 };
 
                     self.stack.push(c);
+                } else if identifier == ">=" {
+                    let b = self.stack.pop()?.to_i32();
+                    let a = self.stack.pop()?.to_i32();
+
+                    let c = if a >= b { 1 } else { 0 };
+
+                    self.stack.push(c);
                 } else if identifier == "copy" {
                     let index_from_top = self.stack.pop()?.to_usize();
                     let value = self.stack.get(index_from_top)?;
