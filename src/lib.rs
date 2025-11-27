@@ -182,6 +182,10 @@ impl Eval {
                     let a = self.stack.pop()?.to_u32();
                     let b = a.count_ones();
                     self.stack.push(b);
+                } else if identifier == "leading_zeros" {
+                    let a = self.stack.pop()?.to_u32();
+                    let b = a.leading_zeros();
+                    self.stack.push(b);
                 } else if identifier == "copy" {
                     let index_from_top = self.stack.pop()?.to_usize();
                     let value = self.stack.get(index_from_top)?;

@@ -50,3 +50,16 @@ fn count_ones() {
     assert_eq!(eval.effect, Some(Effect::OutOfTokens));
     assert_eq!(eval.stack.to_u32_slice(), &[8]);
 }
+
+#[test]
+fn leading_zeros() {
+    // The `leading_zeros` operator outputs the number of leading zero bits in
+    // its input.
+
+    // `252645135` = `0x0f0f0f0f`
+    let mut eval = Eval::start("252645135 leading_zeros");
+    eval.run();
+
+    assert_eq!(eval.effect, Some(Effect::OutOfTokens));
+    assert_eq!(eval.stack.to_u32_slice(), &[4]);
+}
