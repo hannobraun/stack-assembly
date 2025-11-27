@@ -69,3 +69,25 @@ fn smaller_equals_outputs_zero_if_larger() {
     assert_eq!(eval.effect, Some(Effect::OutOfTokens));
     assert_eq!(eval.stack.to_u32_slice(), &[0]);
 }
+
+#[test]
+fn equals_outputs_one_if_equal() {
+    // The `=` operator outputs `1`, if its two inputs are equal.
+
+    let mut eval = Eval::start("3 3 =");
+    eval.run();
+
+    assert_eq!(eval.effect, Some(Effect::OutOfTokens));
+    assert_eq!(eval.stack.to_u32_slice(), &[1]);
+}
+
+#[test]
+fn equals_outputs_zero_if_not_equal() {
+    // The `=` operator outputs `0`, if its two inputs are not equal.
+
+    let mut eval = Eval::start("3 5 =");
+    eval.run();
+
+    assert_eq!(eval.effect, Some(Effect::OutOfTokens));
+    assert_eq!(eval.stack.to_u32_slice(), &[0]);
+}
