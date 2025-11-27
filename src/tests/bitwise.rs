@@ -76,3 +76,16 @@ fn trailing_zeros() {
     assert_eq!(eval.effect, Some(Effect::OutOfTokens));
     assert_eq!(eval.stack.to_u32_slice(), &[4]);
 }
+
+#[test]
+fn rotate_left() {
+    // The `rotate_left` operator rotates the bits of its first input to the
+    // left, by the number of positions defined by its second input.
+
+    // `4026531840` = `0xf0000000`
+    let mut eval = Eval::start("-268435456 4 rotate_left");
+    eval.run();
+
+    assert_eq!(eval.effect, Some(Effect::OutOfTokens));
+    assert_eq!(eval.stack.to_u32_slice(), &[0x0000000f]);
+}
