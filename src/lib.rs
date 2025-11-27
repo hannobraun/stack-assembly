@@ -122,8 +122,15 @@ impl Eval {
 
                     self.stack.push(quotient);
                     self.stack.push(remainder);
+                } else if identifier == "copy" {
+                    let index_from_top = self.stack.pop()?.to_usize();
+                    let value = self.stack.get(index_from_top)?;
+                    self.stack.push(value);
+                } else if identifier == "drop" {
+                    let index_from_top = self.stack.pop()?.to_usize();
+                    self.stack.remove(index_from_top)?;
                 } else if identifier == "jump" {
-                    let index = self.stack.pop()?.to_operator_index();
+                    let index = self.stack.pop()?.to_usize();
                     self.next_operator = index;
 
                     // By default, we increment `self.next_token` below. Since
@@ -131,7 +138,7 @@ impl Eval {
                     // bypass that.
                     return Ok(());
                 } else if identifier == "jump_if" {
-                    let index = self.stack.pop()?.to_operator_index();
+                    let index = self.stack.pop()?.to_usize();
                     let condition = self.stack.pop()?.to_u32();
 
                     if condition != 0 {
@@ -239,6 +246,9 @@ pub enum Effect {
 
     /// # Evaluated a reference that is not paired with a matching label
     InvalidReference,
+
+    /// # An index that supposedly refers to a value on the stack doesn't
+    InvalidStackIndex,
 
     /// # The evaluation ran out of tokens to evaluate
     OutOfTokens,
