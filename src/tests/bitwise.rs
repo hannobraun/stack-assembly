@@ -26,3 +26,15 @@ fn or() {
     assert_eq!(eval.effect, Some(Effect::OutOfTokens));
     assert_eq!(eval.stack.to_u32_slice(), &[0xfff0]);
 }
+
+#[test]
+fn xor() {
+    // The `xor` operator performs the "bitwise exclusive-or" operation.
+
+    // `61680` = `0xf0f0`, `65280` = `0xff00`
+    let mut eval = Eval::start("61680 65280 xor");
+    eval.run();
+
+    assert_eq!(eval.effect, Some(Effect::OutOfTokens));
+    assert_eq!(eval.stack.to_u32_slice(), &[0x0ff0]);
+}
