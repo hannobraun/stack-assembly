@@ -89,3 +89,16 @@ fn rotate_left() {
     assert_eq!(eval.effect, Some(Effect::OutOfTokens));
     assert_eq!(eval.stack.to_u32_slice(), &[0x0000000f]);
 }
+
+#[test]
+fn rotate_right() {
+    // The `rotate_right` operator rotates the bits of its first input to the
+    // right, by the number of positions defined by its second input.
+
+    // `15` = `0x0000000f`
+    let mut eval = Eval::start("15 4 rotate_right");
+    eval.run();
+
+    assert_eq!(eval.effect, Some(Effect::OutOfTokens));
+    assert_eq!(eval.stack.to_u32_slice(), &[0xf0000000]);
+}
