@@ -38,3 +38,15 @@ fn xor() {
     assert_eq!(eval.effect, Some(Effect::OutOfTokens));
     assert_eq!(eval.stack.to_u32_slice(), &[0x0ff0]);
 }
+
+#[test]
+fn count_ones() {
+    // The `count_ones` operator outputs the number of `1` bits in its input.
+
+    // `61680` = `0xf0f0`
+    let mut eval = Eval::start("61680 count_ones");
+    eval.run();
+
+    assert_eq!(eval.effect, Some(Effect::OutOfTokens));
+    assert_eq!(eval.stack.to_u32_slice(), &[8]);
+}
