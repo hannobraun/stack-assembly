@@ -250,7 +250,11 @@ impl Eval {
                     return Err(Effect::Yield);
                 } else if identifier == "read" {
                     let address = self.stack.pop()?.to_usize();
-                    let value = self.memory[address];
+
+                    let Some(value) = self.memory.get(address).copied() else {
+                        return Err(Effect::InvalidAddress);
+                    };
+
                     self.stack.push(value);
                 } else {
                     return Err(Effect::UnknownIdentifier);
@@ -346,6 +350,9 @@ pub enum Effect {
 
     /// # Evaluating an operation resulted in integer overflow
     IntegerOverflow,
+
+    /// # A memory address is out of bounds
+    InvalidAddress,
 
     /// # Evaluated a reference that is not paired with a matching label
     InvalidReference,
