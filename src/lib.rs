@@ -8,7 +8,7 @@ mod stack;
 #[cfg(test)]
 mod tests;
 
-pub use self::stack::Stack;
+pub use self::stack::{InvalidStackIndex, Stack, StackUnderflow, Value};
 
 /// # The ongoing evaluation of a script
 #[derive(Debug)]
