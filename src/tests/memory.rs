@@ -28,3 +28,31 @@ fn read_triggers_effect_on_out_of_bounds_access() {
     assert_eq!(eval.effect, Some(Effect::InvalidAddress));
     assert_eq!(eval.stack.to_u32_slice(), &[]);
 }
+
+#[test]
+fn write() {
+    // `write` writes a word to memory at the given address.
+
+    let mut eval = Eval::start("1 3 write");
+    eval.run();
+
+    assert_eq!(eval.effect, Some(Effect::OutOfTokens));
+    assert_eq!(eval.stack.to_u32_slice(), &[]);
+    assert_eq!(eval.memory[1], Value::from(3));
+}
+
+#[test]
+fn write_triggers_effect_on_out_of_bounds_access() {
+    // If the address passed to `write` is out of bounds, it triggers the
+    // respective effect.
+
+    let mut eval = Eval::start("1025 3 write");
+    assert!(
+        eval.memory.len() < 1025,
+        "Test can't work, because it makes wrong assumption about memory size.",
+    );
+
+    eval.run();
+    assert_eq!(eval.effect, Some(Effect::InvalidAddress));
+    assert_eq!(eval.stack.to_u32_slice(), &[]);
+}

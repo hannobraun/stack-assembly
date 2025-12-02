@@ -256,6 +256,15 @@ impl Eval {
                     };
 
                     self.stack.push(value);
+                } else if identifier == "write" {
+                    let value = self.stack.pop()?;
+                    let address = self.stack.pop()?.to_usize();
+
+                    if address < self.memory.len() {
+                        self.memory[address] = value;
+                    } else {
+                        return Err(Effect::InvalidAddress);
+                    }
                 } else {
                     return Err(Effect::UnknownIdentifier);
                 }
