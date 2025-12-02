@@ -136,7 +136,7 @@ impl From<u32> for Value {
 
 /// # An invalid index was used to access the stack
 ///
-/// See [`Stack::by_index`].
+/// See [`Stack::get`] and [`Stack::remove`].
 #[derive(Debug)]
 pub struct InvalidStackIndex;
 
