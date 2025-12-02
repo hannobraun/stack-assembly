@@ -77,7 +77,9 @@ impl Stack {
 }
 
 /// # A unit of data
-#[derive(Clone, Copy, Debug, bytemuck::Pod, bytemuck::Zeroable)]
+#[derive(
+    Clone, Copy, Debug, Eq, PartialEq, bytemuck::Pod, bytemuck::Zeroable,
+)]
 #[repr(transparent)]
 pub struct Value {
     inner: u32,

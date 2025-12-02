@@ -27,6 +27,9 @@ pub struct Eval {
 
     /// # The stack
     pub stack: Stack,
+
+    /// # The memory
+    pub memory: Vec<Value>,
 }
 
 impl Eval {
@@ -67,6 +70,7 @@ impl Eval {
             next_operator: 0,
             effect: None,
             stack: Stack { values: Vec::new() },
+            memory: vec![Value::from(0); 1024],
         }
     }
 
@@ -244,6 +248,23 @@ impl Eval {
                     }
                 } else if identifier == "yield" {
                     return Err(Effect::Yield);
+                } else if identifier == "read" {
+                    let address = self.stack.pop()?.to_usize();
+
+                    let Some(value) = self.memory.get(address).copied() else {
+                        return Err(Effect::InvalidAddress);
+                    };
+
+                    self.stack.push(value);
+                } else if identifier == "write" {
+                    let value = self.stack.pop()?;
+                    let address = self.stack.pop()?.to_usize();
+
+                    if address < self.memory.len() {
+                        self.memory[address] = value;
+                    } else {
+                        return Err(Effect::InvalidAddress);
+                    }
                 } else {
                     return Err(Effect::UnknownIdentifier);
                 }
@@ -338,6 +359,9 @@ pub enum Effect {
 
     /// # Evaluating an operation resulted in integer overflow
     IntegerOverflow,
+
+    /// # A memory address is out of bounds
+    InvalidAddress,
 
     /// # Evaluated a reference that is not paired with a matching label
     InvalidReference,
