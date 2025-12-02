@@ -84,14 +84,22 @@ pub struct Value {
 }
 
 impl Value {
+    /// # Convert to an `i32`
     pub fn to_i32(self) -> i32 {
         i32::from_le_bytes(self.inner.to_le_bytes())
     }
 
+    /// # Convert to a `u32`
     pub fn to_u32(self) -> u32 {
         self.inner
     }
 
+    /// # Convert to a `usize`
+    ///
+    /// ## Panics
+    ///
+    /// Panics, if `usize` can not represent this value. This can only happen on
+    /// platforms where `usize` is less than 32 bits wide.
     pub fn to_usize(self) -> usize {
         let Ok(index) = self.inner.try_into() else {
             panic!(
