@@ -27,6 +27,9 @@ pub struct Eval {
 
     /// # The stack
     pub stack: Stack,
+
+    /// # The memory
+    pub memory: Vec<Value>,
 }
 
 impl Eval {
@@ -67,6 +70,7 @@ impl Eval {
             next_operator: 0,
             effect: None,
             stack: Stack { values: Vec::new() },
+            memory: vec![Value::from(0); 1024],
         }
     }
 
@@ -244,6 +248,10 @@ impl Eval {
                     }
                 } else if identifier == "yield" {
                     return Err(Effect::Yield);
+                } else if identifier == "read" {
+                    let address = self.stack.pop()?.to_usize();
+                    let value = self.memory[address];
+                    self.stack.push(value);
                 } else {
                     return Err(Effect::UnknownIdentifier);
                 }
