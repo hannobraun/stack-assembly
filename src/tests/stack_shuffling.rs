@@ -8,7 +8,7 @@ fn copy() {
     let mut eval = Eval::start("3 5 8 1 copy");
     eval.run();
 
-    assert_eq!(eval.effect, Some(Effect::OutOfTokens));
+    assert_eq!(eval.effect, Some(Effect::OutOfOperators));
     assert_eq!(eval.stack.to_u32_slice(), &[3, 5, 8, 5]);
 }
 
@@ -31,6 +31,6 @@ fn drop() {
     let mut eval = Eval::start("3 5 8 1 drop");
     eval.run();
 
-    assert_eq!(eval.effect, Some(Effect::OutOfTokens));
+    assert_eq!(eval.effect, Some(Effect::OutOfOperators));
     assert_eq!(eval.stack.to_u32_slice(), &[3, 8]);
 }

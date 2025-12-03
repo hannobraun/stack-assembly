@@ -11,7 +11,7 @@ fn and() {
     let mut eval = Eval::start("61680 65280 and");
     eval.run();
 
-    assert_eq!(eval.effect, Some(Effect::OutOfTokens));
+    assert_eq!(eval.effect, Some(Effect::OutOfOperators));
     assert_eq!(eval.stack.to_u32_slice(), &[0xf000]);
 }
 
@@ -23,7 +23,7 @@ fn or() {
     let mut eval = Eval::start("61680 65280 or");
     eval.run();
 
-    assert_eq!(eval.effect, Some(Effect::OutOfTokens));
+    assert_eq!(eval.effect, Some(Effect::OutOfOperators));
     assert_eq!(eval.stack.to_u32_slice(), &[0xfff0]);
 }
 
@@ -35,7 +35,7 @@ fn xor() {
     let mut eval = Eval::start("61680 65280 xor");
     eval.run();
 
-    assert_eq!(eval.effect, Some(Effect::OutOfTokens));
+    assert_eq!(eval.effect, Some(Effect::OutOfOperators));
     assert_eq!(eval.stack.to_u32_slice(), &[0x0ff0]);
 }
 
@@ -47,7 +47,7 @@ fn count_ones() {
     let mut eval = Eval::start("61680 count_ones");
     eval.run();
 
-    assert_eq!(eval.effect, Some(Effect::OutOfTokens));
+    assert_eq!(eval.effect, Some(Effect::OutOfOperators));
     assert_eq!(eval.stack.to_u32_slice(), &[8]);
 }
 
@@ -60,7 +60,7 @@ fn leading_zeros() {
     let mut eval = Eval::start("252645135 leading_zeros");
     eval.run();
 
-    assert_eq!(eval.effect, Some(Effect::OutOfTokens));
+    assert_eq!(eval.effect, Some(Effect::OutOfOperators));
     assert_eq!(eval.stack.to_u32_slice(), &[4]);
 }
 
@@ -73,7 +73,7 @@ fn trailing_zeros() {
     let mut eval = Eval::start("-252645136 trailing_zeros");
     eval.run();
 
-    assert_eq!(eval.effect, Some(Effect::OutOfTokens));
+    assert_eq!(eval.effect, Some(Effect::OutOfOperators));
     assert_eq!(eval.stack.to_u32_slice(), &[4]);
 }
 
@@ -86,7 +86,7 @@ fn rotate_left() {
     let mut eval = Eval::start("-268435456 4 rotate_left");
     eval.run();
 
-    assert_eq!(eval.effect, Some(Effect::OutOfTokens));
+    assert_eq!(eval.effect, Some(Effect::OutOfOperators));
     assert_eq!(eval.stack.to_u32_slice(), &[0x0000000f]);
 }
 
@@ -99,7 +99,7 @@ fn rotate_right() {
     let mut eval = Eval::start("15 4 rotate_right");
     eval.run();
 
-    assert_eq!(eval.effect, Some(Effect::OutOfTokens));
+    assert_eq!(eval.effect, Some(Effect::OutOfOperators));
     assert_eq!(eval.stack.to_u32_slice(), &[0xf0000000]);
 }
 
@@ -114,7 +114,7 @@ fn shift_left() {
     let mut eval = Eval::start("-16777216 4 shift_left");
     eval.run();
 
-    assert_eq!(eval.effect, Some(Effect::OutOfTokens));
+    assert_eq!(eval.effect, Some(Effect::OutOfOperators));
     assert_eq!(eval.stack.to_u32_slice(), &[0xf0000000]);
 }
 
@@ -129,7 +129,7 @@ fn shift_right_unsigned() {
     let mut eval = Eval::start("255 4 shift_right");
     eval.run();
 
-    assert_eq!(eval.effect, Some(Effect::OutOfTokens));
+    assert_eq!(eval.effect, Some(Effect::OutOfOperators));
     assert_eq!(eval.stack.to_u32_slice(), &[0x0000000f]);
 }
 
@@ -143,6 +143,6 @@ fn shift_right_signed() {
     let mut eval = Eval::start("-268435201 4 shift_right");
     eval.run();
 
-    assert_eq!(eval.effect, Some(Effect::OutOfTokens));
+    assert_eq!(eval.effect, Some(Effect::OutOfOperators));
     assert_eq!(eval.stack.to_u32_slice(), &[0xff00000f]);
 }

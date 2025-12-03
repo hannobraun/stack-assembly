@@ -9,7 +9,7 @@ fn read() {
     eval.memory.values[1] = Value::from(3);
     eval.run();
 
-    assert_eq!(eval.effect, Some(Effect::OutOfTokens));
+    assert_eq!(eval.effect, Some(Effect::OutOfOperators));
     assert_eq!(eval.stack.to_u32_slice(), &[3, 3]);
 }
 
@@ -36,7 +36,7 @@ fn write() {
     let mut eval = Eval::start("1 3 write");
     eval.run();
 
-    assert_eq!(eval.effect, Some(Effect::OutOfTokens));
+    assert_eq!(eval.effect, Some(Effect::OutOfOperators));
     assert_eq!(eval.stack.to_u32_slice(), &[]);
     assert_eq!(eval.memory.values[1], Value::from(3));
 }

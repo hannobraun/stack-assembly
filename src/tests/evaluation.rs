@@ -7,7 +7,7 @@ fn empty_script_triggers_out_of_tokens() {
     let mut eval = Eval::start("");
     eval.run();
 
-    assert_eq!(eval.effect, Some(Effect::OutOfTokens));
+    assert_eq!(eval.effect, Some(Effect::OutOfOperators));
     assert_eq!(eval.stack.to_u32_slice(), &[]);
 }
 
