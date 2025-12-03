@@ -113,11 +113,11 @@ pub struct Eval {
     /// populates this field with the resulting operators.
     ///
     /// Various places refer to operators via their index in this field.
-    /// Specifically, the [`next_operator`] field and [`Label`]'s [`index`]
-    /// field to that..
+    /// Specifically, the [`next_operator`] field and [`Label`]'s [`operator`]
+    /// field to that.
     ///
     /// [`next_operator`]: #structfield.next_operator
-    /// [`index`]: struct.Label.html#structfield.index
+    /// [`operator`]: struct.Label.html#structfield.operator
     pub operators: Vec<Operator>,
 
     /// # The labels of the script we're evaluating
@@ -224,7 +224,7 @@ impl Eval {
             let operator = if let Some((name, "")) = token.rsplit_once(":") {
                 labels.push(Label {
                     name: name.to_string(),
-                    index: operators.len(),
+                    operator: operators.len(),
                 });
                 continue;
             } else if let Some(("", name)) = token.split_once("@") {
@@ -486,13 +486,13 @@ impl Eval {
                 let label =
                     self.labels.iter().find(|label| &label.name == name);
 
-                if let Some(&Label { ref name, index }) = label {
-                    let Ok(index) = index.try_into() else {
+                if let Some(&Label { ref name, operator }) = label {
+                    let Ok(operator) = operator.try_into() else {
                         panic!(
-                            "Operator index `{index}` of label `{name}` is out \
-                            of bounds. This can only happen on platforms where \
-                            the width of Rust's `usize` is wider than 32 bits, \
-                            with a script that consists of at least 2^32 \
+                            "Operator index `{operator}` of label `{name}` is \
+                            out of bounds. This can only happen on platforms \
+                            where the width of Rust's `usize` is wider than 32 \
+                            bits, with a script that consists of at least 2^32 \
                             operators.\n\
                             \n\
                             Scripts that large seem barely realistic in the \
@@ -502,9 +502,9 @@ impl Eval {
                             acceptable outcome."
                         );
                     };
-                    let index: u32 = index;
+                    let operator: u32 = operator;
 
-                    self.stack.push(index);
+                    self.stack.push(operator);
                 } else {
                     return Err(Effect::InvalidReference);
                 }
@@ -601,7 +601,7 @@ pub struct Label {
     /// This is an index into [`Eval`]'s [`operators`] field.
     ///
     /// [`operators`]: struct.Eval.html#structfield.operators
-    pub index: usize,
+    pub operator: usize,
 }
 
 /// # An effect
