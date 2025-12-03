@@ -1,6 +1,24 @@
 use std::fmt;
 
 /// # A unit of data
+///
+/// StackAssembly is an _untyped_ languages. All of its values, both on the
+/// [`Stack`] and in [`Memory`], are 32-bit values.
+///
+/// Depending on the situation, those values may be interpreted as unsigned or
+/// signed.
+///
+/// You can create an instance of `Value` through its `From` implementations.
+///
+/// ```
+/// use stack_assembly::Value;
+///
+/// Value::from(3i32);
+/// Value::from(5u32);
+/// ```
+///
+/// [`Stack`]: crate::Stack
+/// [`Memory`]: crate::Memory
 #[derive(Clone, Copy, Eq, PartialEq, bytemuck::Pod, bytemuck::Zeroable)]
 #[repr(transparent)]
 pub struct Value {
@@ -8,17 +26,27 @@ pub struct Value {
 }
 
 impl Value {
-    /// # Convert to an `i32`
+    /// # Convert the value to an `i32`
+    ///
+    /// Since all values are 32 bits wide, this is always possible. Interprets
+    /// the bits of the value as a signed (two's complement) integer.
     pub fn to_i32(self) -> i32 {
         i32::from_le_bytes(self.inner.to_le_bytes())
     }
 
-    /// # Convert to a `u32`
+    /// # Convert the value to a `u32`
+    ///
+    /// Since all values are 32 bits wide, this is always possible. Interprets
+    /// the bits of the value as an unsigned integer.
     pub fn to_u32(self) -> u32 {
         self.inner
     }
 
     /// # Convert to a `usize`
+    ///
+    /// This is usually possible, unless this library runs on a platform where
+    /// `usize` is less than 32 bits wide. That is considered a niche use case
+    /// that is not fully supported.
     ///
     /// ## Panics
     ///
