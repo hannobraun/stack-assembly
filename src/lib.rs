@@ -1,4 +1,78 @@
-//! # The interpreter for the StackAssembly programming language
+//! # Interpreter for the StackAssembly programming language
+//!
+//! StackAssembly is a minimalist, stack-based, assembly-like programming
+//! language.
+//!
+//! ```text
+//! 1 2 +
+//! ```
+//!
+//! It serves as a foundation for my personal research into programming language
+//! design and development. Even though I want it to be complete enough for real
+//! code too, that is not its main purpose. Don't expect that it will work for
+//! whatever project you might have in mind.
+//!
+//! Please check out the [repository on GitHub][repository] for more information
+//! about the language in general.
+//!
+//! [repository]: https://github.com/hannobraun/stack-assembly
+//!
+//! ## Usage
+//!
+//! This library contains the interpreter for StackAssembly. It is intentionally
+//! minimalist. You provide a **script**, and the library gives you an API to
+//! run it.
+//!
+//! ```
+//! use stack_assembly::Eval;
+//!
+//! let mut eval = Eval::start("1 2 +");
+//! eval.run();
+//!
+//! assert_eq!(eval.stack.to_u32_slice(), &[3]);
+//! ```
+//!
+//! [`Eval`], as shown here, is the main entry point.
+//!
+//! ### Hosts
+//!
+//! [`Eval`] runs scripts in a sandboxed environment. It does not provide them
+//! access to the system it runs on, meaning StackAssembly scripts cannot do
+//! much by themselves.
+//!
+//! A **host** is Rust code that uses this library to run a StackAssembly
+//! script. The host can choose to provide additional capabilities to the script
+//! it runs.
+//!
+//! ```
+//! use stack_assembly::{Effect, Eval};
+//!
+//! let script = "
+//!     3 @print jump
+//!
+//!     print:
+//!         yield
+//! ";
+//!
+//! let mut eval = Eval::start(script);
+//! eval.run();
+//!
+//! assert_eq!(eval.effect, Some(Effect::Yield));
+//! let Ok(value) = eval.stack.pop() else {
+//!     unreachable!("We know that the script pushes a value when yielding.");
+//! };
+//!
+//! // The script `yield`s at a label called `print`, so I guess we're expected
+//! // to print the value.
+//! println!("{value:?}");
+//! ```
+//!
+//! This host prints the value currently at the top of the stack, when the
+//! script triggers the "yield" effect. This is just a simple example.
+//!
+//! A more full-featured host would provide additional services, and could
+//! determine which service the script means to request by inspecting which
+//! other values it put on the stack, or into memory.
 
 #![warn(missing_debug_implementations)]
 #![warn(missing_docs)]
