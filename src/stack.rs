@@ -101,18 +101,6 @@ impl Stack {
     }
 }
 
-/// # An invalid index was used to access the stack
-///
-/// See [`Stack::get`] and [`Stack::remove`].
-#[derive(Debug)]
-pub struct InvalidStackIndex;
-
-impl From<InvalidStackIndex> for Effect {
-    fn from(InvalidStackIndex: InvalidStackIndex) -> Self {
-        Effect::InvalidStackIndex
-    }
-}
-
 /// # A stack underflow error
 ///
 /// See [`Stack::pop`].
@@ -122,5 +110,17 @@ pub struct StackUnderflow;
 impl From<StackUnderflow> for Effect {
     fn from(StackUnderflow: StackUnderflow) -> Self {
         Effect::StackUnderflow
+    }
+}
+
+/// # An invalid index was used to access the stack
+///
+/// See [`Stack::get`] and [`Stack::remove`].
+#[derive(Debug)]
+pub struct InvalidStackIndex;
+
+impl From<InvalidStackIndex> for Effect {
+    fn from(InvalidStackIndex: InvalidStackIndex) -> Self {
+        Effect::InvalidStackIndex
     }
 }
