@@ -486,17 +486,13 @@ impl Eval {
                 let label =
                     self.labels.iter().find(|label| &label.name == name);
 
-                if let Some(&Label {
-                    ref name,
-                    operator: index,
-                }) = label
-                {
-                    let Ok(index) = index.try_into() else {
+                if let Some(&Label { ref name, operator }) = label {
+                    let Ok(index) = operator.try_into() else {
                         panic!(
-                            "Operator index `{index}` of label `{name}` is out \
-                            of bounds. This can only happen on platforms where \
-                            the width of Rust's `usize` is wider than 32 bits, \
-                            with a script that consists of at least 2^32 \
+                            "Operator index `{operator}` of label `{name}` is \
+                            out of bounds. This can only happen on platforms \
+                            where the width of Rust's `usize` is wider than 32 \
+                            bits, with a script that consists of at least 2^32 \
                             operators.\n\
                             \n\
                             Scripts that large seem barely realistic in the \
