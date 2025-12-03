@@ -8,7 +8,7 @@ fn evaluate_positive_integers() {
     let mut eval = Eval::start("3 5");
     eval.run();
 
-    assert_eq!(eval.effect, Some(Effect::OutOfTokens));
+    assert_eq!(eval.effect, Some(Effect::OutOfOperators));
     assert_eq!(eval.stack.to_u32_slice(), &[3, 5]);
 }
 
@@ -21,7 +21,7 @@ fn evaluate_negative_integer() {
     let mut eval = Eval::start("-1");
     eval.run();
 
-    assert_eq!(eval.effect, Some(Effect::OutOfTokens));
+    assert_eq!(eval.effect, Some(Effect::OutOfOperators));
     assert_eq!(eval.stack.to_u32_slice(), &[4294967295]);
 }
 

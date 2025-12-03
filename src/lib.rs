@@ -296,7 +296,7 @@ impl Eval {
 
     fn evaluate_next_operator(&mut self) -> Result<(), Effect> {
         let Some(operator) = self.operators.get(self.next_operator) else {
-            return Err(Effect::OutOfTokens);
+            return Err(Effect::OutOfOperators);
         };
 
         match operator {
@@ -653,7 +653,7 @@ pub enum Effect {
     /// Triggers when evaluation reaches the end of the script, where no more
     /// operators are available to evaluate. This signals the regular end of the
     /// evaluation.
-    OutOfTokens,
+    OutOfOperators,
 
     /// # Tried popping a value from an empty stack
     ///

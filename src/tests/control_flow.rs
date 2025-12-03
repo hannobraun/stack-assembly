@@ -29,7 +29,7 @@ fn jump_if_behaves_like_jump_on_nonzero_condition() {
     let mut eval = Eval::start("1 @target jump_if 1 target: 2");
     eval.run();
 
-    assert_eq!(eval.effect, Some(Effect::OutOfTokens));
+    assert_eq!(eval.effect, Some(Effect::OutOfOperators));
     assert_eq!(eval.stack.to_u32_slice(), &[2]);
 }
 
@@ -42,7 +42,7 @@ fn jump_if_does_nothing_on_zero_condition() {
     let mut eval = Eval::start("0 @target jump_if 1 target: 2");
     eval.run();
 
-    assert_eq!(eval.effect, Some(Effect::OutOfTokens));
+    assert_eq!(eval.effect, Some(Effect::OutOfOperators));
     assert_eq!(eval.stack.to_u32_slice(), &[1, 2]);
 }
 
