@@ -1,7 +1,7 @@
+use std::fmt;
+
 /// # A unit of data
-#[derive(
-    Clone, Copy, Debug, Eq, PartialEq, bytemuck::Pod, bytemuck::Zeroable,
-)]
+#[derive(Clone, Copy, Eq, PartialEq, bytemuck::Pod, bytemuck::Zeroable)]
 #[repr(transparent)]
 pub struct Value {
     inner: u32,
@@ -55,5 +55,13 @@ impl From<i32> for Value {
 impl From<u32> for Value {
     fn from(inner: u32) -> Self {
         Self { inner }
+    }
+}
+
+impl fmt::Debug for Value {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        // Let's bypass this type and format the inner value. This is just a
+        // wrapper anyway, and showing it in debug output is unnecessary noise.
+        self.inner.fmt(f)
     }
 }
