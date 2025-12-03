@@ -6,7 +6,7 @@ fn read() {
     // stack. It does not modify the memory.
 
     let mut eval = Eval::start("1 read 1 read");
-    eval.memory[1] = Value::from(3);
+    eval.memory.values[1] = Value::from(3);
     eval.run();
 
     assert_eq!(eval.effect, Some(Effect::OutOfTokens));
@@ -20,7 +20,7 @@ fn read_triggers_effect_on_out_of_bounds_access() {
 
     let mut eval = Eval::start("1025 read");
     assert!(
-        eval.memory.len() < 1025,
+        eval.memory.values.len() < 1025,
         "Test can't work, because it makes wrong assumption about memory size.",
     );
 
@@ -38,7 +38,7 @@ fn write() {
 
     assert_eq!(eval.effect, Some(Effect::OutOfTokens));
     assert_eq!(eval.stack.to_u32_slice(), &[]);
-    assert_eq!(eval.memory[1], Value::from(3));
+    assert_eq!(eval.memory.values[1], Value::from(3));
 }
 
 #[test]
@@ -48,7 +48,7 @@ fn write_triggers_effect_on_out_of_bounds_access() {
 
     let mut eval = Eval::start("1025 3 write");
     assert!(
-        eval.memory.len() < 1025,
+        eval.memory.values.len() < 1025,
         "Test can't work, because it makes wrong assumption about memory size.",
     );
 

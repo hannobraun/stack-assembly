@@ -3,6 +3,7 @@
 #![warn(missing_debug_implementations)]
 #![warn(missing_docs)]
 
+mod memory;
 mod stack;
 mod value;
 
@@ -10,6 +11,7 @@ mod value;
 mod tests;
 
 pub use self::{
+    memory::Memory,
     stack::{InvalidStackIndex, Stack, StackUnderflow},
     value::Value,
 };
@@ -33,7 +35,7 @@ pub struct Eval {
     pub stack: Stack,
 
     /// # The memory
-    pub memory: Vec<Value>,
+    pub memory: Memory,
 }
 
 impl Eval {
@@ -74,7 +76,9 @@ impl Eval {
             next_operator: 0,
             effect: None,
             stack: Stack { values: Vec::new() },
-            memory: vec![Value::from(0); 1024],
+            memory: Memory {
+                values: vec![Value::from(0); 1024],
+            },
         }
     }
 
@@ -255,7 +259,8 @@ impl Eval {
                 } else if identifier == "read" {
                     let address = self.stack.pop()?.to_usize();
 
-                    let Some(value) = self.memory.get(address).copied() else {
+                    let Some(value) = self.memory.values.get(address).copied()
+                    else {
                         return Err(Effect::InvalidAddress);
                     };
 
@@ -264,8 +269,8 @@ impl Eval {
                     let value = self.stack.pop()?;
                     let address = self.stack.pop()?.to_usize();
 
-                    if address < self.memory.len() {
-                        self.memory[address] = value;
+                    if address < self.memory.values.len() {
+                        self.memory.values[address] = value;
                     } else {
                         return Err(Effect::InvalidAddress);
                     }
