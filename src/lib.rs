@@ -595,32 +595,70 @@ pub struct Label {
 }
 
 /// # An effect
+///
+/// Evaluating an [`Operator`] can trigger an effect. Triggered effects are
+/// stored in [`Eval`]'s [`effect`] field. Please refer to the documentation of
+/// that for more information on effects.
+///
+/// [`effect`]: struct.Eval.html#structfield.effect
 #[derive(Debug, Eq, PartialEq)]
 pub enum Effect {
     /// # Tried to divide by zero
+    ///
+    /// Can trigger when evaluating the `/` operator, if its second input is
+    /// `0`.
     DivisionByZero,
 
     /// # Evaluating an operation resulted in integer overflow
+    ///
+    /// Can only trigger when evaluating the `/` operator, if its first input is
+    /// the lowest signed (two's complement) 32-bit integer, and its second
+    /// input is `-1`.
+    ///
+    /// All other arithmetic operators wrap on overflow and don't trigger this
+    /// effect.
     IntegerOverflow,
 
     /// # A memory address is out of bounds
+    ///
+    /// Can trigger when evaluating the `read` or `write` operators, if their
+    /// _address_ input (when interpreted as an unsigned 32-bit integer) does
+    /// not refer to an address that is within the bounds of the memory.
     InvalidAddress,
 
     /// # Evaluated a reference that is not paired with a matching label
+    ///
+    /// Can trigger when evaluating a reference. See [`Operator::Reference`] for
+    /// more information on references.
     InvalidReference,
 
     /// # An index that supposedly refers to a value on the stack doesn't
+    ///
+    /// Can trigger when evaluating the `copy` or `drop` operators, if their
+    /// _index_ input is too large to refer to a value on the stack.
     InvalidStackIndex,
 
-    /// # The evaluation ran out of tokens to evaluate
+    /// # The evaluation ran out of operators to evaluate
+    ///
+    /// Triggers when evaluation reaches the end of the script, where no more
+    /// operators are available to evaluate. This signals the regular end of the
+    /// evaluation.
     OutOfTokens,
 
     /// # Tried popping a value from an empty stack
+    ///
+    /// Can trigger when evaluating any operator that has inputs, if not enough
+    /// values are on the stack to satisfy these inputs.
     StackUnderflow,
 
     /// # Evaluated an identifier that the language does not recognize
+    ///
+    /// Can trigger when evaluating an identifier. See [`Operator::Identifier`]
+    /// for more information on identifiers.
     UnknownIdentifier,
 
-    /// # The evaluating script has yielded control to the host
+    /// # The evaluating script yields control to the host
+    ///
+    /// Triggers when evaluating the `yield` operator.
     Yield,
 }
