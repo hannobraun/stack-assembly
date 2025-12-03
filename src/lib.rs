@@ -4,11 +4,15 @@
 #![warn(missing_docs)]
 
 mod stack;
+mod value;
 
 #[cfg(test)]
 mod tests;
 
-pub use self::stack::{InvalidStackIndex, Stack, StackUnderflow, Value};
+pub use self::{
+    stack::{InvalidStackIndex, Stack, StackUnderflow},
+    value::Value,
+};
 
 /// # The ongoing evaluation of a script
 #[derive(Debug)]
