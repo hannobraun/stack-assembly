@@ -20,6 +20,10 @@ Currently, [the initial design document][design] is the best source of documenta
 
 [design]: https://www.hannobraun.com/designing-stack-assembly/
 
+The StackAssembly interpreter is packaged as a library. That library's documentation documents the API, but also provides some information on the language. Right now, you must build the documentation locally to access it. With a working [Rust] setup, you can do so by running `cargo doc --open`.
+
+[Rust]: https://rust-lang.org/
+
 ## License
 
 This project is open source, licensed under the terms of the [Zero-Clause BSD License][0BSD] (0BSD, for short). This basically means you can do anything with the code, without restrictions, but you can't hold the authors liable for any problems.
