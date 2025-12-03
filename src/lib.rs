@@ -114,7 +114,7 @@ pub struct Eval {
     ///
     /// Various places refer to operators via their index in this field.
     /// Specifically, the [`next_operator`] field and [`Label`]'s [`index`]
-    /// field to that..
+    /// field to that.
     ///
     /// [`next_operator`]: #structfield.next_operator
     /// [`index`]: struct.Label.html#structfield.index
