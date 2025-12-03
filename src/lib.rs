@@ -156,6 +156,13 @@ impl Eval {
         }
     }
 
+    /// # Advance the evaluation until it triggers an effect or completes
+    pub fn run(&mut self) {
+        while self.effect.is_none() {
+            self.step();
+        }
+    }
+
     /// # Advance the evaluation by one step
     pub fn step(&mut self) {
         if self.effect.is_some() {
@@ -387,13 +394,6 @@ impl Eval {
         self.next_operator += 1;
 
         Ok(())
-    }
-
-    /// # Advance the evaluation until it triggers an effect or completes
-    pub fn run(&mut self) {
-        while self.effect.is_none() {
-            self.step();
-        }
     }
 }
 
