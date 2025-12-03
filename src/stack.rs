@@ -1,6 +1,20 @@
 use crate::{Effect, Value};
 
-/// # The stack
+/// # The operand stack
+///
+/// StackAssembly's evaluation model is based on an implicit stack on which
+/// operands are stored. An operators output is pushed to that stack, and
+/// any of its inputs are popped from there.
+///
+/// A host may access the stack to communicate with a script that has triggered
+/// [`Effect::Yield`]. A host may also access the stack under any other
+/// circumstances. This is considered non-standard and should be avoided under
+/// most circumstances, as it interferes with the evaluation of the script.
+///
+/// The stack for a given evaluation is stored in [`Eval`]'s [`stack`] field.
+///
+/// [`Eval`]: crate::Eval
+/// [`stack`]: struct.Eval.html#structfield.stack
 #[derive(Debug)]
 pub struct Stack {
     /// # The values on the stack
@@ -8,12 +22,15 @@ pub struct Stack {
 }
 
 impl Stack {
-    /// # Push a value to the stack
+    /// # Push a value to top of the stack
     pub fn push(&mut self, value: impl Into<Value>) {
         self.values.push(value.into());
     }
 
     /// # Pop a value from the stack
+    ///
+    /// Return [`StackUnderflow`], if no value is available on the stack, which
+    /// provides an automatic conversion to [`Effect`].
     pub fn pop(&mut self) -> Result<Value, StackUnderflow> {
         self.values.pop().ok_or(StackUnderflow)
     }
@@ -22,6 +39,10 @@ impl Stack {
     ///
     /// Stack indices start at the top, meaning `0` refers to the topmost value
     /// on the stack.
+    ///
+    /// Return [`InvalidStackIndex`], if the provided index does not refer to a
+    /// value on the stack, which provides an automatic conversion to
+    /// [`Effect`].
     pub fn get(
         &self,
         index_from_top: usize,
@@ -44,6 +65,10 @@ impl Stack {
     ///
     /// Stack indices start at the top, meaning `0` refers to the topmost value
     /// on the stack.
+    ///
+    /// Return [`InvalidStackIndex`], if the provided index does not refer to a
+    /// value on the stack, which provides an automatic conversion to
+    /// [`Effect`].
     pub fn remove(
         &mut self,
         index_from_top: usize,
