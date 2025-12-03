@@ -2,21 +2,27 @@
 
 ## About
 
-A minimalist, stack-based, assembly-like programming language.
+StackAssembly is a minimalist, stack-based, assembly-like programming language.
 
 ```
 1 2 +
 ```
 
-Check out [the design document][design] to learn more!
-
-[design]: https://www.hannobraun.com/designing-stack-assembly/
-
-The purpose of StackAssembly is to serve as a foundation for my personal research into programming language design and development. Even though I want it to be complete enough for real code too, that is not its main purpose. Don't expect that it'll work for whatever project you might have in mind.
+It serves as a foundation for my personal research into programming language design and development. Even though I want it to be complete enough for real code too, that is not its main purpose. Don't expect that it will work for whatever project you might have in mind.
 
 ## Status
 
 I'm currently implementing the initial design and have not released a first version yet.
+
+## Documentation
+
+Currently, [the initial design document][design] is the best source of documentation that is available for the language overall.
+
+[design]: https://www.hannobraun.com/designing-stack-assembly/
+
+The StackAssembly interpreter is packaged as a library. That library's documentation documents the API, but also provides some information on the language. Right now, you must build the documentation locally to access it. With a working [Rust] setup, you can do so by running `cargo doc --open`.
+
+[Rust]: https://rust-lang.org/
 
 ## License
 
