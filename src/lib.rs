@@ -487,7 +487,7 @@ impl Eval {
                     self.labels.iter().find(|label| &label.name == name);
 
                 if let Some(&Label { ref name, operator }) = label {
-                    let Ok(index) = operator.try_into() else {
+                    let Ok(operator) = operator.try_into() else {
                         panic!(
                             "Operator index `{operator}` of label `{name}` is \
                             out of bounds. This can only happen on platforms \
@@ -502,9 +502,9 @@ impl Eval {
                             acceptable outcome."
                         );
                     };
-                    let index: u32 = index;
+                    let operator: u32 = operator;
 
-                    self.stack.push(index);
+                    self.stack.push(operator);
                 } else {
                     return Err(Effect::InvalidReference);
                 }
