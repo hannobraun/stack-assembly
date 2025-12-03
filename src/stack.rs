@@ -51,10 +51,10 @@ impl Stack {
 
         let Some(value) = self.values.get(index_from_bottom).copied() else {
             unreachable!(
-                "We computed the index from the top, based on the \
-                number of values on the stack. Since that did not \
-                result in an integer overflow, it's not possible \
-                that we ended up with an out-of-range index."
+                "We computed the index from the top, based on the number of \
+                values on the stack. Since that did not result in an integer \
+                overflow, it's not possible that we ended up with an \
+                out-of-range index."
             );
         };
 
