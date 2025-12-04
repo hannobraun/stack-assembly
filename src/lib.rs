@@ -672,11 +672,11 @@ pub struct Label {
     pub operator: usize,
 }
 
-/// # An effect
+/// # An event triggered by scripts, to signal a specific condition
 ///
 /// Evaluating an [`Operator`] can trigger an effect. Triggered effects are
 /// stored in [`Eval`]'s [`effect`] field. Please refer to the documentation of
-/// that for more information on effects.
+/// that field, for more information on effects and how to handle them.
 ///
 /// [`effect`]: struct.Eval.html#structfield.effect
 #[derive(Debug, Eq, PartialEq)]
@@ -687,7 +687,7 @@ pub enum Effect {
     /// `0`.
     DivisionByZero,
 
-    /// # Evaluating an operation resulted in integer overflow
+    /// # Operation resulted in integer overflow
     ///
     /// Can only trigger when evaluating the `/` operator, if its first input is
     /// the lowest signed (two's complement) 32-bit integer, and its second
@@ -716,17 +716,16 @@ pub enum Effect {
     /// _index_ input is too large to refer to a value on the stack.
     InvalidStackIndex,
 
-    /// # The evaluation ran out of operators to evaluate
+    /// # Ran out of operators to evaluate
     ///
     /// Triggers when evaluation reaches the end of the script, where no more
-    /// operators are available to evaluate. This signals the regular end of the
-    /// evaluation.
+    /// operators are available. This signals the regular end of the evaluation.
     OutOfOperators,
 
     /// # Tried popping a value from an empty stack
     ///
-    /// Can trigger when evaluating any operator that has inputs, if not enough
-    /// values are on the stack to satisfy these inputs.
+    /// Can trigger when evaluating any operator that has more inputs than the
+    /// number of values currently on the stack.
     StackUnderflow,
 
     /// # Evaluated an identifier that the language does not recognize
