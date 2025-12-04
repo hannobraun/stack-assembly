@@ -1,4 +1,4 @@
-//! # Interpreter for the StackAssembly programming language
+//! # StackAssembly
 //!
 //! StackAssembly is a minimalist, stack-based, assembly-like programming
 //! language.
@@ -21,26 +21,28 @@
 //!
 //! This library contains the interpreter for StackAssembly. It is intentionally
 //! minimalist. You provide a **script**, and the library gives you an API to
-//! run it.
+//! evaluate it.
 //!
 //! ```
 //! use stack_assembly::Eval;
 //!
-//! let mut eval = Eval::start("1 2 +");
+//! let script = "1 2 +";
+//!
+//! let mut eval = Eval::start(script);
 //! eval.run();
 //!
 //! assert_eq!(eval.stack.to_u32_slice(), &[3]);
 //! ```
 //!
-//! [`Eval`], as shown here, is the main entry point.
+//! [`Eval`] is the main entry point to the library's API.
 //!
 //! ### Hosts
 //!
 //! [`Eval`] runs scripts in a sandboxed environment. It does not provide them
-//! access to the system it runs on, meaning StackAssembly scripts cannot do
-//! much by themselves.
+//! access to the system it itself runs on, meaning StackAssembly scripts cannot
+//! do much by themselves.
 //!
-//! A **host** is Rust code that uses this library to run a StackAssembly
+//! A **host** is Rust code that uses this library to evaluate a StackAssembly
 //! script. The host can choose to provide additional capabilities to the script
 //! it runs.
 //!
@@ -59,20 +61,21 @@
 //!
 //! assert_eq!(eval.effect, Some(Effect::Yield));
 //! let Ok(value) = eval.stack.pop() else {
-//!     unreachable!("We know that the script pushes a value when yielding.");
+//!     unreachable!("We know that the script pushes a value before yielding.");
 //! };
 //!
-//! // The script `yield`s at a label called `print`, so I guess we're expected
+//! // The script calls `yield` at a label named `print`. I guess it expects us
 //! // to print the value.
 //! println!("{value:?}");
 //! ```
 //!
-//! This host prints the value currently at the top of the stack, when the
-//! script triggers the "yield" effect. This is just a simple example.
+//! When the script triggers the "yield" effect, this host prints the value
+//! that's currently on top of the stack.
 //!
-//! A more full-featured host would provide additional services, and could
-//! determine which service the script means to request by inspecting which
-//! other values it put on the stack, or into memory.
+//! This is just a simple example. A more full-featured host would provide
+//! additional services, and could determine which service the script means to
+//! request by inspecting which other values it put on the stack, or into
+//! memory.
 
 #![warn(missing_debug_implementations)]
 #![warn(missing_docs)]
