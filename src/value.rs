@@ -3,10 +3,8 @@ use std::fmt;
 /// # A unit of data
 ///
 /// StackAssembly is an _untyped_ languages. All of its values, both on the
-/// [`Stack`] and in [`Memory`], are 32-bit values.
-///
-/// Depending on the situation, those values may be interpreted as unsigned or
-/// signed.
+/// [`Stack`] and in [`Memory`], are 32 bits wide. Depending on the situation,
+/// they may be interpreted as unsigned or signed.
 ///
 /// You can create an instance of `Value` through its `From` implementations.
 ///
@@ -46,12 +44,11 @@ impl Value {
     ///
     /// This is usually possible, unless this library runs on a platform where
     /// `usize` is less than 32 bits wide. That is considered a niche use case
-    /// that is not fully supported.
+    /// which is not fully supported.
     ///
     /// ## Panics
     ///
-    /// Panics, if `usize` can not represent this value. This can only happen on
-    /// platforms where `usize` is less than 32 bits wide.
+    /// Panics, if `usize` can not represent this value.
     pub fn to_usize(self) -> usize {
         let Ok(index) = self.inner.try_into() else {
             panic!(

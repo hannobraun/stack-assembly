@@ -7,14 +7,10 @@ use crate::Value;
 /// The memory can be accessed from a script through the `read` and `write`
 /// operators.
 ///
-/// A host may access the memory to communicate with a script that has triggered
-/// [`Effect::Yield`]. A host may also access the memory under any other
-/// circumstances. This is considered non-standard and should be avoided under
-/// most circumstances, as it interferes with the evaluation of the script.
+/// Aside from this, the stack is an important communication channel between
+/// script and host. Please refer to [`Eval`]'s [`memory`] field for more
+/// information on that.
 ///
-/// The memory for a given evaluation is stored in [`Eval`]'s [`memory`] field.
-///
-/// [`Effect::Yield`]: crate::Effect::Yield
 /// [`Eval`]: crate::Eval
 /// [`memory`]: struct.Eval.html#structfield.memory
 pub struct Memory {
