@@ -95,82 +95,106 @@ pub use self::{
 
 /// # The ongoing evaluation of a script
 ///
-/// This is the main entry point into this library's API. You can provide a
-/// script to [`Eval::start`], then run it with [`Eval::run`] or [`Eval::step`].
+/// This is the main entry point into this library's API. To evaluate a script,
+/// you can pass it to [`Eval::start`], then use [`Eval::run`] or [`Eval::step`]
+/// to advance the evaluation.
 ///
 /// ## Example
 ///
 /// ```
 /// use stack_assembly::Eval;
 ///
-/// let mut eval = Eval::start("1 2 +");
+/// let script = "1 2 +";
+///
+/// let mut eval = Eval::start(script);
 /// eval.run();
 ///
 /// assert_eq!(eval.stack.to_u32_slice(), &[3]);
 /// ```
 #[derive(Debug)]
 pub struct Eval {
-    /// # The operators of the script we're evaluating
+    /// # The operators of the evaluating script
     ///
-    /// When you provide a script to [`Eval::start`], it compiles that and
-    /// populates this field with the resulting operators.
+    /// [`Eval::start`] compiles the script you provide and populates this
+    /// field with the resulting operators.
     ///
-    /// Various places refer to operators via their index in this field.
-    /// Specifically, the [`next_operator`] field and [`Label`]'s [`operator`]
-    /// field to that.
+    /// ## References Into This Field
+    ///
+    /// Various locations in the code, like the [`next_operator`] field and
+    /// [`Label`]'s [`operator`] field, refer to operators in this field by
+    /// their index. Making a change to this field that invalidates these
+    /// indices, is likely to be a bug.
+    ///
+    /// The host has unrestricted access to this field, and it is its
+    /// responsibility to make sure that it doesn't break anything.
     ///
     /// [`next_operator`]: #structfield.next_operator
     /// [`operator`]: struct.Label.html#structfield.operator
     pub operators: Vec<Operator>,
 
-    /// # The labels of the script we're evaluating
+    /// # The labels of the evaluating script
     ///
-    /// When you provide a script to [`Eval::start`], it compiles that and
-    /// populates this field with all the labels it finds.
+    /// [`Eval::start`] compiles the script you provide and populates this
+    /// field with the labels it finds.
+    ///
+    /// The host has unrestricted access to this field, and it is its
+    /// responsibility to make sure that it doesn't break anything.
     pub labels: Vec<Label>,
 
     /// # The index of the next operator to evaluate
     ///
     /// This is an index into the [`operators`] field. On the next call to
-    /// [`Eval::run`] or [`Eval::step`], evaluation will continue at the
-    /// operator identified by this index.
+    /// [`Eval::run`] or [`Eval::step`], evaluation continues with the operator
+    /// identified by this index.
     ///
-    /// When [handling an effect](#handling-effects), a host may need to
-    /// increment this field for evaluation to succeed.
+    /// When [handling an effect](#handling-effects), the host must likely
+    /// increment this field, to allow evaluation to proceed after clearing the
+    /// effect.
     ///
     /// [`operators`]: #structfield.operators
     pub next_operator: usize,
 
     /// # The active effect, if one has triggered
     ///
-    /// [`Eval::start`] always initializes this field to `None`.
+    /// Effects moderate the communication between script and host. The effect
+    /// itself only relays _which_ effect has triggered, but that may signal to
+    /// the host that a different communication channel (like [`stack`] or
+    /// [`memory`]) is ready to be accessed.
     ///
-    /// [`Eval::run`] and [`Eval::step`] may store an effect here, if the
-    /// script has triggered one. If that is the case, you must handle the
-    /// effect, if you want evaluation to continue.
+    /// [`Eval::start`] initializes this field to `None`. [`Eval::run`] and
+    /// [`Eval::step`] may store an effect here, if the script triggers one. If
+    /// that is the case, the host may handle the effect, to allow evaluation
+    /// to continue.
     ///
     /// ## Handling Effects
     ///
-    /// A host may handle effects in any way it wishes. However, since most
-    /// effects signal irrecoverable error conditions, a well-behaving host
-    /// would only effects that don't, ending evaluation and reporting an error
-    /// otherwise.
+    /// The host may handle effects however it wishes. But since most effects
+    /// signal error conditions, that from the perspective of the script are
+    /// irrecoverable, a well-behaving host must be careful not handle effects
+    /// in a way that make reasoning about the script's behavior difficult.
     ///
-    /// If the host decides to handle an effect, it must set this field to
-    /// `None`, before evaluation can continue. Most likely, it would also need
-    /// to increment the [`next_operator`] by one. Otherwise, the same operator
-    /// would evaluate again, presumably triggering the same effect again.
+    /// For most effects, abandon the evaluation and reporting an error in the
+    /// appropriate manner is the only reasonable way to handle them. The
+    /// exception to that is [`Effect::Yield`], which does not signal an error
+    /// condition. A script would expect to continue afterwards.
     ///
-    /// However, since the host has full control over the script, it may also
-    /// decide to _not_ update [`next_operator`] and remove the conditions that
-    /// caused the effect instead. This should be considered non-standard, and
-    /// limited to specific and experimental hosts only.
+    /// To make that possible, the host must do two things:
+    ///
+    /// - Clear the effect by setting this field to `None`.
+    /// - Increment the [`next_operator`] field, or the same operator would
+    ///   presumably trigger the same effect again.
+    ///
+    /// None the less, the host has full control over what happens, and a
+    /// non-standard host may choose to handle effects in a non-standard
+    /// manner.
     ///
     /// ### Example
     ///
     /// ```
     /// use stack_assembly::{Effect, Eval};
     ///
+    /// // This script increments a number in a loop, yielding control to the
+    /// // host every time it did so.
     /// let script = "
     ///     0
     ///
@@ -182,34 +206,68 @@ pub struct Eval {
     ///
     /// let mut eval = Eval::start(script);
     ///
+    /// // When running the script for the first time, we expect that it has
+    /// // incremented the number once before yielding.
     /// eval.run();
     /// assert_eq!(eval.effect, Some(Effect::Yield));
     /// assert_eq!(eval.stack.to_u32_slice(), &[1]);
     ///
-    /// // We want the script to continue executing normally after `yield`. So
-    /// // let's clear the effect and move on to the next operator.
+    /// // To allow the script to continue, we must clear the effect and advance
+    /// // to the next operator. Otherwise, `yield` would execute again
+    /// // immediately, and the evaluation would make no progress.
     /// eval.effect = None;
     /// eval.next_operator += 1;
     ///
+    /// // Since we handled the effect correctly, we can now assume that the
+    /// // script has incremented the number a second time, before yielding
+    /// // again.
     /// eval.run();
     /// assert_eq!(eval.effect, Some(Effect::Yield));
     /// assert_eq!(eval.stack.to_u32_slice(), &[2]);
     /// ```
     ///
     /// [`next_operator`]: #structfield.next_operator
+    /// [`stack`]: #structfield.stack
+    /// [`memory`]: #structfield.memory
     pub effect: Option<Effect>,
 
     /// # The operand stack
     ///
-    /// StackAssembly's evaluation model is based on an implicit stack on which
-    /// operands are stored. An operators output is pushed to that stack, and
+    /// StackAssembly's evaluation model is based on an implicit stack which
+    /// stores all operands. An operator's output is pushed to that stack, and
     /// any of its inputs are popped from there.
+    ///
+    /// Alongside [`memory`], this field is the primary channel for
+    /// communication between script and host.
+    ///
+    /// Most hosts should restrict modifications to this field to when the
+    /// script triggered [`Effect::Yield`], and then only do so in a
+    /// well-reasoned and documented manner. Anything else might make reasoning
+    /// about the script's behavior very difficult.
+    ///
+    /// None the less, the host has full access to this field, as to not
+    /// restrict any experimental or non-standard use cases.
+    ///
+    /// [`memory`]: #structfield.memory
     pub stack: Stack,
 
     /// # The memory
     ///
     /// StackAssembly provides a linear memory that is freely addressable per
     /// word.
+    ///
+    /// Alongside [`stack`], this field is the primary channel for
+    /// communication between script and host.
+    ///
+    /// Most hosts should restrict modifications to this field to when the
+    /// script triggered [`Effect::Yield`], and then only do so in a
+    /// well-reasoned and documented manner. Anything else might make reasoning
+    /// about the script's behavior very difficult.
+    ///
+    /// None the less, the host has full access to this field, as to not
+    /// restrict any experimental or non-standard use cases.
+    ///
+    /// [`stack`]: #structfield.stack
     pub memory: Memory,
 }
 
@@ -217,8 +275,8 @@ impl Eval {
     /// # Start evaluating the provided script
     ///
     /// Compile the provided script and return an `Eval` instance that is ready
-    /// for evaluation. To actually evaluate any of its operators, you still
-    /// need to explicitly call [`Eval::run`] or [`Eval::step`].
+    /// for evaluation. To actually evaluate any operators, you must call
+    /// [`Eval::run`] or [`Eval::step`].
     pub fn start(script: &str) -> Self {
         let mut operators = Vec::new();
         let mut labels = Vec::new();
@@ -263,7 +321,7 @@ impl Eval {
     /// return immediately. Otherwise, keep evaluating operators (starting at
     /// the one identified by [`next_operator`]) until one triggers an effect.
     ///
-    /// If you need more control over the evaluation, please consider using
+    /// If you need more control over the evaluation, consider using
     /// [`Eval::step`] instead.
     ///
     /// [`effect`]: #structfield.effect
@@ -282,8 +340,8 @@ impl Eval {
     /// [`effect`].
     ///
     /// This function may be used for advancing the evaluation of the script in
-    /// a controlled manner. If you just want to keep evaluating up until the
-    /// next effect, please consider [`Eval::run`].
+    /// a controlled manner. If you just want to keep evaluating until the next
+    /// effect, consider using [`Eval::run`] instead.
     ///
     /// [`effect`]: #structfield.effect
     /// [`next_operator`]: #structfield.next_operator
