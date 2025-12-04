@@ -578,14 +578,14 @@ impl Eval {
     }
 }
 
-/// # An operator, the executable unit of a StackAssembly script
+/// # A token present at runtime, that is the unit of evaluation
 ///
 /// StackAssembly scripts consist of _tokens_. Operators are the type of token
 /// that have a representation at runtime and can be evaluated. This happens
 /// inside of [`Eval::run`] or [`Eval::step`].
 ///
 /// Operators are stored in [`Eval`]'s [`operators`] field. Evaluating an
-/// operator may affect any of the fields of [`Eval`].
+/// operator may affect any of [`Eval`]'s fields.
 ///
 /// The other type of tokens, beside operators, are [`Label`]s.
 ///
@@ -602,18 +602,20 @@ pub enum Operator {
     /// the fields of [`Eval`] in whatever specific way this known identifier is
     /// supposed to.
     ///
-    /// If an operator is unknown, it will trigger
+    /// If an operator is unknown, evaluating it triggers
     /// [`Effect::UnknownIdentifier`].
     Identifier {
         /// # The value of the identifier
+        ///
+        /// This is how the identifier shows up in the source code.
         value: String,
     },
 
     /// # The operator is an integer
     ///
-    /// A token will be parsed as an integer, if it consists of base-10 digits,
-    /// and the resulting number can be represented as a signed (two's
-    /// complement) 32-bit integer.
+    /// A token parses as an integer, if it consists of base-10 digits, and the
+    /// resulting number falls into the range of a signed (two's complement)
+    /// 32-bit integer.
     ///
     /// Perhaps counterintuitively, this means that tokens that look like
     /// numbers but don't fall into this range, are parsed as identifiers. See
@@ -630,14 +632,16 @@ pub enum Operator {
     /// References are tokens that start with the character `@`, and that
     /// haven't been parsed as a [`Label`].
     ///
-    /// Evaluating a reference that refers to a label, which is the case if
-    /// their names match, pushes the index of the operator that the label
-    /// precedes to the stack.
+    /// Evaluating a reference that has the same name as a label, pushes the
+    /// index of the operator that the label precedes to the stack.
     ///
     /// A reference without a matching label is invalid. Evaluating it triggers
     /// [`Effect::InvalidReference`].
     Reference {
         /// # The name of the operator that the reference refers to
+        ///
+        /// This name with a preceding `@` is how the label shows up in the
+        /// source code.
         name: String,
     },
 }
