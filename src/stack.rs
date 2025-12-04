@@ -2,16 +2,12 @@ use crate::{Effect, Value};
 
 /// # The operand stack
 ///
-/// StackAssembly's evaluation model is based on an implicit stack on which
-/// operands are stored. An operators output is pushed to that stack, and
-/// any of its inputs are popped from there.
+/// StackAssembly's evaluation model is based on an implicit stack which
+/// stores all operands.
 ///
-/// A host may access the stack to communicate with a script that has triggered
-/// [`Effect::Yield`]. A host may also access the stack under any other
-/// circumstances. This is considered non-standard and should be avoided under
-/// most circumstances, as it interferes with the evaluation of the script.
-///
-/// The stack for a given evaluation is stored in [`Eval`]'s [`stack`] field.
+/// Aside from this, the stack is an important communication channel between
+/// script and host. Please refer to [`Eval`]'s [`stack`] field for more
+/// information on that.
 ///
 /// [`Eval`]: crate::Eval
 /// [`stack`]: struct.Eval.html#structfield.stack
