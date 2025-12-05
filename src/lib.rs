@@ -590,7 +590,8 @@ impl Eval {
 /// inside of [`Eval::run`] or [`Eval::step`].
 ///
 /// Operators are stored in [`Eval`]'s [`operators`] field. Evaluating an
-/// operator may affect any of [`Eval`]'s fields.
+/// operator may affect any of [`Eval`]'s fields, except for [`operators`]
+/// itself.
 ///
 /// The other type of tokens, beside operators, are [`Label`]s.
 ///
@@ -601,11 +602,11 @@ pub enum Operator {
     ///
     /// Identifiers are the most general type of operator, syntactically
     /// speaking. Any token that can't be parsed as something more specific,
-    /// ends up as an operator.
+    /// ends up as an identifier.
     ///
-    /// Identifiers may be known to the language, in which case they may affect
-    /// the fields of [`Eval`] in whatever specific way this known identifier is
-    /// supposed to.
+    /// Identifiers may be known to the language, in which case evaluating them
+    /// may affect the fields of [`Eval`] in whatever specific way this known
+    /// identifier is supposed to.
     ///
     /// If an operator is unknown, evaluating it triggers
     /// [`Effect::UnknownIdentifier`].
@@ -645,7 +646,7 @@ pub enum Operator {
     Reference {
         /// # The name of the operator that the reference refers to
         ///
-        /// This name with a preceding `@` is how the label shows up in the
+        /// This name, with a preceding `@`, is how the label shows up in the
         /// source code.
         name: String,
     },
