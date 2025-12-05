@@ -288,6 +288,11 @@ impl Eval {
 
         for line in script.lines() {
             for token in line.split_whitespace() {
+                if token == "#" {
+                    // This is a comment. Ignore the rest of the line.
+                    break;
+                }
+
                 let operator = if let Some((name, "")) = token.rsplit_once(":")
                 {
                     labels.push(Label {
