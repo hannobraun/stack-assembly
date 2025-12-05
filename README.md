@@ -31,7 +31,7 @@ To run the "loop" example from the root directory of this repository, for exampl
 
 ### Interpreter API
 
-The StackAssembly interpreter is packaged as a library. That library's documentation documents the API, but also provides some information on the language. Right now, you must build the documentation locally to access it. With a working [Rust] setup, you can do so by running `cargo doc --open`.
+The StackAssembly interpreter is packaged as a library. That library's documentation covers mainly the interpreter API, but also provides information on the language. Right now, you must build the documentation locally to access it. With a working [Rust] setup, you can do so by running `cargo doc --open`.
 
 [Rust]: https://rust-lang.org/
 
