@@ -654,9 +654,13 @@ pub enum Operator {
 
 /// # A token with no runtime representation, that names an operator
 ///
-/// Labels are a type of token that exist in the code, but not at runtime. They
-/// assign a name to the operator they precede. Labels are stored in [`Eval`]'s
-/// [`labels`] field.
+/// Labels are a type of token that exist in the code, but do not have a direct
+/// representation at runtime. They don't get evaluated, like operators are.
+/// (Though they are accessed at runtime to resolve labels. This is just an
+/// implementation detail though, and subject to change.)
+///
+/// Labels assign a name to the operator they precede. They are stored in
+/// [`Eval`]'s [`labels`] field.
 ///
 /// [`labels`]: struct.Eval.html#structfield.labels
 #[derive(Debug)]
