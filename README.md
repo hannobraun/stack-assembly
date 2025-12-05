@@ -14,6 +14,19 @@ It serves as a foundation for my personal research into programming language des
 
 I'm currently implementing the initial design and have not released a first version yet.
 
+## Examples
+
+Check out the `examples/` directory to see some StackAssembly code. To run a script, follow these steps:
+
+1. Clone this repository. Git will do for this, but I generally recommend using [Jujutsu] instead.
+2. Make sure you have a recent version of [Rust] installed on your system.
+3. From within this repository, run this command: `cargo run -- path/to/script.stack`
+
+To run the "loop" example from the root directory of this repository, for example, run this command: `cargo run -- examples/loop.stack`
+
+[Jujutsu]: https://github.com/jj-vcs/jj
+[Rust]: https://rust-lang.org/
+
 ## Documentation
 
 Currently, [the initial design document][design] is the best source of documentation that is available for the language overall.
