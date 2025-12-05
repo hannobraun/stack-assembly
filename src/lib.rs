@@ -12,8 +12,10 @@
 //! code too, that is not its main purpose. Don't expect that it will work for
 //! whatever project you might have in mind.
 //!
-//! Please check out the [repository on GitHub][repository] for more information
-//! about the language in general.
+//! Please check out the [repository on GitHub][repository] to learn more about
+//! StackAssembly. This documentation, while it contains some information about
+//! the language itself, is focused on how to use this library, which contains
+//! the StackAssembly interpreter.
 //!
 //! [repository]: https://github.com/hannobraun/stack-assembly
 //!
@@ -49,6 +51,7 @@
 //! ```
 //! use stack_assembly::{Effect, Eval};
 //!
+//! // A script that seems to want to print the value `3`.
 //! let script = "
 //!     3 @print jump
 //!
@@ -56,9 +59,12 @@
 //!         yield
 //! ";
 //!
+//! // Start the evaluation and advance it until the script triggers an effect.
 //! let mut eval = Eval::start(script);
 //! eval.run();
 //!
+//! // `run` has returned, meaning an effect has been triggered. Let's make sure
+//! // it's as we expect.
 //! assert_eq!(eval.effect, Some(Effect::Yield));
 //! let Ok(value) = eval.stack.pop() else {
 //!     unreachable!("We know that the script pushes a value before yielding.");
@@ -72,10 +78,10 @@
 //! When the script triggers the "yield" effect, this host prints the value
 //! that's currently on top of the stack.
 //!
-//! This is just a simple example. A more full-featured host would provide
-//! additional services, and could determine which service the script means to
-//! request by inspecting which other values it put on the stack, or into
-//! memory.
+//! This is just a simple example. A more full-featured host would provide more
+//! services in addition to printing values. Such a host could determine which
+//! service the script means to request by inspecting which other values it put
+//! on the stack, or into memory.
 
 #![warn(missing_debug_implementations)]
 #![warn(missing_docs)]
