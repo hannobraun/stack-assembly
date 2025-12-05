@@ -286,26 +286,29 @@ impl Eval {
         let mut operators = Vec::new();
         let mut labels = Vec::new();
 
-        for token in script.split_whitespace() {
-            let operator = if let Some((name, "")) = token.rsplit_once(":") {
-                labels.push(Label {
-                    name: name.to_string(),
-                    operator: operators.len(),
-                });
-                continue;
-            } else if let Some(("", name)) = token.split_once("@") {
-                Operator::Reference {
-                    name: name.to_string(),
-                }
-            } else if let Ok(value) = token.parse::<i32>() {
-                Operator::Integer { value }
-            } else {
-                Operator::Identifier {
-                    value: token.to_string(),
-                }
-            };
+        for line in script.lines() {
+            for token in line.split_whitespace() {
+                let operator = if let Some((name, "")) = token.rsplit_once(":")
+                {
+                    labels.push(Label {
+                        name: name.to_string(),
+                        operator: operators.len(),
+                    });
+                    continue;
+                } else if let Some(("", name)) = token.split_once("@") {
+                    Operator::Reference {
+                        name: name.to_string(),
+                    }
+                } else if let Ok(value) = token.parse::<i32>() {
+                    Operator::Integer { value }
+                } else {
+                    Operator::Identifier {
+                        value: token.to_string(),
+                    }
+                };
 
-            operators.push(operator);
+                operators.push(operator);
+            }
         }
 
         Self {
