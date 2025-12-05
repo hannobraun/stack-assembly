@@ -1,0 +1,6 @@
+0
+
+loop:
+    1 +
+    yield
+    @loop jump
