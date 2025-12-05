@@ -23,7 +23,7 @@ impl Stack {
         self.values.push(value.into());
     }
 
-    /// # Pop a value from the stack
+    /// # Pop a value from the top of the stack
     ///
     /// Return [`StackUnderflow`], if no value is available on the stack, which
     /// provides an automatic conversion to [`Effect`].
@@ -97,7 +97,7 @@ impl Stack {
     }
 }
 
-/// # A stack underflow error
+/// # Tried to pop a value from an empty stack
 ///
 /// See [`Stack::pop`].
 #[derive(Debug)]

@@ -12,8 +12,10 @@
 //! code too, that is not its main purpose. Don't expect that it will work for
 //! whatever project you might have in mind.
 //!
-//! Please check out the [repository on GitHub][repository] for more information
-//! about the language in general.
+//! Please check out the [repository on GitHub][repository] to learn more about
+//! StackAssembly. This documentation, while it contains some information about
+//! the language itself, is focused on how to use this library, which contains
+//! the StackAssembly interpreter.
 //!
 //! [repository]: https://github.com/hannobraun/stack-assembly
 //!
@@ -49,6 +51,7 @@
 //! ```
 //! use stack_assembly::{Effect, Eval};
 //!
+//! // A script that seems to want to print the value `3`.
 //! let script = "
 //!     3 @print jump
 //!
@@ -56,9 +59,12 @@
 //!         yield
 //! ";
 //!
+//! // Start the evaluation and advance it until the script triggers an effect.
 //! let mut eval = Eval::start(script);
 //! eval.run();
 //!
+//! // `run` has returned, meaning an effect has been triggered. Let's make sure
+//! // it's as we expect.
 //! assert_eq!(eval.effect, Some(Effect::Yield));
 //! let Ok(value) = eval.stack.pop() else {
 //!     unreachable!("We know that the script pushes a value before yielding.");
@@ -72,10 +78,10 @@
 //! When the script triggers the "yield" effect, this host prints the value
 //! that's currently on top of the stack.
 //!
-//! This is just a simple example. A more full-featured host would provide
-//! additional services, and could determine which service the script means to
-//! request by inspecting which other values it put on the stack, or into
-//! memory.
+//! This is just a simple example. A more full-featured host would provide more
+//! services in addition to printing values. Such a host could determine which
+//! service the script means to request by inspecting which other values it put
+//! on the stack, or into memory.
 
 #![warn(missing_debug_implementations)]
 #![warn(missing_docs)]
@@ -122,11 +128,11 @@ pub struct Eval {
     ///
     /// Various locations in the code, like the [`next_operator`] field and
     /// [`Label`]'s [`operator`] field, refer to operators in this field by
-    /// their index. Making a change to this field that invalidates these
-    /// indices, is likely to be a bug.
+    /// their index.
     ///
-    /// The host has unrestricted access to this field, and it is its
-    /// responsibility to make sure that it doesn't break anything.
+    /// The host has unrestricted access to this field, and must make sure that
+    /// any changes it makes to the field do not invalidate those references,
+    /// or break things in other ways.
     ///
     /// [`next_operator`]: #structfield.next_operator
     /// [`operator`]: struct.Label.html#structfield.operator
@@ -137,8 +143,8 @@ pub struct Eval {
     /// [`Eval::start`] compiles the script you provide and populates this
     /// field with the labels it finds.
     ///
-    /// The host has unrestricted access to this field, and it is its
-    /// responsibility to make sure that it doesn't break anything.
+    /// The host has unrestricted access to this field, and must make sure that
+    /// any change is makes do not break anything.
     pub labels: Vec<Label>,
 
     /// # The index of the next operator to evaluate
@@ -147,7 +153,7 @@ pub struct Eval {
     /// [`Eval::run`] or [`Eval::step`], evaluation continues with the operator
     /// identified by this index.
     ///
-    /// When [handling an effect](#handling-effects), the host must likely
+    /// When [handling an effect](#handling-effects), the host likely has to
     /// increment this field, to allow evaluation to proceed after clearing the
     /// effect.
     ///
@@ -169,12 +175,12 @@ pub struct Eval {
     /// ## Handling Effects
     ///
     /// The host may handle effects however it wishes. But since most effects
-    /// signal error conditions, that from the perspective of the script are
-    /// irrecoverable, a well-behaving host must be careful not handle effects
-    /// in a way that make reasoning about the script's behavior difficult.
+    /// signal error conditions that the script would not expect to recover
+    /// from, a well-behaving host must be careful not to handle effects in
+    /// a way that make reasoning about the script's behavior difficult.
     ///
-    /// For most effects, abandon the evaluation and reporting an error in the
-    /// appropriate manner is the only reasonable way to handle them. The
+    /// Abandoning the evaluation and reporting an error in the appropriate
+    /// manner, is the only reasonable way to handle most effects. The
     /// exception to that is [`Effect::Yield`], which does not signal an error
     /// condition. A script would expect to continue afterwards.
     ///
@@ -184,9 +190,8 @@ pub struct Eval {
     /// - Increment the [`next_operator`] field, or the same operator would
     ///   presumably trigger the same effect again.
     ///
-    /// None the less, the host has full control over what happens, and a
-    /// non-standard host may choose to handle effects in a non-standard
-    /// manner.
+    /// None the less, the host has full access to this field, as to not
+    /// restrict any experimental or non-standard use cases.
     ///
     /// ### Example
     ///
@@ -207,7 +212,7 @@ pub struct Eval {
     /// let mut eval = Eval::start(script);
     ///
     /// // When running the script for the first time, we expect that it has
-    /// // incremented the number once before yielding.
+    /// // incremented the number once, before yielding.
     /// eval.run();
     /// assert_eq!(eval.effect, Some(Effect::Yield));
     /// assert_eq!(eval.stack.to_u32_slice(), &[1]);
@@ -275,8 +280,8 @@ impl Eval {
     /// # Start evaluating the provided script
     ///
     /// Compile the provided script and return an `Eval` instance that is ready
-    /// for evaluation. To actually evaluate any operators, you must call
-    /// [`Eval::run`] or [`Eval::step`].
+    /// for evaluation. To evaluate any operators, you must call [`Eval::run`]
+    /// or [`Eval::step`].
     pub fn start(script: &str) -> Self {
         let mut operators = Vec::new();
         let mut labels = Vec::new();
@@ -337,7 +342,7 @@ impl Eval {
     /// If an effect is currently active (see [`effect`] field), do nothing and
     /// return immediately. Otherwise, evaluate the next operator (as defined by
     /// the [`next_operator`] field). If that triggers an effect, store that in
-    /// [`effect`].
+    /// the [`effect`] field.
     ///
     /// This function may be used for advancing the evaluation of the script in
     /// a controlled manner. If you just want to keep evaluating until the next
@@ -585,7 +590,8 @@ impl Eval {
 /// inside of [`Eval::run`] or [`Eval::step`].
 ///
 /// Operators are stored in [`Eval`]'s [`operators`] field. Evaluating an
-/// operator may affect any of [`Eval`]'s fields.
+/// operator may affect any of [`Eval`]'s fields, except for [`operators`]
+/// itself.
 ///
 /// The other type of tokens, beside operators, are [`Label`]s.
 ///
@@ -596,11 +602,11 @@ pub enum Operator {
     ///
     /// Identifiers are the most general type of operator, syntactically
     /// speaking. Any token that can't be parsed as something more specific,
-    /// ends up as an operator.
+    /// ends up as an identifier.
     ///
-    /// Identifiers may be known to the language, in which case they may affect
-    /// the fields of [`Eval`] in whatever specific way this known identifier is
-    /// supposed to.
+    /// Identifiers may be known to the language, in which case evaluating them
+    /// may affect the fields of [`Eval`] in whatever specific way this known
+    /// identifier is supposed to.
     ///
     /// If an operator is unknown, evaluating it triggers
     /// [`Effect::UnknownIdentifier`].
@@ -640,7 +646,7 @@ pub enum Operator {
     Reference {
         /// # The name of the operator that the reference refers to
         ///
-        /// This name with a preceding `@` is how the label shows up in the
+        /// This name, with a preceding `@`, is how the label shows up in the
         /// source code.
         name: String,
     },
@@ -648,9 +654,13 @@ pub enum Operator {
 
 /// # A token with no runtime representation, that names an operator
 ///
-/// Labels are a type of token that exist in the code, but not at runtime. They
-/// assign a name to the operator they precede. Labels are stored in [`Eval`]'s
-/// [`labels`] field.
+/// Labels are a type of token that exist in the code, but do not have a direct
+/// representation at runtime. They don't get evaluated, like operators are.
+/// (Though they are accessed at runtime to resolve labels. This is just an
+/// implementation detail though, and subject to change.)
+///
+/// Labels assign a name to the operator they precede. They are stored in
+/// [`Eval`]'s [`labels`] field.
 ///
 /// [`labels`]: struct.Eval.html#structfield.labels
 #[derive(Debug)]
@@ -674,9 +684,9 @@ pub struct Label {
 
 /// # An event triggered by scripts, to signal a specific condition
 ///
-/// Evaluating an [`Operator`] can trigger an effect. Triggered effects are
-/// stored in [`Eval`]'s [`effect`] field. Please refer to the documentation of
-/// that field, for more information on effects and how to handle them.
+/// Evaluating an [`Operator`] can trigger an effect. Active effects are stored
+/// in [`Eval`]'s [`effect`] field. Please refer to the documentation of that
+/// field, for more information on effects and how to handle them.
 ///
 /// [`effect`]: struct.Eval.html#structfield.effect
 #[derive(Debug, Eq, PartialEq)]
@@ -687,7 +697,7 @@ pub enum Effect {
     /// `0`.
     DivisionByZero,
 
-    /// # Operation resulted in integer overflow
+    /// # Division resulted in integer overflow
     ///
     /// Can only trigger when evaluating the `/` operator, if its first input is
     /// the lowest signed (two's complement) 32-bit integer, and its second
@@ -710,7 +720,7 @@ pub enum Effect {
     /// more information on references.
     InvalidReference,
 
-    /// # An index that supposedly refers to a value on the stack doesn't
+    /// # An index that supposedly refers to a value on the stack, doesn't
     ///
     /// Can trigger when evaluating the `copy` or `drop` operators, if their
     /// _index_ input is too large to refer to a value on the stack.
