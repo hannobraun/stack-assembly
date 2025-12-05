@@ -1,5 +1,6 @@
 mod arithmetic;
 mod bitwise;
+mod comments;
 mod comparison;
 mod control_flow;
 mod evaluation;
