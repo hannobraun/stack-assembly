@@ -37,7 +37,7 @@ The StackAssembly interpreter is packaged as a library. That library's documenta
 
 ### Additional Documentation
 
-Currently, [the initial design document][design] is the best available introduction into the language. The [test suite] provides a less friendly but more complete picture, basically serving the role of a specification.
+Currently, [the initial design document][design] is the best available introduction to the language. The [test suite] provides a less friendly but more complete picture, basically serving the role of a specification.
 
 [design]: https://www.hannobraun.com/designing-stack-assembly/
 [test suite]: src/tests/
