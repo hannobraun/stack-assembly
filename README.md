@@ -14,7 +14,9 @@ It serves as a foundation for my personal research into programming language des
 
 I'm currently implementing the initial design and have not released a first version yet.
 
-## Examples
+## Documentation
+
+### Examples
 
 Check out the `examples/` directory to see some StackAssembly code. To run a script, follow these steps:
 
@@ -27,16 +29,18 @@ To run the "loop" example from the root directory of this repository, for exampl
 [Jujutsu]: https://github.com/jj-vcs/jj
 [Rust]: https://rust-lang.org/
 
-## Documentation
+### Interpreter API
+
+The StackAssembly interpreter is packaged as a library. That library's documentation documents the API, but also provides some information on the language. Right now, you must build the documentation locally to access it. With a working [Rust] setup, you can do so by running `cargo doc --open`.
+
+[Rust]: https://rust-lang.org/
+
+### Additional Documentation
 
 Currently, [the initial design document][design] is the best available introduction into the language. The [test suite] provides a less friendly but more complete picture, basically serving the role of a specification.
 
 [design]: https://www.hannobraun.com/designing-stack-assembly/
 [test suite]: src/tests/
-
-The StackAssembly interpreter is packaged as a library. That library's documentation documents the API, but also provides some information on the language. Right now, you must build the documentation locally to access it. With a working [Rust] setup, you can do so by running `cargo doc --open`.
-
-[Rust]: https://rust-lang.org/
 
 ## License
 
