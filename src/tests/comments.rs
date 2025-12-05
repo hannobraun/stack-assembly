@@ -26,3 +26,14 @@ fn end_of_line_comment() {
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
     assert_eq!(eval.stack.to_u32_slice(), &[3]);
 }
+
+#[test]
+fn comment_without_whitespace() {
+    // Any `#` introduces a comment, even if there is no whitespace after it.
+
+    let mut eval = Eval::start("3 #5 8");
+    eval.run();
+
+    assert_eq!(eval.effect, Some(Effect::OutOfOperators));
+    assert_eq!(eval.stack.to_u32_slice(), &[3]);
+}

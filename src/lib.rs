@@ -288,7 +288,7 @@ impl Eval {
 
         for line in script.lines() {
             for token in line.split_whitespace() {
-                if token == "#" {
+                if token.starts_with("#") {
                     // This is a comment. Ignore the rest of the line.
                     break;
                 }
