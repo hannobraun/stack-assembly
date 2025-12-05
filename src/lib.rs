@@ -684,9 +684,9 @@ pub struct Label {
 
 /// # An event triggered by scripts, to signal a specific condition
 ///
-/// Evaluating an [`Operator`] can trigger an effect. Triggered effects are
-/// stored in [`Eval`]'s [`effect`] field. Please refer to the documentation of
-/// that field, for more information on effects and how to handle them.
+/// Evaluating an [`Operator`] can trigger an effect. Active effects are stored
+/// in [`Eval`]'s [`effect`] field. Please refer to the documentation of that
+/// field, for more information on effects and how to handle them.
 ///
 /// [`effect`]: struct.Eval.html#structfield.effect
 #[derive(Debug, Eq, PartialEq)]
@@ -697,7 +697,7 @@ pub enum Effect {
     /// `0`.
     DivisionByZero,
 
-    /// # Operation resulted in integer overflow
+    /// # Division resulted in integer overflow
     ///
     /// Can only trigger when evaluating the `/` operator, if its first input is
     /// the lowest signed (two's complement) 32-bit integer, and its second
@@ -720,7 +720,7 @@ pub enum Effect {
     /// more information on references.
     InvalidReference,
 
-    /// # An index that supposedly refers to a value on the stack doesn't
+    /// # An index that supposedly refers to a value on the stack, doesn't
     ///
     /// Can trigger when evaluating the `copy` or `drop` operators, if their
     /// _index_ input is too large to refer to a value on the stack.
