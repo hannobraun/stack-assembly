@@ -39,7 +39,7 @@ impl Stack {
     /// Return [`InvalidStackIndex`], if the provided index does not refer to a
     /// value on the stack, which provides an automatic conversion to
     /// [`Effect`].
-    pub fn get(
+    pub(crate) fn get(
         &self,
         index_from_top: usize,
     ) -> Result<Value, InvalidStackIndex> {
@@ -65,7 +65,7 @@ impl Stack {
     /// Return [`InvalidStackIndex`], if the provided index does not refer to a
     /// value on the stack, which provides an automatic conversion to
     /// [`Effect`].
-    pub fn remove(
+    pub(crate) fn remove(
         &mut self,
         index_from_top: usize,
     ) -> Result<(), InvalidStackIndex> {
