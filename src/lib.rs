@@ -141,7 +141,7 @@ pub struct Eval {
     ///
     /// [`next_operator`]: #structfield.next_operator
     /// [`operator`]: struct.Label.html#structfield.operator
-    pub operators: Vec<Operator>,
+    operators: Vec<Operator>,
 
     /// # The labels of the evaluating script
     ///
@@ -150,7 +150,7 @@ pub struct Eval {
     ///
     /// The host has unrestricted access to this field, and must make sure that
     /// any change is makes do not break anything.
-    pub labels: Vec<Label>,
+    labels: Vec<Label>,
 
     /// # The index of the next operator to evaluate
     ///
