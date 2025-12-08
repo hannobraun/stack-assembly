@@ -48,9 +48,7 @@ fn main() -> io::Result<()> {
             }
             Effect::Yield => {
                 print_stack(&eval.stack);
-
                 eval.effect = None;
-                eval.next_operator += 1;
 
                 // Let's not execute scripts that fast. Give the user a chance
                 // to read the output.

@@ -197,11 +197,8 @@ pub struct Eval {
     /// assert_eq!(eval.effect, Some(Effect::Yield));
     /// assert_eq!(eval.stack.to_u32_slice(), &[1]);
     ///
-    /// // To allow the script to continue, we must clear the effect and advance
-    /// // to the next operator. Otherwise, `yield` would execute again
-    /// // immediately, and the evaluation would make no progress.
+    /// // To allow the script to continue, we must clear the effect.
     /// eval.effect = None;
-    /// eval.next_operator += 1;
     ///
     /// // Since we handled the effect correctly, we can now assume that the
     /// // script has incremented the number a second time, before yielding
@@ -353,6 +350,12 @@ impl Eval {
             return Err(Effect::OutOfOperators);
         };
 
+        // We're done reading `next_operator`, so let's update it right away. We
+        // might overwrite it again right away, if the operator we just loaded
+        // does control flow. But in all other cases, this makes sure that next
+        // time we'll load the next operator, regardless of what else happens.
+        self.next_operator += 1;
+
         match operator {
             Operator::Identifier { value: identifier } => {
                 if identifier == "*" {
@@ -492,22 +495,12 @@ impl Eval {
                 } else if identifier == "jump" {
                     let index = self.stack.pop()?.to_usize();
                     self.next_operator = index;
-
-                    // By default, we increment `self.next_token` below. Since
-                    // we just set that to the exact value we want, we need to
-                    // bypass that.
-                    return Ok(());
                 } else if identifier == "jump_if" {
                     let index = self.stack.pop()?.to_usize();
                     let condition = self.stack.pop()?.to_u32();
 
                     if condition != 0 {
                         self.next_operator = index;
-
-                        // By default, we increment `self.next_token` below.
-                        // Since we just set that to the exact value we want, we
-                        // need to bypass that.
-                        return Ok(());
                     }
                 } else if identifier == "yield" {
                     return Err(Effect::Yield);
@@ -564,8 +557,6 @@ impl Eval {
                 }
             }
         }
-
-        self.next_operator += 1;
 
         Ok(())
     }
