@@ -4,7 +4,12 @@
 //! language.
 //!
 //! ```text
-//! 1 2 +
+//! 0
+//!
+//! loop:
+//!     1 +
+//!     yield
+//!     @loop jump
 //! ```
 //!
 //! It serves as a foundation for my personal research into programming language

@@ -5,7 +5,12 @@
 StackAssembly is a minimalist, stack-based, assembly-like programming language.
 
 ```
-1 2 +
+0
+
+loop:
+    1 +
+    yield
+    @loop jump
 ```
 
 It serves as a foundation for my personal research into programming language design and development. Even though I want it to be complete enough for real code too, that is not its main purpose. Don't expect that it will work for whatever project you might have in mind.
