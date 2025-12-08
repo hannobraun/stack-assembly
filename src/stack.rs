@@ -110,8 +110,6 @@ impl From<StackUnderflow> for Effect {
 }
 
 /// # An invalid index was used to access the stack
-///
-/// See [`Stack::get`] and [`Stack::remove`].
 #[derive(Debug)]
 pub struct InvalidStackIndex;
 
