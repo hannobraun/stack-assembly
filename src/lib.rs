@@ -697,7 +697,7 @@ pub struct Label {
 
 /// # An event triggered by scripts, to signal a specific condition
 ///
-/// Evaluating an [`Operator`] can trigger an effect. Active effects are stored
+/// Evaluating an operator can trigger an effect. Active effects are stored in
 /// in [`Eval`]'s [`effect`] field. Please refer to the documentation of that
 /// field, for more information on effects and how to handle them.
 ///
@@ -729,8 +729,7 @@ pub enum Effect {
 
     /// # Evaluated a reference that is not paired with a matching label
     ///
-    /// Can trigger when evaluating a reference. See [`Operator::Reference`] for
-    /// more information on references.
+    /// Can trigger when evaluating a reference.
     InvalidReference,
 
     /// # An index that supposedly refers to a value on the stack, doesn't
@@ -753,8 +752,7 @@ pub enum Effect {
 
     /// # Evaluated an identifier that the language does not recognize
     ///
-    /// Can trigger when evaluating an identifier. See [`Operator::Identifier`]
-    /// for more information on identifiers.
+    /// Can trigger when evaluating an identifier.
     UnknownIdentifier,
 
     /// # The evaluating script yields control to the host
