@@ -138,7 +138,7 @@ pub struct Eval {
     /// effect.
     ///
     /// [`operators`]: #structfield.operators
-    pub next_operator: usize,
+    next_operator: usize,
 
     /// # The active effect, if one has triggered
     ///
