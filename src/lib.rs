@@ -124,32 +124,7 @@ pub use self::{
 /// ```
 #[derive(Debug)]
 pub struct Eval {
-    /// # The operators of the evaluating script
-    ///
-    /// [`Eval::start`] compiles the script you provide and populates this
-    /// field with the resulting operators.
-    ///
-    /// ## References Into This Field
-    ///
-    /// Various locations in the code, like the [`next_operator`] field and
-    /// [`Label`]'s [`operator`] field, refer to operators in this field by
-    /// their index.
-    ///
-    /// The host has unrestricted access to this field, and must make sure that
-    /// any changes it makes to the field do not invalidate those references,
-    /// or break things in other ways.
-    ///
-    /// [`next_operator`]: #structfield.next_operator
-    /// [`operator`]: struct.Label.html#structfield.operator
     operators: Vec<Operator>,
-
-    /// # The labels of the evaluating script
-    ///
-    /// [`Eval::start`] compiles the script you provide and populates this
-    /// field with the labels it finds.
-    ///
-    /// The host has unrestricted access to this field, and must make sure that
-    /// any change is makes do not break anything.
     labels: Vec<Label>,
 
     /// # The index of the next operator to evaluate
@@ -596,102 +571,16 @@ impl Eval {
     }
 }
 
-/// # A token present at runtime, that is the unit of evaluation
-///
-/// StackAssembly scripts consist of _tokens_. Operators are the type of token
-/// that have a representation at runtime and can be evaluated. This happens
-/// inside of [`Eval::run`] or [`Eval::step`].
-///
-/// Operators are stored in [`Eval`]'s [`operators`] field. Evaluating an
-/// operator may affect any of [`Eval`]'s fields, except for [`operators`]
-/// itself.
-///
-/// The other type of tokens, beside operators, are [`Label`]s.
-///
-/// [`operators`]: struct.Eval.html#structfield.operators
 #[derive(Debug)]
 enum Operator {
-    /// # The operator is an identifier
-    ///
-    /// Identifiers are the most general type of operator, syntactically
-    /// speaking. Any token that can't be parsed as something more specific,
-    /// ends up as an identifier.
-    ///
-    /// Identifiers may be known to the language, in which case evaluating them
-    /// may affect the fields of [`Eval`] in whatever specific way this known
-    /// identifier is supposed to.
-    ///
-    /// If an operator is unknown, evaluating it triggers
-    /// [`Effect::UnknownIdentifier`].
-    Identifier {
-        /// # The value of the identifier
-        ///
-        /// This is how the identifier shows up in the source code.
-        value: String,
-    },
-
-    /// # The operator is an integer
-    ///
-    /// A token parses as an integer, if it consists of base-10 digits, and the
-    /// resulting number falls into the range of a signed (two's complement)
-    /// 32-bit integer.
-    ///
-    /// Perhaps counterintuitively, this means that tokens that look like
-    /// numbers but don't fall into this range, are parsed as identifiers. See
-    /// [`Operator::Identifier`] for more information on those.
-    ///
-    /// Evaluating an integer pushes its value to the stack.
-    Integer {
-        /// # The value of the integer
-        value: i32,
-    },
-
-    /// # The operator is a reference
-    ///
-    /// References are tokens that start with the character `@`, and that
-    /// haven't been parsed as a [`Label`].
-    ///
-    /// Evaluating a reference that has the same name as a label, pushes the
-    /// index of the operator that the label precedes to the stack.
-    ///
-    /// A reference without a matching label is invalid. Evaluating it triggers
-    /// [`Effect::InvalidReference`].
-    Reference {
-        /// # The name of the operator that the reference refers to
-        ///
-        /// This name, with a preceding `@`, is how the label shows up in the
-        /// source code.
-        name: String,
-    },
+    Identifier { value: String },
+    Integer { value: i32 },
+    Reference { name: String },
 }
 
-/// # A token with no runtime representation, that names an operator
-///
-/// Labels are a type of token that exist in the code, but do not have a direct
-/// representation at runtime. They don't get evaluated, like operators are.
-/// (Though they are accessed at runtime to resolve labels. This is just an
-/// implementation detail though, and subject to change.)
-///
-/// Labels assign a name to the operator they precede. They are stored in
-/// [`Eval`]'s [`labels`] field.
-///
-/// [`labels`]: struct.Eval.html#structfield.labels
 #[derive(Debug)]
 struct Label {
-    /// # The name that the label assigns to the operator it precedes
-    ///
-    /// This name, with an added `:` at the end, is how the label shows up in
-    /// the source code.
-    ///
-    /// References (see [`Operator::Reference`]) can be used to refer to the
-    /// same operator.
     pub name: String,
-
-    /// # The index of the operator that the label precedes
-    ///
-    /// This is an index into [`Eval`]'s [`operators`] field.
-    ///
-    /// [`operators`]: struct.Eval.html#structfield.operators
     pub operator: usize,
 }
 
