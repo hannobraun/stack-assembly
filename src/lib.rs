@@ -590,7 +590,8 @@ pub enum Effect {
 
     /// # Evaluated a reference that is not paired with a matching label
     ///
-    /// Can trigger when evaluating a reference.
+    /// Can trigger when evaluating a reference, if that reference does not
+    /// refer to a label.
     InvalidReference,
 
     /// # An index that supposedly refers to a value on the stack, doesn't
@@ -613,7 +614,8 @@ pub enum Effect {
 
     /// # Evaluated an identifier that the language does not recognize
     ///
-    /// Can trigger when evaluating an identifier.
+    /// Can trigger when evaluating an identifier, if that identifier does not
+    /// refer to a known operation.
     UnknownIdentifier,
 
     /// # The evaluating script yields control to the host
