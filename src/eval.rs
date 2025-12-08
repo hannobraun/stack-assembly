@@ -364,11 +364,30 @@ impl Eval {
                     self.stack.push(b);
                 } else if identifier == "copy" {
                     let index_from_top = self.stack.pop()?.to_usize();
-                    let value = self.stack.get(index_from_top)?;
+                    let index_from_bottom =
+                        convert_stack_index(&self.stack, index_from_top)?;
+
+                    let Some(value) =
+                        self.stack.values.get(index_from_bottom).copied()
+                    else {
+                        unreachable!(
+                            "We computed the index from the top, based on the \
+                            number of values on the stack. Since that did not \
+                            result in an integer overflow, it's not possible \
+                            that we ended up with an out-of-range index."
+                        );
+                    };
+
                     self.stack.push(value);
                 } else if identifier == "drop" {
                     let index_from_top = self.stack.pop()?.to_usize();
-                    self.stack.remove(index_from_top)?;
+                    let index_from_bottom =
+                        convert_stack_index(&self.stack, index_from_top)?;
+
+                    // This could theoretically panic, but actually won't, for
+                    // the same reason that the index must be valid in the
+                    // implementation of `copy`.
+                    self.stack.values.remove(index_from_bottom);
                 } else if identifier == "jump" {
                     let index = self.stack.pop()?.to_usize();
                     self.next_operator = index;
@@ -450,4 +469,17 @@ enum Operator {
 struct Label {
     pub name: String,
     pub operator: usize,
+}
+
+fn convert_stack_index(
+    stack: &Stack,
+    index_from_top: usize,
+) -> Result<usize, Effect> {
+    let index_from_bottom = stack
+        .values
+        .len()
+        .checked_sub(1)
+        .and_then(|index| index.checked_sub(index_from_top));
+
+    index_from_bottom.ok_or(Effect::InvalidStackIndex)
 }
