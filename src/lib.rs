@@ -45,13 +45,13 @@
 //!
 //! ### Hosts
 //!
-//! [`Eval`] runs scripts in a sandboxed environment. It does not provide them
-//! access to the system it itself runs on, meaning StackAssembly scripts cannot
-//! do much by themselves.
+//! [`Eval`] evaluates scripts in a sandboxed environment, not giving them any
+//! access to the system it itself runs on. StackAssembly scripts by themselves
+//! cannot do much.
 //!
-//! A **host** is Rust code that uses this library to evaluate a StackAssembly
-//! script. The host can choose to provide additional capabilities to the script
-//! it runs.
+//! To change that, we need a **host**. A host is Rust code that uses this
+//! library to drive the evaluation of a StackAssembly script. It can choose to
+//! provide additional capabilities to the script.
 //!
 //! ```
 //! use stack_assembly::{Effect, Eval};
@@ -68,15 +68,15 @@
 //! let mut eval = Eval::start(script);
 //! eval.run();
 //!
-//! // `run` has returned, meaning an effect has been triggered. Let's make sure
-//! // it's as we expect.
+//! // `run` has returned, meaning an effect has triggered. Let's make sure that
+//! // went as expected.
 //! assert_eq!(eval.effect, Some(Effect::Yield));
 //! let Ok(value) = eval.stack.pop() else {
 //!     unreachable!("We know that the script pushes a value before yielding.");
 //! };
 //!
 //! // The script calls `yield` at a label named `print`. I guess it expects us
-//! // to print the value.
+//! // to print the value then.
 //! println!("{value:?}");
 //! ```
 //!
