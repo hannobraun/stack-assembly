@@ -45,13 +45,13 @@
 //!
 //! ### Hosts
 //!
-//! [`Eval`] runs scripts in a sandboxed environment. It does not provide them
-//! access to the system it itself runs on, meaning StackAssembly scripts cannot
-//! do much by themselves.
+//! [`Eval`] evaluates scripts in a sandboxed environment, not giving them any
+//! access to the system it itself runs on. StackAssembly scripts by themselves
+//! cannot do much.
 //!
-//! A **host** is Rust code that uses this library to evaluate a StackAssembly
-//! script. The host can choose to provide additional capabilities to the script
-//! it runs.
+//! To change that, we need a **host**. A host is Rust code that uses this
+//! library to drive the evaluation of a StackAssembly script. It can choose to
+//! provide additional capabilities to the script.
 //!
 //! ```
 //! use stack_assembly::{Effect, Eval};
@@ -68,15 +68,15 @@
 //! let mut eval = Eval::start(script);
 //! eval.run();
 //!
-//! // `run` has returned, meaning an effect has been triggered. Let's make sure
-//! // it's as we expect.
+//! // `run` has returned, meaning an effect has triggered. Let's make sure that
+//! // went as expected.
 //! assert_eq!(eval.effect, Some(Effect::Yield));
 //! let Ok(value) = eval.stack.pop() else {
 //!     unreachable!("We know that the script pushes a value before yielding.");
 //! };
 //!
 //! // The script calls `yield` at a label named `print`. I guess it expects us
-//! // to print the value.
+//! // to print the value then.
 //! println!("{value:?}");
 //! ```
 //!
@@ -152,14 +152,8 @@ pub struct Eval {
     /// exception to that is [`Effect::Yield`], which does not signal an error
     /// condition. A script would expect to continue afterwards.
     ///
-    /// To make that possible, the host must do two things:
-    ///
-    /// - Clear the effect by setting this field to `None`.
-    /// - Increment the [`next_operator`] field, or the same operator would
-    ///   presumably trigger the same effect again.
-    ///
-    /// None the less, the host has full access to this field, as to not
-    /// restrict any experimental or non-standard use cases.
+    /// To make that possible, the host must clear the effect by setting this
+    /// field to `None`.
     ///
     /// ### Example
     ///
@@ -211,7 +205,7 @@ pub struct Eval {
     /// communication between script and host.
     ///
     /// Most hosts should restrict modifications to this field to when the
-    /// script triggered [`Effect::Yield`], and then only do so in a
+    /// script triggers [`Effect::Yield`], and then only do so in a
     /// well-reasoned and documented manner. Anything else might make reasoning
     /// about the script's behavior very difficult.
     ///
@@ -230,7 +224,7 @@ pub struct Eval {
     /// communication between script and host.
     ///
     /// Most hosts should restrict modifications to this field to when the
-    /// script triggered [`Effect::Yield`], and then only do so in a
+    /// script triggers [`Effect::Yield`], and then only do so in a
     /// well-reasoned and documented manner. Anything else might make reasoning
     /// about the script's behavior very difficult.
     ///
@@ -296,8 +290,8 @@ impl Eval {
     /// # Advance the evaluation until it triggers an effect
     ///
     /// If an effect is currently active (see [`effect`] field), do nothing and
-    /// return immediately. Otherwise, keep evaluating operators (starting at
-    /// the one identified by [`next_operator`]) until one triggers an effect.
+    /// return immediately. Otherwise, keep evaluating operators until one
+    /// triggers an effect.
     ///
     /// If you need more control over the evaluation, consider using
     /// [`Eval::step`] instead.
@@ -313,9 +307,8 @@ impl Eval {
     /// # Advance the evaluation by one step
     ///
     /// If an effect is currently active (see [`effect`] field), do nothing and
-    /// return immediately. Otherwise, evaluate the next operator (as defined by
-    /// the [`next_operator`] field). If that triggers an effect, store that in
-    /// the [`effect`] field.
+    /// return immediately. Otherwise, evaluate the next operator. If that
+    /// triggers an effect, store that in the [`effect`] field.
     ///
     /// This function may be used for advancing the evaluation of the script in
     /// a controlled manner. If you just want to keep evaluating until the next
@@ -597,7 +590,8 @@ pub enum Effect {
 
     /// # Evaluated a reference that is not paired with a matching label
     ///
-    /// Can trigger when evaluating a reference.
+    /// Can trigger when evaluating a reference, if that reference does not
+    /// refer to a label.
     InvalidReference,
 
     /// # An index that supposedly refers to a value on the stack, doesn't
@@ -620,7 +614,8 @@ pub enum Effect {
 
     /// # Evaluated an identifier that the language does not recognize
     ///
-    /// Can trigger when evaluating an identifier.
+    /// Can trigger when evaluating an identifier, if that identifier does not
+    /// refer to a known operation.
     UnknownIdentifier,
 
     /// # The evaluating script yields control to the host
