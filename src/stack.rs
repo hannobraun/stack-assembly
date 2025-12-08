@@ -48,12 +48,3 @@ impl From<StackUnderflow> for Effect {
         Effect::StackUnderflow
     }
 }
-
-#[derive(Debug)]
-pub struct InvalidStackIndex;
-
-impl From<InvalidStackIndex> for Effect {
-    fn from(InvalidStackIndex: InvalidStackIndex) -> Self {
-        Effect::InvalidStackIndex
-    }
-}
