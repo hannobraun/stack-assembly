@@ -610,7 +610,7 @@ impl Eval {
 ///
 /// [`operators`]: struct.Eval.html#structfield.operators
 #[derive(Debug)]
-pub enum Operator {
+enum Operator {
     /// # The operator is an identifier
     ///
     /// Identifiers are the most general type of operator, syntactically
@@ -677,7 +677,7 @@ pub enum Operator {
 ///
 /// [`labels`]: struct.Eval.html#structfield.labels
 #[derive(Debug)]
-pub struct Label {
+struct Label {
     /// # The name that the label assigns to the operator it precedes
     ///
     /// This name, with an added `:` at the end, is how the label shows up in
