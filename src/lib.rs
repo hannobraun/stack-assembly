@@ -126,18 +126,6 @@ pub use self::{
 pub struct Eval {
     operators: Vec<Operator>,
     labels: Vec<Label>,
-
-    /// # The index of the next operator to evaluate
-    ///
-    /// This is an index into the [`operators`] field. On the next call to
-    /// [`Eval::run`] or [`Eval::step`], evaluation continues with the operator
-    /// identified by this index.
-    ///
-    /// When [handling an effect](#handling-effects), the host likely has to
-    /// increment this field, to allow evaluation to proceed after clearing the
-    /// effect.
-    ///
-    /// [`operators`]: #structfield.operators
     next_operator: usize,
 
     /// # The active effect, if one has triggered
