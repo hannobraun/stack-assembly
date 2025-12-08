@@ -13,7 +13,6 @@ fn jump() {
     assert_eq!(eval.stack.to_u32_slice(), &[1]);
 
     eval.effect = None;
-    eval.next_operator += 1;
 
     eval.run();
     assert_eq!(eval.effect, Some(Effect::Yield));

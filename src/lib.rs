@@ -197,11 +197,8 @@ pub struct Eval {
     /// assert_eq!(eval.effect, Some(Effect::Yield));
     /// assert_eq!(eval.stack.to_u32_slice(), &[1]);
     ///
-    /// // To allow the script to continue, we must clear the effect and advance
-    /// // to the next operator. Otherwise, `yield` would execute again
-    /// // immediately, and the evaluation would make no progress.
+    /// // To allow the script to continue, we must clear the effect.
     /// eval.effect = None;
-    /// eval.next_operator += 1;
     ///
     /// // Since we handled the effect correctly, we can now assume that the
     /// // script has incremented the number a second time, before yielding
@@ -352,6 +349,8 @@ impl Eval {
         let Some(operator) = self.operators.get(self.next_operator) else {
             return Err(Effect::OutOfOperators);
         };
+
+        self.next_operator += 1;
 
         match operator {
             Operator::Identifier { value: identifier } => {
@@ -564,8 +563,6 @@ impl Eval {
                 }
             }
         }
-
-        self.next_operator += 1;
 
         Ok(())
     }
