@@ -100,7 +100,7 @@ mod tests;
 
 pub use self::{
     memory::Memory,
-    stack::{InvalidStackIndex, Stack, StackUnderflow},
+    stack::{Stack, StackUnderflow},
     value::Value,
 };
 
