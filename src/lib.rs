@@ -152,14 +152,8 @@ pub struct Eval {
     /// exception to that is [`Effect::Yield`], which does not signal an error
     /// condition. A script would expect to continue afterwards.
     ///
-    /// To make that possible, the host must do two things:
-    ///
-    /// - Clear the effect by setting this field to `None`.
-    /// - Increment the [`next_operator`] field, or the same operator would
-    ///   presumably trigger the same effect again.
-    ///
-    /// None the less, the host has full access to this field, as to not
-    /// restrict any experimental or non-standard use cases.
+    /// To make that possible, the host must clear the effect by setting this
+    /// field to `None`.
     ///
     /// ### Example
     ///
@@ -211,7 +205,7 @@ pub struct Eval {
     /// communication between script and host.
     ///
     /// Most hosts should restrict modifications to this field to when the
-    /// script triggered [`Effect::Yield`], and then only do so in a
+    /// script triggers [`Effect::Yield`], and then only do so in a
     /// well-reasoned and documented manner. Anything else might make reasoning
     /// about the script's behavior very difficult.
     ///
@@ -230,7 +224,7 @@ pub struct Eval {
     /// communication between script and host.
     ///
     /// Most hosts should restrict modifications to this field to when the
-    /// script triggered [`Effect::Yield`], and then only do so in a
+    /// script triggers [`Effect::Yield`], and then only do so in a
     /// well-reasoned and documented manner. Anything else might make reasoning
     /// about the script's behavior very difficult.
     ///
@@ -296,8 +290,8 @@ impl Eval {
     /// # Advance the evaluation until it triggers an effect
     ///
     /// If an effect is currently active (see [`effect`] field), do nothing and
-    /// return immediately. Otherwise, keep evaluating operators (starting at
-    /// the one identified by [`next_operator`]) until one triggers an effect.
+    /// return immediately. Otherwise, keep evaluating operators until one
+    /// triggers an effect.
     ///
     /// If you need more control over the evaluation, consider using
     /// [`Eval::step`] instead.
@@ -313,9 +307,8 @@ impl Eval {
     /// # Advance the evaluation by one step
     ///
     /// If an effect is currently active (see [`effect`] field), do nothing and
-    /// return immediately. Otherwise, evaluate the next operator (as defined by
-    /// the [`next_operator`] field). If that triggers an effect, store that in
-    /// the [`effect`] field.
+    /// return immediately. Otherwise, evaluate the next operator. If that
+    /// triggers an effect, store that in the [`effect`] field.
     ///
     /// This function may be used for advancing the evaluation of the script in
     /// a controlled manner. If you just want to keep evaluating until the next
