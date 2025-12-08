@@ -31,14 +31,6 @@ impl Stack {
         self.values.pop().ok_or(StackUnderflow)
     }
 
-    /// # Access the value at the given index
-    ///
-    /// Stack indices start at the top, meaning `0` refers to the topmost value
-    /// on the stack.
-    ///
-    /// Return [`InvalidStackIndex`], if the provided index does not refer to a
-    /// value on the stack, which provides an automatic conversion to
-    /// [`Effect`].
     pub(crate) fn get(
         &self,
         index_from_top: usize,
@@ -57,14 +49,6 @@ impl Stack {
         Ok(value)
     }
 
-    /// # Remove the value at the given index
-    ///
-    /// Stack indices start at the top, meaning `0` refers to the topmost value
-    /// on the stack.
-    ///
-    /// Return [`InvalidStackIndex`], if the provided index does not refer to a
-    /// value on the stack, which provides an automatic conversion to
-    /// [`Effect`].
     pub(crate) fn remove(
         &mut self,
         index_from_top: usize,
@@ -109,7 +93,6 @@ impl From<StackUnderflow> for Effect {
     }
 }
 
-/// # An invalid index was used to access the stack
 #[derive(Debug)]
 pub struct InvalidStackIndex;
 
