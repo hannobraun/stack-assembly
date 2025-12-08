@@ -491,22 +491,12 @@ impl Eval {
                 } else if identifier == "jump" {
                     let index = self.stack.pop()?.to_usize();
                     self.next_operator = index;
-
-                    // By default, we increment `self.next_token` below. Since
-                    // we just set that to the exact value we want, we need to
-                    // bypass that.
-                    return Ok(());
                 } else if identifier == "jump_if" {
                     let index = self.stack.pop()?.to_usize();
                     let condition = self.stack.pop()?.to_u32();
 
                     if condition != 0 {
                         self.next_operator = index;
-
-                        // By default, we increment `self.next_token` below.
-                        // Since we just set that to the exact value we want, we
-                        // need to bypass that.
-                        return Ok(());
                     }
                 } else if identifier == "yield" {
                     return Err(Effect::Yield);
