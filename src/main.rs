@@ -50,8 +50,8 @@ fn main() -> io::Result<()> {
                 print_stack(&eval.stack);
                 eval.effect = None;
 
-                // Let's not execute scripts that fast. Give the user a chance
-                // to read the output.
+                // Let's not execute scripts that fast, to give the user a
+                // chance to read the output.
                 thread::sleep(Duration::from_millis(20));
 
                 continue;
