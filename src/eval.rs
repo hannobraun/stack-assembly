@@ -231,18 +231,18 @@ impl Eval {
         match operator {
             Operator::Identifier { value: identifier } => {
                 if identifier == "*" {
-                    let b = self.stack.pop()?.to_u32();
-                    let a = self.stack.pop()?.to_u32();
+                    let b = self.stack.pop()?.to_i32();
+                    let a = self.stack.pop()?.to_i32();
 
                     self.stack.push(a.wrapping_mul(b));
                 } else if identifier == "+" {
-                    let b = self.stack.pop()?.to_u32();
-                    let a = self.stack.pop()?.to_u32();
+                    let b = self.stack.pop()?.to_i32();
+                    let a = self.stack.pop()?.to_i32();
 
                     self.stack.push(a.wrapping_add(b));
                 } else if identifier == "-" {
-                    let b = self.stack.pop()?.to_u32();
-                    let a = self.stack.pop()?.to_u32();
+                    let b = self.stack.pop()?.to_i32();
+                    let a = self.stack.pop()?.to_i32();
 
                     self.stack.push(a.wrapping_sub(b));
                 } else if identifier == "/" {
@@ -276,8 +276,8 @@ impl Eval {
 
                     self.stack.push(c);
                 } else if identifier == "=" {
-                    let b = self.stack.pop()?.to_u32();
-                    let a = self.stack.pop()?.to_u32();
+                    let b = self.stack.pop()?.to_i32();
+                    let a = self.stack.pop()?.to_i32();
 
                     let c = if a == b { 1 } else { 0 };
 
@@ -318,27 +318,27 @@ impl Eval {
 
                     self.stack.push(c);
                 } else if identifier == "count_ones" {
-                    let a = self.stack.pop()?.to_u32();
+                    let a = self.stack.pop()?.to_i32();
                     let b = a.count_ones();
                     self.stack.push(b);
                 } else if identifier == "leading_zeros" {
-                    let a = self.stack.pop()?.to_u32();
+                    let a = self.stack.pop()?.to_i32();
                     let b = a.leading_zeros();
                     self.stack.push(b);
                 } else if identifier == "trailing_zeros" {
-                    let a = self.stack.pop()?.to_u32();
+                    let a = self.stack.pop()?.to_i32();
                     let b = a.trailing_zeros();
                     self.stack.push(b);
                 } else if identifier == "rotate_left" {
                     let num_positions = self.stack.pop()?.to_u32();
-                    let a = self.stack.pop()?.to_u32();
+                    let a = self.stack.pop()?.to_i32();
 
                     let b = a.rotate_left(num_positions);
 
                     self.stack.push(b);
                 } else if identifier == "rotate_right" {
                     let num_positions = self.stack.pop()?.to_u32();
-                    let a = self.stack.pop()?.to_u32();
+                    let a = self.stack.pop()?.to_i32();
 
                     let b = a.rotate_right(num_positions);
 
@@ -388,7 +388,7 @@ impl Eval {
                     self.next_operator = index;
                 } else if identifier == "jump_if" {
                     let index = self.stack.pop()?.to_usize();
-                    let condition = self.stack.pop()?.to_u32();
+                    let condition = self.stack.pop()?.to_i32();
 
                     if condition != 0 {
                         self.next_operator = index;
