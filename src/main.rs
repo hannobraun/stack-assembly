@@ -28,14 +28,7 @@ fn main() -> io::Result<()> {
     let mut eval = Eval::start(&script);
 
     loop {
-        eval.run();
-
-        let Some(effect) = &eval.effect else {
-            unreachable!(
-                "Script must have triggered effect, or `Eval::run` would not \
-                have returned."
-            );
-        };
+        let effect = eval.run();
 
         match effect {
             Effect::OutOfOperators => {
