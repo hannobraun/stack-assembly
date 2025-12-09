@@ -226,11 +226,6 @@ impl Eval {
         let Some(operator) = self.operators.get(self.next_operator) else {
             return Err(Effect::OutOfOperators);
         };
-
-        // We're done reading `next_operator`, so let's update it right away. We
-        // might overwrite it again right away, if the operator we just loaded
-        // does control flow. But in all other cases, this makes sure that next
-        // time we'll load the next operator, regardless of what else happens.
         self.next_operator += 1;
 
         match operator {
