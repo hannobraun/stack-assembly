@@ -58,7 +58,7 @@ fn main() -> io::Result<()> {
             }
             effect => {
                 eprintln!("Script triggered effect: {effect:?}");
-                eprintln!("Stack at end of script: {:?}", eval.stack);
+                print_stack(&eval.stack);
                 process::exit(2);
             }
         }
