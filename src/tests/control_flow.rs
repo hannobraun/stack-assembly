@@ -22,7 +22,7 @@ fn jump() {
 #[test]
 fn jump_if_behaves_like_jump_on_nonzero_condition() {
     // The `jump_if` operator is the conditional variant of `jump`. In addition
-    // to an operator index, it takes a condition that. If that condition is
+    // to an operator index, it takes a condition. If that condition is
     // non-zero, `jump_if` behaves like `jump`.
 
     let mut eval = Eval::start("1 @target jump_if 1 target: 2");
@@ -35,8 +35,8 @@ fn jump_if_behaves_like_jump_on_nonzero_condition() {
 #[test]
 fn jump_if_does_nothing_on_zero_condition() {
     // The `jump_if` operator is the conditional variant of `jump`. In addition
-    // to an operator index, it takes a condition that. If that condition is
-    // zero, `jump_if` does nothing.
+    // to an operator index, it takes a condition. If that condition is zero,
+    // `jump_if` does nothing.
 
     let mut eval = Eval::start("0 @target jump_if 1 target: 2");
     eval.run();
