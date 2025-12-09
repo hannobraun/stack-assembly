@@ -31,6 +31,11 @@ impl Stack {
         self.values.pop().ok_or(StackUnderflow)
     }
 
+    /// # Access the stack as a slice of `i32` values
+    pub fn to_i32_slice(&self) -> &[i32] {
+        bytemuck::cast_slice(&self.values)
+    }
+
     /// # Access the stack as a slice of `u32` values
     pub fn to_u32_slice(&self) -> &[u32] {
         bytemuck::cast_slice(&self.values)
