@@ -16,7 +16,7 @@ use crate::{Effect, Memory, Stack, Value};
 /// let mut eval = Eval::start(script);
 /// eval.run();
 ///
-/// assert_eq!(eval.stack.to_u32_slice(), &[3]);
+/// assert_eq!(eval.stack.to_i32_slice(), &[3]);
 /// ```
 #[derive(Debug)]
 pub struct Eval {
