@@ -2,7 +2,7 @@ use crate::{Effect, Eval};
 
 #[test]
 fn empty_script_triggers_out_of_tokens() {
-    // Running an empty script does nothing.
+    // Running an empty script directly triggers the "out of operators" effect.
 
     let mut eval = Eval::start("");
     eval.run();
