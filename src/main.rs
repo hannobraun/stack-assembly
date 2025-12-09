@@ -12,14 +12,14 @@ fn main() -> io::Result<()> {
     let mut args = env::args();
 
     let Some(_executable) = args.next() else {
-        panic!("Expected the first argument to be the path to the executable.");
+        panic!("Expecting first argument to be the path to the executable.");
     };
 
     let Some(path) = args.next() else {
-        print_usage_and_exit("Expected a single argument; found none.");
+        print_usage_and_exit("Expecting a single argument; found none.");
     };
     let None = args.next() else {
-        print_usage_and_exit("Expected a single argument; found multiple.");
+        print_usage_and_exit("Expecting a single argument; found multiple.");
     };
 
     let mut script = String::new();
