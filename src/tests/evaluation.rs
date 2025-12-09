@@ -38,8 +38,11 @@ fn yield_operator_triggers_the_respective_effect() {
 fn active_effect_prevents_evaluation_from_advancing() {
     // An active effect prevents the evaluation from advancing.
 
-    let mut eval = Eval::start("1");
-    eval.effect = Some(Effect::Yield);
+    let mut eval = Eval::start("yield 1");
+
+    eval.run();
+    assert_eq!(eval.effect, Some(Effect::Yield));
+    assert_eq!(eval.stack.to_u32_slice(), &[]);
 
     eval.run();
     assert_eq!(eval.effect, Some(Effect::Yield));
