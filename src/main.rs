@@ -28,16 +28,7 @@ fn main() -> io::Result<()> {
     let mut eval = Eval::start(&script);
 
     loop {
-        eval.run();
-
-        let Some(effect) = &eval.effect else {
-            unreachable!(
-                "Script must have triggered effect, or `Eval::run` would not \
-                have returned."
-            );
-        };
-
-        match effect {
+        match eval.run() {
             Effect::OutOfOperators => {
                 eprintln!();
                 eprintln!("Evaluation has finished.");
