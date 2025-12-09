@@ -15,7 +15,7 @@ fn read() {
 
 #[test]
 fn read_triggers_effect_on_out_of_bounds_access() {
-    // If the address passed to `read` is out of bounds, it triggers the
+    // If the address passed to `read` is out of bounds, that triggers the
     // respective effect.
 
     let mut eval = Eval::start("1025 read");
@@ -43,7 +43,7 @@ fn write() {
 
 #[test]
 fn write_triggers_effect_on_out_of_bounds_access() {
-    // If the address passed to `write` is out of bounds, it triggers the
+    // If the address passed to `write` is out of bounds, that triggers the
     // respective effect.
 
     let mut eval = Eval::start("1025 3 write");
