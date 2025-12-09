@@ -38,7 +38,7 @@
 //! let mut eval = Eval::start(script);
 //! eval.run();
 //!
-//! assert_eq!(eval.stack.to_u32_slice(), &[3]);
+//! assert_eq!(eval.stack.to_i32_slice(), &[3]);
 //! ```
 //!
 //! [`Eval`] is the main entry point to the library's API.
