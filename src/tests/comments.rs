@@ -29,7 +29,7 @@ fn end_of_line_comment() {
 
 #[test]
 fn comment_without_whitespace() {
-    // Any `#` introduces a comment, even if there is no whitespace after it.
+    // Any `#` introduces a comment, even if not delineated by whitespace.
 
     let mut eval = Eval::start("3 #5 8");
     eval.run();

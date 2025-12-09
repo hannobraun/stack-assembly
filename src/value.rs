@@ -52,8 +52,8 @@ impl Value {
     pub fn to_usize(self) -> usize {
         let Ok(index) = self.inner.try_into() else {
             panic!(
-                "Can't convert value `{value}` to `usize`. This should only be \
-                possible on platforms where Rust's `usize` is less than 32 \
+                "Can't convert value `{value}` to `usize`. This can only \
+                happen  on platforms where Rust's `usize` is less than 32 bits \
                 bits wide. This is a niche use case that isn't fully \
                 supported, making this panic an acceptable outcome.\n\
                 \n\

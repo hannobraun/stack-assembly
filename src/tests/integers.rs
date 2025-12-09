@@ -31,18 +31,9 @@ fn trigger_effect_on_integer_overflow() {
     // signed (two's complement) 32-bit one, we treat it as an unknown
     // identifier.
     //
-    // It would be more appropriate to trigger an "integer overflow" effect in
-    // this case, but that would complicate the implementation. For now, that
-    // would be the wrong trade-off, so this weirder but easier behavior has to
-    // do.
-    //
-    // In principle, since the language is untyped, we could support integers
-    // that cover the full range of both signed and unsigned 32-bit values. That
-    // would just mean that numbers larger than `2^31-1` would end up with bit
-    // patterns that also represent negative numbers (and vice versa).
-    //
-    // But again, to keep the initial implementation simple, we only support the
-    // range of signed values for now.
+    // Long-term, this is undesired behavior, which is tracked in the following
+    // issue:
+    // https://github.com/hannobraun/stack-assembly/issues/18
 
     let mut eval = Eval::start("2147483647 2147483648");
 

@@ -13,7 +13,7 @@ fn add() {
 
 #[test]
 fn add_wraps_on_signed_overflow() {
-    // An addition that overflows the range of a signed 32-bit integer wraps.
+    // An addition wraps, if it overflows the range of a signed 32-bit integer.
 
     let mut eval = Eval::start("2147483647 1 +");
     eval.run();
@@ -24,7 +24,8 @@ fn add_wraps_on_signed_overflow() {
 
 #[test]
 fn add_wraps_on_unsigned_overflow() {
-    // An addition that overflows the range of an unsigned 32-bit integer wraps.
+    // An addition wraps, if it overflows the range of an unsigned 32-bit
+    // integer.
     //
     // This test currently needs to represent the largest unsigned integer as
     // `-1`, due to the limitation tracked in this issue:
@@ -50,7 +51,8 @@ fn subtract() {
 
 #[test]
 fn subtract_wraps_on_signed_overflow() {
-    // A subtraction that overflows the range of a signed 32-bit integer wraps.
+    // A subtraction wraps, if it overflows the range of a signed 32-bit
+    // integer.
 
     let mut eval = Eval::start("-2147483648 1 -");
     eval.run();
@@ -61,8 +63,8 @@ fn subtract_wraps_on_signed_overflow() {
 
 #[test]
 fn subtract_wraps_on_unsigned_overflow() {
-    // A subtraction that overflows the range of an unsigned 32-bit integer
-    // wraps.
+    // A subtraction wraps, if it overflows the range of an unsigned 32-bit
+    // integer.
 
     let mut eval = Eval::start("0 1 -");
     eval.run();
@@ -84,8 +86,8 @@ fn multiply() {
 
 #[test]
 fn multiply_wraps_on_signed_overflow() {
-    // A multiplication that overflows the range of a signed 32-bit integer
-    // wraps.
+    // A multiplication wraps, if it overflows the range of a signed 32-bit
+    // integer.
 
     let mut eval = Eval::start("2147483647 2 *");
     eval.run();
@@ -96,8 +98,8 @@ fn multiply_wraps_on_signed_overflow() {
 
 #[test]
 fn multiply_wraps_on_unsigned_overflow() {
-    // A multiplication that overflows the range of an unsigned 32-bit integer
-    // wraps.
+    // A multiplication wraps, if it overflows the range of an unsigned 32-bit
+    // integer.
     //
     // This test currently needs to represent the largest unsigned integer as
     // `-1`, due to the limitation tracked in this issue:
@@ -154,12 +156,13 @@ fn divide_by_zero_triggers_effect() {
 
 #[test]
 fn divide_triggers_effect_on_overflow() {
-    // In contrast to other arithmetic operations, division overflow only in one
-    // specific circumstance, and that circumstance is unlikely to be
-    // intentional. Therefore it triggers an effect.
+    // In contrast to other arithmetic operations, division overflows only in
+    // one specific circumstance, and that circumstance is unlikely to be
+    // intentional. Therefore it triggers an effect instead of wrapping.
     //
-    // If it is, the user can work around it quite easily, by watching for the
-    // inputs that trigger the overflow and not doing the division then.
+    // If it is intentional, the user can work around it quite easily, by
+    // watching for the inputs that trigger the overflow and not doing the
+    // division then.
 
     let mut eval = Eval::start("-2147483648 -1 /");
     eval.run();

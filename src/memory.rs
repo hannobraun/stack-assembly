@@ -21,7 +21,7 @@ pub struct Memory {
 impl fmt::Debug for Memory {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         // This is not perfect, but it's way more compact than the derived
-        // implementation. That was so verbose as to be barely usable.
+        // implementation.
 
         let mut values = self.values.iter().peekable();
 

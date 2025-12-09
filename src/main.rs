@@ -12,14 +12,14 @@ fn main() -> io::Result<()> {
     let mut args = env::args();
 
     let Some(_executable) = args.next() else {
-        panic!("Expected the first argument to be the path to the executable.");
+        panic!("Expecting first argument to be the path to the executable.");
     };
 
     let Some(path) = args.next() else {
-        print_usage_and_exit("Expected a single argument; found none.");
+        print_usage_and_exit("Expecting a single argument; found none.");
     };
     let None = args.next() else {
-        print_usage_and_exit("Expected a single argument; found multiple.");
+        print_usage_and_exit("Expecting a single argument; found multiple.");
     };
 
     let mut script = String::new();
@@ -50,15 +50,15 @@ fn main() -> io::Result<()> {
                 print_stack(&eval.stack);
                 eval.effect = None;
 
-                // Let's not execute scripts that fast. Give the user a chance
-                // to read the output.
+                // Let's not execute scripts that fast, to give the user a
+                // chance to read the output.
                 thread::sleep(Duration::from_millis(20));
 
                 continue;
             }
             effect => {
                 eprintln!("Script triggered effect: {effect:?}");
-                eprintln!("Stack at end of script: {:?}", eval.stack);
+                print_stack(&eval.stack);
                 process::exit(2);
             }
         }
