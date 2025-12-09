@@ -28,9 +28,7 @@ fn main() -> io::Result<()> {
     let mut eval = Eval::start(&script);
 
     loop {
-        let effect = eval.run();
-
-        match effect {
+        match eval.run() {
             Effect::OutOfOperators => {
                 eprintln!();
                 eprintln!("Evaluation has finished.");
