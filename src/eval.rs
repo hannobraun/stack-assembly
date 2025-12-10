@@ -159,6 +159,10 @@ impl Eval {
                     Operator::Reference {
                         name: name.to_string(),
                     }
+                } else if let Some(("", value)) = token.split_once("0x")
+                    && let Ok(value) = i32::from_str_radix(value, 16)
+                {
+                    Operator::Integer { value }
                 } else if let Ok(value) = token.parse::<i32>() {
                     Operator::Integer { value }
                 } else {
