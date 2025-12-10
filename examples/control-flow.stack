@@ -1,0 +1,69 @@
+# Control flow in StackAssembly is flat, assembly-like. It is based on defining
+# labels, then jumping to those labels.
+
+3
+@end jump
+5
+end:
+
+# Here we have code with a label called `end:`. Labels name the operator that
+# follows them, which here is the first operator below this comment.
+#
+# When we follow this code from the start, it first pushes the integer `3`.
+# Afterwards, we have a label, `@end`, which pushes the address of the operator
+# that `end:` gave its name to.
+#
+# `jump` then pops that address from the stack and arranges for evaluation to
+# continue there. As a result, the `5` in the middle is never evaluated, and `3`
+# is left on top of the stack.
+
+3 = assert
+
+# We can also jump to code conditionally, using `jump_if`. `jump_if` has an
+# additional input, its condition. If that condition is non-zero, `jump_if`
+# behaves just like `jump`.
+
+3
+1 @end2 jump_if
+5
+end2:
+
+# Here we pass `1` to `jump_if`, which is non-zero. As a result, this code
+# behaves just like the one above, and `5` is never pushed to the stack.
+
+3 = assert
+
+# If we pass `0` as `jump_if`'s condition, it does not jump, and we continue
+# with evaluating the `5` right after it.
+
+3
+0 @end3 jump_if
+5
+end3:
+
+# As a result, both `3` and `5` are pushed to the stack.
+
+5 = assert
+3 = assert
+
+# But just giving constant conditions to `jump_if` is boring. Let's do something
+# more interesting instead.
+
+0
+
+start:
+    1 +
+
+    0 copy 255 <
+    @start
+        jump_if
+
+# Here, we start by pushing `0` to the stack, then we increment it by `1`. We
+# make a copy of that number and check if that copy is smaller than `255`. (If
+# we didn't make a copy, `<` would pop the number from the stack.) This
+# comparison is the condition we use for `jump_if`.
+#
+# If the number is actually smaller than `255`, `jump_if` goes to the part where
+# we increment the number again. This loop continues, until the number is `255`.
+
+255 = assert

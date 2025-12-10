@@ -1,0 +1,37 @@
+# StackAssembly's evaluation model is based on an implicit operand stack.
+# Operators push their outputs to, and pop their inputs from, the top of the
+# stack.
+#
+# Let's push some integers there.
+
+3 5 8
+
+# As a result of this model, we sooner or later will run into a situation, where
+# we want to access values that are currently _not_ on top of the stack.
+#
+# Let's say we need a copy of that `5` at the top. We can do that using `copy`.
+
+1 copy
+
+# First, we push another integer, which is `copy`'s _index_ argument. An index
+# of `0` would make `copy` target the value at the top of the stack, `8`. Here,
+# with an index of `1`, it targets the one below that, `5`.
+#
+# As a result, the original values are still on the stack, but `5` is now on
+# top.
+
+5 = assert
+8 = assert
+5 = assert
+3 = assert
+
+# If we no longer need a value, we can remove it using `drop`. It also takes an
+# index that works the same as the one from `copy`.
+
+3 5 8
+1 drop
+
+# Here we push `3`, `5`, and `8` to the stack, then remove the `5`.
+
+8 = assert
+3 = assert

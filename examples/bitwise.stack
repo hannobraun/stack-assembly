@@ -1,0 +1,15 @@
+# StackAssembly provides a set of bitwise operators. Among those, the classics,
+# `and`, `or`, and `xor`.
+
+0xf0f0 0xff00 and
+0xf000 = assert
+
+0xf0f0 0xff00 or
+0xfff0 = assert
+
+0xf0f0 0xff00 xor
+0x0ff0 = assert
+
+# But there are a few others too, like `count_ones`, `leading_zeros`,
+# `trailing_zeros`, `rotate_left`, `rotate_right`, `shift_left`, and
+# `shift_right`.
