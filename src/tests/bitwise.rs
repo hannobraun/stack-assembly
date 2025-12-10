@@ -82,7 +82,7 @@ fn rotate_left() {
     // The `rotate_left` operator rotates the bits of its first input to the
     // left, by the number of positions defined by its second input.
 
-    // `4026531840` = `0xf0000000`
+    // `-268435456` = `0xf0000000`
     let mut eval = Eval::start("-268435456 4 rotate_left");
     eval.run();
 
