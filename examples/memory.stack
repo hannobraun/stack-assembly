@@ -1,0 +1,20 @@
+# StackAssembly provides a linear memory, that is addressable per word. Like all
+# values in StackAssembly, words in memory are 32 bits wide.
+#
+# We can write values into that memory.
+
+1 -1 write
+
+# Here we first push the integer `1` to the stack (the address we write to),
+# then `-1` (the value we write). `write` pops both of those from the stack, and
+# writes the value to the address.
+#
+# We can read that value back to the stack using `read`.
+
+1 read
+
+# Here we push only one value to the stack, the address. `read` pops that
+# address from the stack, then pushes the value at that address. The one we
+# wrote earlier.
+
+-1 = assert
