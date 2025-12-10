@@ -8,6 +8,11 @@
 /// [`effect`]: struct.Eval.html#structfield.effect
 #[derive(Debug, Eq, PartialEq)]
 pub enum Effect {
+    /// # An assertion failed
+    ///
+    /// Can trigger when evaluating `assert`, if its input is zero.
+    AssertionFailed,
+
     /// # Tried to divide by zero
     ///
     /// Can trigger when evaluating the `/` operator, if its second input is

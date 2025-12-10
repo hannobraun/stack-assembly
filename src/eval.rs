@@ -405,6 +405,12 @@ impl Eval {
                     if condition != 0 {
                         self.next_operator = index;
                     }
+                } else if identifier == "assert" {
+                    let value = self.stack.pop()?.to_i32();
+
+                    if value == 0 {
+                        return Err(Effect::AssertionFailed);
+                    }
                 } else if identifier == "yield" {
                     return Err(Effect::Yield);
                 } else if identifier == "read" {
