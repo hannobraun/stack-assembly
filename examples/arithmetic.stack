@@ -1,1 +1,38 @@
-2 2 * 1 + 2 /
+# StackAssembly uses a stack-based evaluation model. Here's an operator that
+# pushes an integer to that stack.
+
+1
+
+# The integer it pushes to the stack is, unsurprisingly, `1`. Other numbers work
+# the same, as long as they fall into the range of signed (two's complement)
+# 32-bit integers.
+#
+# Let's push another integer!
+
+2
+
+# The stack now contains `1` and `2`, with `2` being on top. But just pushing
+# integers to the stack is not very interesting by itself. Let's use an operator
+# that also _takes_ integers.
+
++
+
+# `+` takes two integers from the stack (its inputs), then pushes one (the sum
+# of its inputs). The stack now contains the `3`.
+
+3 = assert
+
+# There are more arithmetic operators, and we can combine them into more complex
+# expressions.
+
+2 3 * 1 - 2 /
+
+# This pushes integers to the stack (`2`, `3`), multiplies them (`6`), pushes
+# another integer (`6`, `1`), subtracts the second from the first (`5`), pushes
+# one more integer (`5`, `2`) and divides the first by the second.
+#
+# `/` performs integer division, and leaves both the quotient and the remainder
+# on the stack. So the final contents are `2` and `1`.
+
+1 = assert
+2 = assert
