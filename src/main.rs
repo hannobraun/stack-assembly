@@ -48,8 +48,11 @@ fn main() -> io::Result<()> {
                 continue;
             }
             effect => {
+                eprintln!();
                 eprintln!("Script triggered effect: {effect:?}");
+
                 print_stack(&eval.stack);
+
                 process::exit(2);
             }
         }
