@@ -1,4 +1,5 @@
 mod arithmetic;
+mod assert;
 mod bitwise;
 mod comments;
 mod comparison;
