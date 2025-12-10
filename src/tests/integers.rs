@@ -24,6 +24,17 @@ fn evaluate_negative_integer() {
 }
 
 #[test]
+fn evaluate_hexadecimal_integer() {
+    // Hexadecimal integer notation is supported.
+
+    let mut eval = Eval::start("0xf0f0");
+    eval.run();
+
+    assert_eq!(eval.effect, Some(Effect::OutOfOperators));
+    assert_eq!(eval.stack.to_i32_slice(), &[0xf0f0]);
+}
+
+#[test]
 fn trigger_effect_on_integer_overflow() {
     // If a token could theoretically be an integer, but is too large to be a
     // signed (two's complement) 32-bit one, we treat it as an unknown

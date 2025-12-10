@@ -1,14 +1,13 @@
 use crate::{Effect, Eval};
 
-// These tests suffer because we don't support hexadecimal integers yet. We
-// should update them, once we do.
+// Some of these tests suffer because we don't support integers that are larger
+// than `i32::MAX` yet. We should update them, once we do.
 
 #[test]
 fn and() {
     // The `and` operator performs the "bitwise and" operation.
 
-    // `61680` = `0xf0f0`, `65280` = `0xff00`
-    let mut eval = Eval::start("61680 65280 and");
+    let mut eval = Eval::start("0xf0f0 0xff00 and");
     eval.run();
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
@@ -19,8 +18,7 @@ fn and() {
 fn or() {
     // The `or` operator performs the "bitwise or" operation.
 
-    // `61680` = `0xf0f0`, `65280` = `0xff00`
-    let mut eval = Eval::start("61680 65280 or");
+    let mut eval = Eval::start("0xf0f0 0xff00 or");
     eval.run();
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
@@ -31,8 +29,7 @@ fn or() {
 fn xor() {
     // The `xor` operator performs the "bitwise exclusive-or" operation.
 
-    // `61680` = `0xf0f0`, `65280` = `0xff00`
-    let mut eval = Eval::start("61680 65280 xor");
+    let mut eval = Eval::start("0xf0f0 0xff00 xor");
     eval.run();
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
@@ -43,8 +40,7 @@ fn xor() {
 fn count_ones() {
     // The `count_ones` operator outputs the number of `1` bits in its input.
 
-    // `61680` = `0xf0f0`
-    let mut eval = Eval::start("61680 count_ones");
+    let mut eval = Eval::start("0xf0f0 count_ones");
     eval.run();
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
@@ -56,8 +52,7 @@ fn leading_zeros() {
     // The `leading_zeros` operator outputs the number of leading zero bits in
     // its input.
 
-    // `252645135` = `0x0f0f0f0f`
-    let mut eval = Eval::start("252645135 leading_zeros");
+    let mut eval = Eval::start("0x0f0f0f0f leading_zeros");
     eval.run();
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
@@ -82,7 +77,7 @@ fn rotate_left() {
     // The `rotate_left` operator rotates the bits of its first input to the
     // left, by the number of positions defined by its second input.
 
-    // `4026531840` = `0xf0000000`
+    // `-268435456` = `0xf0000000`
     let mut eval = Eval::start("-268435456 4 rotate_left");
     eval.run();
 
@@ -95,8 +90,7 @@ fn rotate_right() {
     // The `rotate_right` operator rotates the bits of its first input to the
     // right, by the number of positions defined by its second input.
 
-    // `15` = `0x0000000f`
-    let mut eval = Eval::start("15 4 rotate_right");
+    let mut eval = Eval::start("0x0000000f 4 rotate_right");
     eval.run();
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
@@ -125,8 +119,7 @@ fn shift_right_unsigned() {
     // unsigned input, there is no meaningful distinction between arithmetic and
     // logical shift.
 
-    // `255` = `0x000000ff`
-    let mut eval = Eval::start("255 4 shift_right");
+    let mut eval = Eval::start("0x000000ff 4 shift_right");
     eval.run();
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
