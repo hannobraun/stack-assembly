@@ -2,7 +2,7 @@
 
 ## About
 
-StackAssembly is a minimalist, stack-based, assembly-like programming language.
+StackAssembly is a minimalist, stack-based, assembly-like programming language. Here's a small taste:
 
 ```
 # Push `0` to the stack.
@@ -22,7 +22,7 @@ start:
 255 = assert
 ```
 
-It serves as a foundation for my personal research into programming language design and development. Even though I want it to be complete enough for real code too, that is not its main purpose. Don't expect that it will work for whatever project you might have in mind.
+StackAssembly serves as a foundation for my personal research into programming language design and development. Even though I want it to be complete enough for real code too, that is not its main purpose. If you're wondering if it might work for you, the safe answer is probably "no".
 
 ## Status
 

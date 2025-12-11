@@ -1,7 +1,7 @@
 //! # StackAssembly
 //!
 //! StackAssembly is a minimalist, stack-based, assembly-like programming
-//! language.
+//! language. Here's a small taste:
 //!
 //! ```text
 //! # Push `0` to the stack.
@@ -21,10 +21,10 @@
 //! 255 = assert
 //! ```
 //!
-//! It serves as a foundation for my personal research into programming language
-//! design and development. Even though I want it to be complete enough for real
-//! code too, that is not its main purpose. Don't expect that it will work for
-//! whatever project you might have in mind.
+//! StackAssembly serves as a foundation for my personal research into
+//! programming language design and development. Even though I want it to be
+//! complete enough for real code too, that is not its main purpose. If you're
+//! wondering if it might work for you, the safe answer is probably "no".
 //!
 //! Please check out the [repository on GitHub][repository] to learn more about
 //! StackAssembly. This documentation, while it contains some information about
