@@ -41,3 +41,9 @@ jobs:
         env:
           RUSTDOCFLAGS: -D warnings
         run: cargo doc
+
+      - name: Run examples
+        run: |
+          for example in examples/*; do
+            cargo run -- "$example"
+          done
