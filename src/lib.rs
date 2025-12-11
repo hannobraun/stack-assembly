@@ -4,12 +4,21 @@
 //! language.
 //!
 //! ```text
+//! # Push `0` to the stack.
 //! 0
 //!
-//! loop:
+//! start:
+//!     # Increment the value on the stack by `1`.
 //!     1 +
-//!     yield
-//!     @loop jump
+//!
+//!     # If the value on the stack is smaller than `255`, jump to `start:`.
+//!     0 copy 255 <
+//!     @start
+//!         jump_if
+//!
+//! # Looks like we didn't jump to `start:` that last time, so the value must be
+//! # `255`.
+//! 255 = assert
 //! ```
 //!
 //! It serves as a foundation for my personal research into programming language
