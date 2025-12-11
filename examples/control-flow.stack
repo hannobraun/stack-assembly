@@ -1,5 +1,5 @@
 # Control flow in StackAssembly is flat, assembly-like. It is based on defining
-# labels, then jumping to those labels.
+# labels and jumping to them.
 
 3
 @end jump
@@ -29,7 +29,7 @@ end:
 end2:
 
 # Here we pass `1` to `jump_if`, which is non-zero. As a result, this code
-# behaves just like the one above, and `5` is never pushed to the stack.
+# behaves just like that above, and `5` is never pushed to the stack.
 
 3 = assert
 
