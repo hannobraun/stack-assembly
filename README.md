@@ -2,18 +2,27 @@
 
 ## About
 
-StackAssembly is a minimalist, stack-based, assembly-like programming language.
+StackAssembly is a minimalist, stack-based, assembly-like programming language. Here's a small taste:
 
 ```
+# Push `0` to the stack.
 0
 
-loop:
+start:
+    # Increment the value on the stack by `1`.
     1 +
-    yield
-    @loop jump
+
+    # If the value on the stack is smaller than `255`, jump to `start:`.
+    0 copy 255 <
+    @start
+        jump_if
+
+# Looks like we didn't jump to `start:` that last time, so the value must be
+# `255`.
+255 = assert
 ```
 
-It serves as a foundation for my personal research into programming language design and development. Even though I want it to be complete enough for real code too, that is not its main purpose. Don't expect that it will work for whatever project you might have in mind.
+StackAssembly serves as a foundation for my personal research into programming language design and development. Even though I want it to be complete enough for real code too, that is not its main purpose. If you're wondering if it might work for you, the safe answer is probably "no".
 
 ## Status
 
