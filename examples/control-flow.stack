@@ -50,11 +50,11 @@ end3:
 
 0
 
-start:
+increment:
     1 +
 
     0 copy 255 <
-    @start
+    @increment
         jump_if
 
 # Here, we start by pushing `0` to the stack, then we increment it by `1`. We
