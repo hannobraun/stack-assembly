@@ -5,11 +5,11 @@
 
 1 -1 write
 
-# Here we first push the integer `1` to the stack (the address we write to),
-# then `-1` (the value we write). `write` pops both from the stack, then writes
+# Here we first push the integer `1` to the stack (the address to write to),
+# then `-1` (the value to write). `write` pops both from the stack, then writes
 # the value to the address.
 #
-# We can read that value back to the stack using `read`.
+# We can read that value back from memory, using `read`.
 
 1 read
 
@@ -17,6 +17,6 @@
 # address from the stack, reads the value at that address, then pushes that
 # value to the stack.
 #
-# As a result, the value we wrote above is now on the stack.
+# As a result, the value we wrote above is now back on the stack.
 
 -1 = assert
