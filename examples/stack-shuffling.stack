@@ -2,23 +2,23 @@
 # Operators push their outputs to, and pop their inputs from, the top of the
 # stack.
 #
-# Let's push some integers there.
+# Let's push some integers.
 
 3 5 8
 
-# As a result of this model, we will sooner or later run into a situation, where
-# we need to access values that are currently _not_ on top of the stack.
+# Sooner or later, we will run into a situation, where we need to access values
+# that are currently _not_ on top of the stack.
 #
 # Let's say we need a copy of that `5` at the top. We can do that using `copy`.
 
 1 copy
 
 # First, we push another integer, which is `copy`'s _index_ argument. An index
-# of `0` would make `copy` target the value at the top of the stack (`8`). Here,
-# with an index of `1`, it targets the one below that (`5`).
+# of `0` would refer to the value at the top of the stack (`8`). Here, with an
+# index of `1`, we refer to the one below that (`5`).
 #
-# As a result, the original values are still on the stack, but `5` is now on
-# top.
+# As a result, the original values are still on the stack, but a copy of `5` is
+# now on top.
 
 5 = assert
 8 = assert
