@@ -9,7 +9,7 @@ end:
 # Here we have code with a label called `end:`. Labels name the operator that
 # follows them, which here is the first operator below this comment.
 #
-# When we follow this code from the start, it first pushes the integer `3`.
+# Following this code from the start, it first pushes the integer `3`.
 # Afterwards, we have a label, `@end`, which pushes the address of the operator
 # that `end:` gave its name to.
 #
@@ -28,13 +28,13 @@ end:
 5
 end2:
 
-# Here we pass `1` to `jump_if`, which is non-zero. As a result, this code
-# behaves just like that above, and `5` is never pushed to the stack.
+# Here we pass `1` as `jump_if`'s condition, which is non-zero. As a result,
+# this code behaves just like that above, and `5` is never pushed to the stack.
 
 3 = assert
 
-# If we pass `0` as `jump_if`'s condition, it does not jump, and we continue
-# with evaluating the `5` right after it.
+# If we pass `0` instead, `jump_if` does not jump, and we continue with
+# evaluating the `5` right after it.
 
 3
 0 @end3 jump_if
@@ -46,8 +46,7 @@ end3:
 5 = assert
 3 = assert
 
-# But just giving constant conditions to `jump_if` is boring. Let's do something
-# more interesting instead.
+# But let's use `jump_if` for something more interesting.
 
 0
 

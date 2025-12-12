@@ -2,9 +2,9 @@
 
 0xf0f0 0xff00 and
 
-# Here we push two values to the stack (`0xf0f0`, `0xff00`). `and` then pops
-# them from the stack, computes the logical conjunction for each bit, then
-# pushes the result back to the stack.
+# Here we push two values to the stack (`0xf0f0`, `0xff00`). `and` pops them,
+# computes the logical conjunction for each bit, then pushes the result back to
+# the stack.
 #
 # The stack now contains `0xf000`.
 
