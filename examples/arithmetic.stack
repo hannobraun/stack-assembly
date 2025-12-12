@@ -1,4 +1,4 @@
-# StackAssembly uses a stack-based evaluation model. As a result, arithmetic
+# StackAssembly has a stack-based evaluation model. As a result, arithmetic
 # operations use postfix notation.
 
 1 2 +
