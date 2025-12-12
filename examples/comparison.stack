@@ -7,7 +7,7 @@
 #
 # `1` is non-zero, which some operators interpret as "true". We can pass it to
 # `assert`, for example, which pops a value from the stack and checks whether
-# it's true. If it's not, it triggers an effect, aborting the evaluation.
+# it's true. If it's not, `assert` triggers an effect, aborting the evaluation.
 
 assert
 
