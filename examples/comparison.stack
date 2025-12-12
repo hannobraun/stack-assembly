@@ -1,14 +1,13 @@
-# To determine if two values are equal, we can use the `=` operator.
+# To determine if two values are equal, StackAssembly provides the `=` operator.
 
 0 0 =
 
 # Here we push the integer `0` to the stack, twice. `=` then pops both values
 # from the stack, and since they are equal, it pushes `1` to the stack.
 #
-# `1` is non-zero, which operators that do boolean things interpret as "true".
-# We can pass it to `assert`, for example, which pops a value from the stack and
-# checks that it's actually true. If it's not, it triggers an effect, aborting
-# the evaluation.
+# `1` is non-zero, which some operators interpret as "true". We can pass it to
+# `assert`, for example, which pops a value from the stack and checks whether
+# it's true. If it's not, it triggers an effect, aborting the evaluation.
 
 assert
 
@@ -23,7 +22,7 @@ assert
 0 1 <= assert
 1 1 <= assert
 
-# And finally, `>=` checks that its first input is larger than or equal to its
+# And finally, `>=` checks if its first input is larger than or equal to its
 # second.
 
 1 0 >= assert
