@@ -7,17 +7,17 @@
 //! # Push `0` to the stack.
 //! 0
 //!
-//! start:
+//! increment:
 //!     # Increment the value on the stack by `1`.
 //!     1 +
 //!
-//!     # If the value on the stack is smaller than `255`, jump to `start:`.
+//!     # If the value on the stack is smaller than `255`, jump to `increment:`.
 //!     0 copy 255 <
-//!     @start
+//!     @increment
 //!         jump_if
 //!
-//! # Looks like we didn't jump to `start:` that last time, so the value must be
-//! # `255`.
+//! # Looks like we didn't jump to `increment:` that last time, so the value
+//! # must be `255` now.
 //! 255 = assert
 //! ```
 //!
