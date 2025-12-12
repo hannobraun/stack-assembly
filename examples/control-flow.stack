@@ -6,12 +6,12 @@
 5
 end:
 
-# Here we have code with a label called `end:`. Labels name the operator that
-# follows them, which here is the first operator below this comment.
+# Here we have code with a label called `end:`. Labels give a name to the
+# operator that follows them, which here is the first operator below this
+# comment.
 #
-# Following this code from the start, it first pushes the integer `3`.
-# Afterwards, we have a label, `@end`, which pushes the address of the operator
-# that `end:` gave its name to.
+# This code first pushes the integer `3`. Afterwards, we have a label, `@end`,
+# which pushes the address of the operator that `end:` gave a name to.
 #
 # `jump` then pops that address from the stack and arranges for evaluation to
 # continue there. As a result, the `5` in the middle is never evaluated, and `3`
