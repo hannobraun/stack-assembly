@@ -20,7 +20,7 @@ end:
 3 = assert
 
 # We can also jump to code conditionally, using `jump_if`. `jump_if` has an
-# additional input, its condition. If that condition is non-zero, `jump_if`
+# additional input, its _condition_. If that condition is non-zero, `jump_if`
 # behaves just like `jump`.
 
 3
@@ -28,8 +28,8 @@ end:
 5
 end2:
 
-# Here we pass `1` as `jump_if`'s condition, which is non-zero. As a result,
-# this code behaves just like that above, and `5` is never pushed to the stack.
+# Here we pass `1` as `jump_if`'s condition. As a result, this code behaves just
+# like that above, and `5` is never pushed to the stack.
 
 3 = assert
 
