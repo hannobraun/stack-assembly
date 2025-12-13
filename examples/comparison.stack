@@ -12,7 +12,7 @@
 assert
 
 # Similarly, we can use `<` and `>` to check if one value is larger or smaller
-# than the other.
+# than another.
 
 0 1 < assert
 1 0 > assert
