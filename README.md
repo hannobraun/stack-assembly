@@ -34,11 +34,11 @@ I'm currently implementing the initial design and have not released a first vers
 
 Check out the `examples/` directory to see some StackAssembly code. To run a script, follow these steps:
 
-1. Clone this repository. Git will do for this, but I generally recommend using [Jujutsu] instead.
+1. Clone this repository. Regular Git will do, but I generally recommend using [Jujutsu] instead.
 2. Make sure you have a recent version of [Rust] installed on your system.
-3. From within this repository, run this command: `cargo run -- path/to/script.stack`
+3. From within this repository, run the following command: `cargo run -- path/to/script.stack`
 
-To run the "loop" example from the root directory of this repository, for example, run this command: `cargo run -- examples/loop.stack`
+For example, to run the "control flow" example from the root directory of this repository, execute this command: `cargo run -- examples/control-flow.stack`
 
 [Jujutsu]: https://github.com/jj-vcs/jj
 [Rust]: https://rust-lang.org/
@@ -49,7 +49,7 @@ The StackAssembly interpreter is packaged as a library. That library's documenta
 
 ### Additional Documentation
 
-Currently, [the initial design document][design] is the best available introduction to the language. The [test suite] provides a less friendly but more complete picture, basically serving the role of a specification.
+[The initial design document][design] can serve as a (not fully complete) introduction to the language. The [test suite] covers the full language in all its detail, basically serving the role of a specification, but is not as friendly to approach.
 
 [design]: https://www.hannobraun.com/designing-stack-assembly/
 [test suite]: src/tests/
