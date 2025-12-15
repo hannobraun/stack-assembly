@@ -22,7 +22,7 @@
 //! ```
 //!
 //! StackAssembly serves as a foundation for my personal research into
-//! programming language design and development. Even though I want it to be
+//! programming language design and implementation. Even though I want it to be
 //! complete enough for real code too, that is not its main purpose. If you're
 //! wondering if it might work for you, the safe answer is probably "no".
 //!
