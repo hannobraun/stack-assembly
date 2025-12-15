@@ -45,7 +45,11 @@ For example, to run the "control flow" example from the root directory of this r
 
 ### Interpreter API
 
-The StackAssembly interpreter is packaged as a library. That library's documentation covers mainly the interpreter API, but also provides information on the language. Right now, you must build the documentation locally to access it. With a working [Rust] setup, you can do so by running `cargo doc --open`.
+The StackAssembly interpreter is packaged as a library. [That library's documentation][api] covers mainly the interpreter API, but also provides information on the language.
+
+[api]: https://docs.rs/stack-assembly/latest/stack_assembly/
+
+With a working [Rust] setup, you can also build this documentation locally, by running `cargo doc --open`.
 
 ### Additional Documentation
 
