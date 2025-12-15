@@ -47,8 +47,6 @@ To run the "loop" example from the root directory of this repository, for exampl
 
 The StackAssembly interpreter is packaged as a library. That library's documentation covers mainly the interpreter API, but also provides information on the language. Right now, you must build the documentation locally to access it. With a working [Rust] setup, you can do so by running `cargo doc --open`.
 
-[Rust]: https://rust-lang.org/
-
 ### Additional Documentation
 
 Currently, [the initial design document][design] is the best available introduction to the language. The [test suite] provides a less friendly but more complete picture, basically serving the role of a specification.
