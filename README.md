@@ -26,7 +26,7 @@ StackAssembly serves as a foundation for my personal research into programming l
 
 ## Status
 
-I'm currently implementing the initial design and have not released a first version yet.
+The initial implementation is complete, but testing (both automated and in terms of real-world use) has been limited. Feel free to try the language, but don't expect too much in terms of reliability or usefulness.
 
 ## Documentation
 
