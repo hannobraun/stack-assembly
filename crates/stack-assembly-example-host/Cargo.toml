@@ -7,5 +7,12 @@ description.workspace = true
 license.workspace = true
 repository.workspace = true
 
+[dependencies]
+anyhow = "*"
+
+[dependencies.clap]
+version = "*"
+features = ["derive"]
+
 [dependencies.stack-assembly]
 path = "../stack-assembly"
