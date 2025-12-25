@@ -1,0 +1,11 @@
+[package]
+name = "stack-assembly-example-host"
+publish = false
+version.workspace = true
+edition.workspace = true
+description.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[dependencies.stack-assembly]
+path = "../stack-assembly"
