@@ -1,3 +1,10 @@
 [workspace]
 resolver = "3"
 members = ["crates/stack-assembly"]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+description = "minimalist, stack-based, assembly-like programming language"
+license = "0BSD"
+repository = "https://github.com/hannobraun/stack-assembly"
