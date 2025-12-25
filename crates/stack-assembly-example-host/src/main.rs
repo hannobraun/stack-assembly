@@ -1,5 +1,6 @@
 use std::{fs::File, io::Read, path::PathBuf, process, thread, time::Duration};
 
+use anyhow::Context;
 use clap::Parser;
 use stack_assembly::{Effect, Eval, Stack};
 
@@ -13,7 +14,10 @@ fn main() -> anyhow::Result<()> {
     let args = Args::parse();
 
     let mut script = String::new();
-    File::open(args.path)?.read_to_string(&mut script)?;
+    File::open(args.path)
+        .context("Opening script file.")?
+        .read_to_string(&mut script)
+        .context("Reading from script file.")?;
 
     let mut eval = Eval::start(&script);
 
