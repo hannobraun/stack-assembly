@@ -1,29 +1,25 @@
 use std::{
-    env,
     fs::File,
     io::{self, Read},
+    path::PathBuf,
     process, thread,
     time::Duration,
 };
 
+use clap::Parser;
 use stack_assembly::{Effect, Eval, Stack};
 
 fn main() -> io::Result<()> {
-    let mut args = env::args();
-
-    let Some(_executable) = args.next() else {
-        panic!("Expecting first argument to be the path to the executable.");
-    };
-
-    let Some(path) = args.next() else {
-        print_usage_and_exit("Expecting a single argument; found none.");
-    };
-    let None = args.next() else {
-        print_usage_and_exit("Expecting a single argument; found multiple.");
-    };
+    /// Example host for the StackAssembly programming language
+    #[derive(clap::Parser)]
+    struct Args {
+        /// The path to the script that the parser should evaluate
+        path: PathBuf,
+    }
+    let args = Args::parse();
 
     let mut script = String::new();
-    File::open(path)?.read_to_string(&mut script)?;
+    File::open(args.path)?.read_to_string(&mut script)?;
 
     let mut eval = Eval::start(&script);
 
@@ -57,16 +53,6 @@ fn main() -> io::Result<()> {
             }
         }
     }
-}
-
-fn print_usage_and_exit(error: &str) -> ! {
-    eprintln!();
-    eprintln!("{error}");
-    eprintln!();
-    eprintln!("Usage:");
-    eprintln!("cargo run -- path/to/script.stack");
-
-    process::exit(1);
 }
 
 fn print_stack(stack: &Stack) {
