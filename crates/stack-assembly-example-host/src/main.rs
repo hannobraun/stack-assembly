@@ -1,15 +1,9 @@
-use std::{
-    fs::File,
-    io::{self, Read},
-    path::PathBuf,
-    process, thread,
-    time::Duration,
-};
+use std::{fs::File, io::Read, path::PathBuf, process, thread, time::Duration};
 
 use clap::Parser;
 use stack_assembly::{Effect, Eval, Stack};
 
-fn main() -> io::Result<()> {
+fn main() -> anyhow::Result<()> {
     /// Example host for the StackAssembly programming language
     #[derive(clap::Parser)]
     struct Args {
