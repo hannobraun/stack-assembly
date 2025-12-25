@@ -1,11 +1,10 @@
-[package]
-name = "stack-assembly"
+[workspace]
+resolver = "3"
+members = ["crates/*"]
+
+[workspace.package]
 version = "0.1.0"
 edition = "2024"
 description = "minimalist, stack-based, assembly-like programming language"
 license = "0BSD"
 repository = "https://github.com/hannobraun/stack-assembly"
-
-[dependencies.bytemuck]
-version = "1.24.0"
-features = ["derive"]
