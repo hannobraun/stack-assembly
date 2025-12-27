@@ -48,9 +48,9 @@ fn trigger_effect_on_integer_overflow() {
 
     eval.step();
     assert_eq!(eval.effect, None);
-    assert_eq!(eval.stack.to_i32_slice(), &[2147483647]);
+    assert_eq!(eval.stack.to_u32_slice(), &[2147483647]);
 
     eval.step();
     assert_eq!(eval.effect, Some(Effect::UnknownIdentifier));
-    assert_eq!(eval.stack.to_i32_slice(), &[2147483647]);
+    assert_eq!(eval.stack.to_u32_slice(), &[2147483647]);
 }
