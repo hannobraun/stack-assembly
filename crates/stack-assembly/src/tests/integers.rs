@@ -48,6 +48,19 @@ fn evaluate_full_range_of_unsigned_decimal_integers() {
 }
 
 #[test]
+fn evaluate_full_range_of_unsigned_hexadecimal_integers() {
+    // Hexadecimal integers that are too large to fit into signed (two's
+    // complement) 32-bit values are still supported, as long as they fit into
+    // an unsigned 32-bit value.
+
+    let mut eval = Eval::start("0x80000000");
+    eval.run();
+
+    assert_eq!(eval.effect, Some(Effect::OutOfOperators));
+    assert_eq!(eval.stack.to_u32_slice(), &[0x80000000]);
+}
+
+#[test]
 fn trigger_effect_on_integer_overflow() {
     // If a token could theoretically be an integer, but is too large to be a
     // signed (two's complement) 32-bit one, we treat it as an unknown
