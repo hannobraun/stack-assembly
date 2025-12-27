@@ -19,6 +19,11 @@ pub struct Memory {
 }
 
 impl Memory {
+    /// # Access the memory as a slice of `i32` values
+    pub fn to_i32_slice(&self) -> &[i32] {
+        bytemuck::cast_slice(&self.values)
+    }
+
     /// # Access the memory as a slice of `u32` values
     pub fn to_u32_slice(&self) -> &[u32] {
         bytemuck::cast_slice(&self.values)
