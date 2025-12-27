@@ -165,6 +165,10 @@ impl Eval {
                     Operator::Integer { value }
                 } else if let Ok(value) = token.parse::<i32>() {
                     Operator::Integer { value }
+                } else if let Ok(value) = token.parse::<u32>() {
+                    Operator::Integer {
+                        value: i32::from_le_bytes(value.to_le_bytes()),
+                    }
                 } else {
                     Operator::Identifier {
                         value: token.to_string(),
