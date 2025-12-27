@@ -166,9 +166,7 @@ impl Eval {
                 } else if let Ok(value) = token.parse::<i32>() {
                     Operator::Integer { value }
                 } else if let Ok(value) = token.parse::<u32>() {
-                    Operator::Integer {
-                        value: i32::from_le_bytes(value.to_le_bytes()),
-                    }
+                    Operator::integer_u32(value)
                 } else {
                     Operator::Identifier {
                         value: token.to_string(),
@@ -484,6 +482,14 @@ enum Operator {
     Identifier { value: String },
     Integer { value: i32 },
     Reference { name: String },
+}
+
+impl Operator {
+    pub fn integer_u32(value: u32) -> Self {
+        Self::Integer {
+            value: i32::from_le_bytes(value.to_le_bytes()),
+        }
+    }
 }
 
 #[derive(Debug)]
