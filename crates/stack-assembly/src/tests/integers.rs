@@ -62,13 +62,13 @@ fn evaluate_full_range_of_unsigned_hexadecimal_integers() {
 
 #[test]
 fn trigger_effect_on_integer_overflow() {
-    // If a token could theoretically be an integer, but is too large to be a
-    // signed (two's complement) 32-bit one, we treat it as an unknown
+    // If a token could theoretically be an integer, but the value it represents
+    // is too large to fit in a 32-bit word, we treat it as an unknown
     // identifier.
     //
-    // Long-term, this is undesired behavior, which is tracked in the following
-    // issue:
-    // https://github.com/hannobraun/stack-assembly/issues/18
+    // Long-term, it would make more sense to trigger an "integer overflow"
+    // effect instead. This is tracked in the following issue:
+    // https://github.com/hannobraun/stack-assembly/issues/22
 
     let mut eval = Eval::start("4294967295 4294967296");
 
