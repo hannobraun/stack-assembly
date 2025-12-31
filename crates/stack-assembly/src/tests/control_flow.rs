@@ -58,6 +58,32 @@ fn return_() {
 }
 
 #[test]
+fn call_return() {
+    // The `call` operator takes the index of an operator (usually provided by
+    // a reference) as input, arranges for evaluation to continue at that
+    // operator, and pushes a return address to the call stack. `return` pops an
+    // address from the call stack and arranges for evaluation to continue
+    // there.
+
+    let script = "
+        1
+        @2 call
+        3
+        return
+
+        2:
+            2
+            return
+    ";
+
+    let mut eval = Eval::start(script);
+    eval.run();
+
+    assert_eq!(eval.effect, Some(Effect::Return));
+    assert_eq!(eval.operand_stack.to_u32_slice(), &[1, 2, 3]);
+}
+
+#[test]
 fn invalid_reference_triggers_effect() {
     // A reference that is not paired with a matching label can't return a
     // sensible value and must trigger an effect.

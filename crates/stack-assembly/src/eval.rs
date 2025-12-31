@@ -23,6 +23,7 @@ pub struct Eval {
     operators: Vec<Operator>,
     labels: Vec<Label>,
     next_operator: usize,
+    call_stack: Vec<usize>,
 
     /// # The active effect, if one has triggered
     ///
@@ -185,6 +186,7 @@ impl Eval {
             operators,
             labels,
             next_operator: 0,
+            call_stack: Vec::new(),
             effect: None,
             operand_stack: OperandStack { values: Vec::new() },
             memory: Memory {
@@ -422,8 +424,17 @@ impl Eval {
                     if condition != 0 {
                         self.next_operator = index;
                     }
+                } else if identifier == "call" {
+                    self.call_stack.push(self.next_operator);
+
+                    let index = self.operand_stack.pop()?.to_usize();
+                    self.next_operator = index;
                 } else if identifier == "return" {
-                    return Err(Effect::Return);
+                    let Some(index) = self.call_stack.pop() else {
+                        return Err(Effect::Return);
+                    };
+
+                    self.next_operator = index;
                 } else if identifier == "assert" {
                     let value = self.operand_stack.pop()?.to_i32();
 
