@@ -103,7 +103,7 @@
 mod effect;
 mod eval;
 mod memory;
-mod stack;
+mod operand_stack;
 mod value;
 
 #[cfg(test)]
@@ -113,6 +113,6 @@ pub use self::{
     effect::Effect,
     eval::Eval,
     memory::Memory,
-    stack::{OperandStack, OperandStackUnderflow},
+    operand_stack::{OperandStack, OperandStackUnderflow},
     value::Value,
 };
