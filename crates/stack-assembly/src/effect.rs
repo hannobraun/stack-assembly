@@ -48,17 +48,17 @@ pub enum Effect {
     /// _index_ input is too large to refer to a value on the stack.
     InvalidStackIndex,
 
-    /// # Ran out of operators to evaluate
-    ///
-    /// Triggers when evaluation reaches the end of the script, where no more
-    /// operators are available. This signals the regular end of the evaluation.
-    OutOfOperators,
-
     /// # Tried popping a value from an empty stack
     ///
     /// Can trigger when evaluating any operator that has more inputs than the
     /// number of values currently on the stack.
     OperandStackUnderflow,
+
+    /// # Ran out of operators to evaluate
+    ///
+    /// Triggers when evaluation reaches the end of the script, where no more
+    /// operators are available. This signals the regular end of the evaluation.
+    OutOfOperators,
 
     /// # Evaluated an identifier that the language does not recognize
     ///
