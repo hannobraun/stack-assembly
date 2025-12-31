@@ -9,7 +9,7 @@ fn smaller_outputs_one_if_smaller() {
     eval.run();
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
-    assert_eq!(eval.stack.to_u32_slice(), &[1]);
+    assert_eq!(eval.operand_stack.to_u32_slice(), &[1]);
 }
 
 #[test]
@@ -20,7 +20,7 @@ fn smaller_outputs_zero_if_equal() {
     eval.run();
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
-    assert_eq!(eval.stack.to_u32_slice(), &[0]);
+    assert_eq!(eval.operand_stack.to_u32_slice(), &[0]);
 }
 
 #[test]
@@ -32,7 +32,7 @@ fn smaller_outputs_zero_if_larger() {
     eval.run();
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
-    assert_eq!(eval.stack.to_u32_slice(), &[0]);
+    assert_eq!(eval.operand_stack.to_u32_slice(), &[0]);
 }
 
 #[test]
@@ -44,7 +44,7 @@ fn smaller_equals_outputs_one_if_smaller() {
     eval.run();
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
-    assert_eq!(eval.stack.to_u32_slice(), &[1]);
+    assert_eq!(eval.operand_stack.to_u32_slice(), &[1]);
 }
 
 #[test]
@@ -55,7 +55,7 @@ fn smaller_equals_outputs_one_if_equal() {
     eval.run();
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
-    assert_eq!(eval.stack.to_u32_slice(), &[1]);
+    assert_eq!(eval.operand_stack.to_u32_slice(), &[1]);
 }
 
 #[test]
@@ -67,7 +67,7 @@ fn smaller_equals_outputs_zero_if_larger() {
     eval.run();
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
-    assert_eq!(eval.stack.to_u32_slice(), &[0]);
+    assert_eq!(eval.operand_stack.to_u32_slice(), &[0]);
 }
 
 #[test]
@@ -78,7 +78,7 @@ fn equals_outputs_one_if_equal() {
     eval.run();
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
-    assert_eq!(eval.stack.to_u32_slice(), &[1]);
+    assert_eq!(eval.operand_stack.to_u32_slice(), &[1]);
 }
 
 #[test]
@@ -89,7 +89,7 @@ fn equals_outputs_zero_if_not_equal() {
     eval.run();
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
-    assert_eq!(eval.stack.to_u32_slice(), &[0]);
+    assert_eq!(eval.operand_stack.to_u32_slice(), &[0]);
 }
 
 #[test]
@@ -101,7 +101,7 @@ fn larger_outputs_zero_if_smaller() {
     eval.run();
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
-    assert_eq!(eval.stack.to_u32_slice(), &[0]);
+    assert_eq!(eval.operand_stack.to_u32_slice(), &[0]);
 }
 
 #[test]
@@ -112,7 +112,7 @@ fn larger_outputs_zero_if_equal() {
     eval.run();
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
-    assert_eq!(eval.stack.to_u32_slice(), &[0]);
+    assert_eq!(eval.operand_stack.to_u32_slice(), &[0]);
 }
 
 #[test]
@@ -124,7 +124,7 @@ fn larger_outputs_one_if_larger() {
     eval.run();
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
-    assert_eq!(eval.stack.to_u32_slice(), &[1]);
+    assert_eq!(eval.operand_stack.to_u32_slice(), &[1]);
 }
 
 #[test]
@@ -136,7 +136,7 @@ fn larger_equals_outputs_zero_if_smaller() {
     eval.run();
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
-    assert_eq!(eval.stack.to_u32_slice(), &[0]);
+    assert_eq!(eval.operand_stack.to_u32_slice(), &[0]);
 }
 
 #[test]
@@ -147,7 +147,7 @@ fn larger_equals_outputs_one_if_equal() {
     eval.run();
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
-    assert_eq!(eval.stack.to_u32_slice(), &[1]);
+    assert_eq!(eval.operand_stack.to_u32_slice(), &[1]);
 }
 
 #[test]
@@ -159,5 +159,5 @@ fn larger_equals_outputs_one_if_larger() {
     eval.run();
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
-    assert_eq!(eval.stack.to_u32_slice(), &[1]);
+    assert_eq!(eval.operand_stack.to_u32_slice(), &[1]);
 }

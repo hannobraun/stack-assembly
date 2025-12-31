@@ -8,7 +8,7 @@ fn add() {
     eval.run();
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
-    assert_eq!(eval.stack.to_i32_slice(), &[3]);
+    assert_eq!(eval.operand_stack.to_i32_slice(), &[3]);
 }
 
 #[test]
@@ -19,7 +19,7 @@ fn add_wraps_on_signed_overflow() {
     eval.run();
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
-    assert_eq!(eval.stack.to_i32_slice(), &[-2147483648]);
+    assert_eq!(eval.operand_stack.to_i32_slice(), &[-2147483648]);
 }
 
 #[test]
@@ -35,7 +35,7 @@ fn add_wraps_on_unsigned_overflow() {
     eval.run();
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
-    assert_eq!(eval.stack.to_i32_slice(), &[0]);
+    assert_eq!(eval.operand_stack.to_i32_slice(), &[0]);
 }
 
 #[test]
@@ -46,7 +46,7 @@ fn subtract() {
     eval.run();
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
-    assert_eq!(eval.stack.to_i32_slice(), &[1]);
+    assert_eq!(eval.operand_stack.to_i32_slice(), &[1]);
 }
 
 #[test]
@@ -58,7 +58,7 @@ fn subtract_wraps_on_signed_overflow() {
     eval.run();
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
-    assert_eq!(eval.stack.to_i32_slice(), &[2147483647]);
+    assert_eq!(eval.operand_stack.to_i32_slice(), &[2147483647]);
 }
 
 #[test]
@@ -70,7 +70,7 @@ fn subtract_wraps_on_unsigned_overflow() {
     eval.run();
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
-    assert_eq!(eval.stack.to_i32_slice(), &[-1]);
+    assert_eq!(eval.operand_stack.to_i32_slice(), &[-1]);
 }
 
 #[test]
@@ -81,7 +81,7 @@ fn multiply() {
     eval.run();
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
-    assert_eq!(eval.stack.to_i32_slice(), &[6]);
+    assert_eq!(eval.operand_stack.to_i32_slice(), &[6]);
 }
 
 #[test]
@@ -93,7 +93,7 @@ fn multiply_wraps_on_signed_overflow() {
     eval.run();
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
-    assert_eq!(eval.stack.to_i32_slice(), &[-2]);
+    assert_eq!(eval.operand_stack.to_i32_slice(), &[-2]);
 }
 
 #[test]
@@ -109,7 +109,7 @@ fn multiply_wraps_on_unsigned_overflow() {
     eval.run();
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
-    assert_eq!(eval.stack.to_i32_slice(), &[-2]);
+    assert_eq!(eval.operand_stack.to_i32_slice(), &[-2]);
 }
 
 #[test]
@@ -121,7 +121,7 @@ fn divide() {
     eval.run();
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
-    assert_eq!(eval.stack.to_i32_slice(), &[2, 1]);
+    assert_eq!(eval.operand_stack.to_i32_slice(), &[2, 1]);
 }
 
 #[test]
@@ -139,7 +139,7 @@ fn divide_treats_its_inputs_as_signed() {
     eval.run();
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
-    assert_eq!(eval.stack.to_i32_slice(), &[-2, 1]);
+    assert_eq!(eval.operand_stack.to_i32_slice(), &[-2, 1]);
 }
 
 #[test]
@@ -151,7 +151,7 @@ fn divide_by_zero_triggers_effect() {
     eval.run();
 
     assert_eq!(eval.effect, Some(Effect::DivisionByZero));
-    assert_eq!(eval.stack.to_i32_slice(), &[]);
+    assert_eq!(eval.operand_stack.to_i32_slice(), &[]);
 }
 
 #[test]
@@ -168,5 +168,5 @@ fn divide_triggers_effect_on_overflow() {
     eval.run();
 
     assert_eq!(eval.effect, Some(Effect::IntegerOverflow));
-    assert_eq!(eval.stack.to_i32_slice(), &[]);
+    assert_eq!(eval.operand_stack.to_i32_slice(), &[]);
 }

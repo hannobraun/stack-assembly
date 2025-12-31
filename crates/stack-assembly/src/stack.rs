@@ -6,11 +6,11 @@ use crate::{Effect, Value};
 /// stores all operands.
 ///
 /// Aside from this, the stack is an important communication channel between
-/// script and host. Please refer to [`Eval`]'s [`stack`] field for more
+/// script and host. Please refer to [`Eval`]'s [`operand_stack`] field for more
 /// information on that.
 ///
 /// [`Eval`]: crate::Eval
-/// [`stack`]: struct.Eval.html#structfield.stack
+/// [`operand_stack`]: struct.Eval.html#structfield.operand_stack
 #[derive(Debug)]
 pub struct Stack {
     /// # The values on the stack

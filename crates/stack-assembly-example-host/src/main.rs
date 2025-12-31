@@ -27,12 +27,12 @@ fn main() -> anyhow::Result<()> {
                 eprintln!();
                 eprintln!("Evaluation has finished.");
 
-                print_stack(&eval.stack);
+                print_stack(&eval.operand_stack);
 
                 process::exit(0);
             }
             Effect::Yield => {
-                print_stack(&eval.stack);
+                print_stack(&eval.operand_stack);
                 eval.effect = None;
 
                 // Let's not execute scripts that fast, to give the user a
@@ -45,7 +45,7 @@ fn main() -> anyhow::Result<()> {
                 eprintln!();
                 eprintln!("Script triggered effect: {effect:?}");
 
-                print_stack(&eval.stack);
+                print_stack(&eval.operand_stack);
 
                 process::exit(2);
             }

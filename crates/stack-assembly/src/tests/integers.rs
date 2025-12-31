@@ -9,7 +9,7 @@ fn evaluate_positive_integers() {
     eval.run();
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
-    assert_eq!(eval.stack.to_i32_slice(), &[3, 5]);
+    assert_eq!(eval.operand_stack.to_i32_slice(), &[3, 5]);
 }
 
 #[test]
@@ -20,7 +20,7 @@ fn evaluate_negative_integer() {
     eval.run();
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
-    assert_eq!(eval.stack.to_i32_slice(), &[-1]);
+    assert_eq!(eval.operand_stack.to_i32_slice(), &[-1]);
 }
 
 #[test]
@@ -31,7 +31,7 @@ fn evaluate_hexadecimal_integer() {
     eval.run();
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
-    assert_eq!(eval.stack.to_i32_slice(), &[0xf0f0]);
+    assert_eq!(eval.operand_stack.to_i32_slice(), &[0xf0f0]);
 }
 
 #[test]
@@ -44,7 +44,7 @@ fn evaluate_full_range_of_unsigned_decimal_integers() {
     eval.run();
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
-    assert_eq!(eval.stack.to_u32_slice(), &[2147483648]);
+    assert_eq!(eval.operand_stack.to_u32_slice(), &[2147483648]);
 }
 
 #[test]
@@ -57,7 +57,7 @@ fn evaluate_full_range_of_unsigned_hexadecimal_integers() {
     eval.run();
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
-    assert_eq!(eval.stack.to_u32_slice(), &[0x80000000]);
+    assert_eq!(eval.operand_stack.to_u32_slice(), &[0x80000000]);
 }
 
 #[test]
@@ -74,9 +74,9 @@ fn trigger_effect_on_integer_overflow() {
 
     eval.step();
     assert_eq!(eval.effect, None);
-    assert_eq!(eval.stack.to_u32_slice(), &[4294967295]);
+    assert_eq!(eval.operand_stack.to_u32_slice(), &[4294967295]);
 
     eval.step();
     assert_eq!(eval.effect, Some(Effect::UnknownIdentifier));
-    assert_eq!(eval.stack.to_u32_slice(), &[4294967295]);
+    assert_eq!(eval.operand_stack.to_u32_slice(), &[4294967295]);
 }

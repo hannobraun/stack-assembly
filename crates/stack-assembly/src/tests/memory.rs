@@ -10,7 +10,7 @@ fn read() {
     eval.run();
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
-    assert_eq!(eval.stack.to_u32_slice(), &[3, 3]);
+    assert_eq!(eval.operand_stack.to_u32_slice(), &[3, 3]);
 }
 
 #[test]
@@ -26,7 +26,7 @@ fn read_triggers_effect_on_out_of_bounds_access() {
 
     eval.run();
     assert_eq!(eval.effect, Some(Effect::InvalidAddress));
-    assert_eq!(eval.stack.to_u32_slice(), &[]);
+    assert_eq!(eval.operand_stack.to_u32_slice(), &[]);
 }
 
 #[test]
@@ -37,7 +37,7 @@ fn write() {
     eval.run();
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
-    assert_eq!(eval.stack.to_u32_slice(), &[]);
+    assert_eq!(eval.operand_stack.to_u32_slice(), &[]);
     assert_eq!(eval.memory.values[1], Value::from(3));
 }
 
@@ -54,5 +54,5 @@ fn write_triggers_effect_on_out_of_bounds_access() {
 
     eval.run();
     assert_eq!(eval.effect, Some(Effect::InvalidAddress));
-    assert_eq!(eval.stack.to_u32_slice(), &[]);
+    assert_eq!(eval.operand_stack.to_u32_slice(), &[]);
 }

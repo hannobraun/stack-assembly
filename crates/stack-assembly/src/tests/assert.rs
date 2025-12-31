@@ -9,7 +9,7 @@ fn assert_consumes_input() {
     eval.run();
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
-    assert_eq!(eval.stack.to_i32_slice(), &[]);
+    assert_eq!(eval.operand_stack.to_i32_slice(), &[]);
 }
 
 #[test]
@@ -20,5 +20,5 @@ fn assert_triggers_effect() {
     eval.run();
 
     assert_eq!(eval.effect, Some(Effect::AssertionFailed));
-    assert_eq!(eval.stack.to_i32_slice(), &[]);
+    assert_eq!(eval.operand_stack.to_i32_slice(), &[]);
 }
