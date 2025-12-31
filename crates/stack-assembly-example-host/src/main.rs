@@ -53,8 +53,8 @@ fn main() -> anyhow::Result<()> {
     }
 }
 
-fn print_stack(stack: &OperandStack) {
-    let mut values = stack.values.iter().peekable();
+fn print_stack(operand_stack: &OperandStack) {
+    let mut values = operand_stack.values.iter().peekable();
 
     print!("Stack: ");
 
