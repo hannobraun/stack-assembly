@@ -422,6 +422,8 @@ impl Eval {
                     if condition != 0 {
                         self.next_operator = index;
                     }
+                } else if identifier == "return" {
+                    return Err(Effect::Return);
                 } else if identifier == "assert" {
                     let value = self.operand_stack.pop()?.to_i32();
 

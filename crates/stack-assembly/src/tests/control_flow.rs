@@ -46,6 +46,18 @@ fn jump_if_does_nothing_on_zero_condition() {
 }
 
 #[test]
+fn return_() {
+    // If the call stack is empty, as is the case when the evaluation starts,
+    // the `return` operator triggers an effect.
+
+    let mut eval = Eval::start("return");
+    eval.run();
+
+    assert_eq!(eval.effect, Some(Effect::Return));
+    assert_eq!(eval.operand_stack.to_u32_slice(), &[]);
+}
+
+#[test]
 fn invalid_reference_triggers_effect() {
     // A reference that is not paired with a matching label can't return a
     // sensible value and must trigger an effect.

@@ -60,6 +60,12 @@ pub enum Effect {
     /// operators are available. This signals the regular end of the evaluation.
     OutOfOperators,
 
+    /// # Evaluated `return` while call stack was empty
+    ///
+    /// This is not an error, which makes it one of the ways to signal the
+    /// regular end of evaluation, alongside [`Effect::OutOfOperators`].
+    Return,
+
     /// # Evaluated an identifier that the language does not recognize
     ///
     /// Can trigger when evaluating an identifier, if that identifier does not
