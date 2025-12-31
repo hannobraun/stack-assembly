@@ -6,18 +6,18 @@ use crate::{Effect, Value};
 /// stores all operands.
 ///
 /// Aside from this, the stack is an important communication channel between
-/// script and host. Please refer to [`Eval`]'s [`stack`] field for more
+/// script and host. Please refer to [`Eval`]'s [`operand_stack`] field for more
 /// information on that.
 ///
 /// [`Eval`]: crate::Eval
-/// [`stack`]: struct.Eval.html#structfield.stack
+/// [`operand_stack`]: struct.Eval.html#structfield.operand_stack
 #[derive(Debug)]
-pub struct Stack {
+pub struct OperandStack {
     /// # The values on the stack
     pub values: Vec<Value>,
 }
 
-impl Stack {
+impl OperandStack {
     /// # Push a value to top of the stack
     pub fn push(&mut self, value: impl Into<Value>) {
         self.values.push(value.into());
@@ -25,10 +25,10 @@ impl Stack {
 
     /// # Pop a value from the top of the stack
     ///
-    /// Return [`StackUnderflow`], if no value is available on the stack, which
-    /// provides an automatic conversion to [`Effect`].
-    pub fn pop(&mut self) -> Result<Value, StackUnderflow> {
-        self.values.pop().ok_or(StackUnderflow)
+    /// Return [`OperandStackUnderflow`], if no value is available on the stack,
+    /// which provides an automatic conversion to [`Effect`].
+    pub fn pop(&mut self) -> Result<Value, OperandStackUnderflow> {
+        self.values.pop().ok_or(OperandStackUnderflow)
     }
 
     /// # Access the stack as a slice of `i32` values
@@ -44,12 +44,12 @@ impl Stack {
 
 /// # Tried to pop a value from an empty stack
 ///
-/// See [`Stack::pop`].
+/// See [`OperandStack::pop`].
 #[derive(Debug)]
-pub struct StackUnderflow;
+pub struct OperandStackUnderflow;
 
-impl From<StackUnderflow> for Effect {
-    fn from(StackUnderflow: StackUnderflow) -> Self {
-        Effect::StackUnderflow
+impl From<OperandStackUnderflow> for Effect {
+    fn from(OperandStackUnderflow: OperandStackUnderflow) -> Self {
+        Effect::OperandStackUnderflow
     }
 }

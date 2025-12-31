@@ -1,4 +1,4 @@
-use crate::{Effect, Memory, Stack, Value};
+use crate::{Effect, Memory, OperandStack, Value};
 
 /// # The ongoing evaluation of a script
 ///
@@ -16,7 +16,7 @@ use crate::{Effect, Memory, Stack, Value};
 /// let mut eval = Eval::start(script);
 /// eval.run();
 ///
-/// assert_eq!(eval.stack.to_i32_slice(), &[3]);
+/// assert_eq!(eval.operand_stack.to_i32_slice(), &[3]);
 /// ```
 #[derive(Debug)]
 pub struct Eval {
@@ -28,8 +28,8 @@ pub struct Eval {
     ///
     /// Effects moderate the communication between script and host. The effect
     /// itself only relays _which_ effect has triggered, but that may signal to
-    /// the host that a different communication channel (like [`stack`] or
-    /// [`memory`]) is ready to be accessed.
+    /// the host that a different communication channel (like [`operand_stack`]
+    /// or [`memory`]) is ready to be accessed.
     ///
     /// [`Eval::start`] initializes this field to `None`. [`Eval::run`] and
     /// [`Eval::step`] may store an effect here, if the script triggers one. If
@@ -73,7 +73,7 @@ pub struct Eval {
     /// // incremented the number once, before yielding.
     /// eval.run();
     /// assert_eq!(eval.effect, Some(Effect::Yield));
-    /// assert_eq!(eval.stack.to_u32_slice(), &[1]);
+    /// assert_eq!(eval.operand_stack.to_u32_slice(), &[1]);
     ///
     /// // To allow the script to continue, we must clear the effect.
     /// eval.effect = None;
@@ -83,11 +83,11 @@ pub struct Eval {
     /// // again.
     /// eval.run();
     /// assert_eq!(eval.effect, Some(Effect::Yield));
-    /// assert_eq!(eval.stack.to_u32_slice(), &[2]);
+    /// assert_eq!(eval.operand_stack.to_u32_slice(), &[2]);
     /// ```
     ///
     /// [`next_operator`]: #structfield.next_operator
-    /// [`stack`]: #structfield.stack
+    /// [`operand_stack`]: #structfield.operand_stack
     /// [`memory`]: #structfield.memory
     pub effect: Option<Effect>,
 
@@ -109,14 +109,14 @@ pub struct Eval {
     /// restrict any experimental or non-standard use cases.
     ///
     /// [`memory`]: #structfield.memory
-    pub stack: Stack,
+    pub operand_stack: OperandStack,
 
     /// # The memory
     ///
     /// StackAssembly provides a linear memory that is freely addressable per
     /// word.
     ///
-    /// Alongside [`stack`], this field is the primary channel for
+    /// Alongside [`operand_stack`], this field is the primary channel for
     /// communication between script and host.
     ///
     /// Most hosts should restrict modifications to this field to when the
@@ -127,7 +127,7 @@ pub struct Eval {
     /// None the less, the host has full access to this field, as to not
     /// restrict any experimental or non-standard use cases.
     ///
-    /// [`stack`]: #structfield.stack
+    /// [`operand_stack`]: #structfield.operand_stack
     pub memory: Memory,
 }
 
@@ -186,7 +186,7 @@ impl Eval {
             labels,
             next_operator: 0,
             effect: None,
-            stack: Stack { values: Vec::new() },
+            operand_stack: OperandStack { values: Vec::new() },
             memory: Memory {
                 values: vec![Value::from(0); 1024],
             },
@@ -253,23 +253,23 @@ impl Eval {
         match operator {
             Operator::Identifier { value: identifier } => {
                 if identifier == "*" {
-                    let b = self.stack.pop()?.to_i32();
-                    let a = self.stack.pop()?.to_i32();
+                    let b = self.operand_stack.pop()?.to_i32();
+                    let a = self.operand_stack.pop()?.to_i32();
 
-                    self.stack.push(a.wrapping_mul(b));
+                    self.operand_stack.push(a.wrapping_mul(b));
                 } else if identifier == "+" {
-                    let b = self.stack.pop()?.to_i32();
-                    let a = self.stack.pop()?.to_i32();
+                    let b = self.operand_stack.pop()?.to_i32();
+                    let a = self.operand_stack.pop()?.to_i32();
 
-                    self.stack.push(a.wrapping_add(b));
+                    self.operand_stack.push(a.wrapping_add(b));
                 } else if identifier == "-" {
-                    let b = self.stack.pop()?.to_i32();
-                    let a = self.stack.pop()?.to_i32();
+                    let b = self.operand_stack.pop()?.to_i32();
+                    let a = self.operand_stack.pop()?.to_i32();
 
-                    self.stack.push(a.wrapping_sub(b));
+                    self.operand_stack.push(a.wrapping_sub(b));
                 } else if identifier == "/" {
-                    let b = self.stack.pop()?.to_i32();
-                    let a = self.stack.pop()?.to_i32();
+                    let b = self.operand_stack.pop()?.to_i32();
+                    let a = self.operand_stack.pop()?.to_i32();
 
                     if b == 0 {
                         return Err(Effect::DivisionByZero);
@@ -281,111 +281,116 @@ impl Eval {
                     let quotient = a / b;
                     let remainder = a % b;
 
-                    self.stack.push(quotient);
-                    self.stack.push(remainder);
+                    self.operand_stack.push(quotient);
+                    self.operand_stack.push(remainder);
                 } else if identifier == "<" {
-                    let b = self.stack.pop()?.to_i32();
-                    let a = self.stack.pop()?.to_i32();
+                    let b = self.operand_stack.pop()?.to_i32();
+                    let a = self.operand_stack.pop()?.to_i32();
 
                     let c = if a < b { 1 } else { 0 };
 
-                    self.stack.push(c);
+                    self.operand_stack.push(c);
                 } else if identifier == "<=" {
-                    let b = self.stack.pop()?.to_i32();
-                    let a = self.stack.pop()?.to_i32();
+                    let b = self.operand_stack.pop()?.to_i32();
+                    let a = self.operand_stack.pop()?.to_i32();
 
                     let c = if a <= b { 1 } else { 0 };
 
-                    self.stack.push(c);
+                    self.operand_stack.push(c);
                 } else if identifier == "=" {
-                    let b = self.stack.pop()?.to_i32();
-                    let a = self.stack.pop()?.to_i32();
+                    let b = self.operand_stack.pop()?.to_i32();
+                    let a = self.operand_stack.pop()?.to_i32();
 
                     let c = if a == b { 1 } else { 0 };
 
-                    self.stack.push(c);
+                    self.operand_stack.push(c);
                 } else if identifier == ">" {
-                    let b = self.stack.pop()?.to_i32();
-                    let a = self.stack.pop()?.to_i32();
+                    let b = self.operand_stack.pop()?.to_i32();
+                    let a = self.operand_stack.pop()?.to_i32();
 
                     let c = if a > b { 1 } else { 0 };
 
-                    self.stack.push(c);
+                    self.operand_stack.push(c);
                 } else if identifier == ">=" {
-                    let b = self.stack.pop()?.to_i32();
-                    let a = self.stack.pop()?.to_i32();
+                    let b = self.operand_stack.pop()?.to_i32();
+                    let a = self.operand_stack.pop()?.to_i32();
 
                     let c = if a >= b { 1 } else { 0 };
 
-                    self.stack.push(c);
+                    self.operand_stack.push(c);
                 } else if identifier == "and" {
-                    let b = self.stack.pop()?.to_i32();
-                    let a = self.stack.pop()?.to_i32();
+                    let b = self.operand_stack.pop()?.to_i32();
+                    let a = self.operand_stack.pop()?.to_i32();
 
                     let c = a & b;
 
-                    self.stack.push(c);
+                    self.operand_stack.push(c);
                 } else if identifier == "or" {
-                    let b = self.stack.pop()?.to_i32();
-                    let a = self.stack.pop()?.to_i32();
+                    let b = self.operand_stack.pop()?.to_i32();
+                    let a = self.operand_stack.pop()?.to_i32();
 
                     let c = a | b;
 
-                    self.stack.push(c);
+                    self.operand_stack.push(c);
                 } else if identifier == "xor" {
-                    let b = self.stack.pop()?.to_i32();
-                    let a = self.stack.pop()?.to_i32();
+                    let b = self.operand_stack.pop()?.to_i32();
+                    let a = self.operand_stack.pop()?.to_i32();
 
                     let c = a ^ b;
 
-                    self.stack.push(c);
+                    self.operand_stack.push(c);
                 } else if identifier == "count_ones" {
-                    let a = self.stack.pop()?.to_i32();
+                    let a = self.operand_stack.pop()?.to_i32();
                     let b = a.count_ones();
-                    self.stack.push(b);
+                    self.operand_stack.push(b);
                 } else if identifier == "leading_zeros" {
-                    let a = self.stack.pop()?.to_i32();
+                    let a = self.operand_stack.pop()?.to_i32();
                     let b = a.leading_zeros();
-                    self.stack.push(b);
+                    self.operand_stack.push(b);
                 } else if identifier == "trailing_zeros" {
-                    let a = self.stack.pop()?.to_i32();
+                    let a = self.operand_stack.pop()?.to_i32();
                     let b = a.trailing_zeros();
-                    self.stack.push(b);
+                    self.operand_stack.push(b);
                 } else if identifier == "rotate_left" {
-                    let num_positions = self.stack.pop()?.to_u32();
-                    let a = self.stack.pop()?.to_i32();
+                    let num_positions = self.operand_stack.pop()?.to_u32();
+                    let a = self.operand_stack.pop()?.to_i32();
 
                     let b = a.rotate_left(num_positions);
 
-                    self.stack.push(b);
+                    self.operand_stack.push(b);
                 } else if identifier == "rotate_right" {
-                    let num_positions = self.stack.pop()?.to_u32();
-                    let a = self.stack.pop()?.to_i32();
+                    let num_positions = self.operand_stack.pop()?.to_u32();
+                    let a = self.operand_stack.pop()?.to_i32();
 
                     let b = a.rotate_right(num_positions);
 
-                    self.stack.push(b);
+                    self.operand_stack.push(b);
                 } else if identifier == "shift_left" {
-                    let num_positions = self.stack.pop()?.to_i32();
-                    let a = self.stack.pop()?.to_i32();
+                    let num_positions = self.operand_stack.pop()?.to_i32();
+                    let a = self.operand_stack.pop()?.to_i32();
 
                     let b = a << num_positions;
 
-                    self.stack.push(b);
+                    self.operand_stack.push(b);
                 } else if identifier == "shift_right" {
-                    let num_positions = self.stack.pop()?.to_i32();
-                    let a = self.stack.pop()?.to_i32();
+                    let num_positions = self.operand_stack.pop()?.to_i32();
+                    let a = self.operand_stack.pop()?.to_i32();
 
                     let b = a >> num_positions;
 
-                    self.stack.push(b);
+                    self.operand_stack.push(b);
                 } else if identifier == "copy" {
-                    let index_from_top = self.stack.pop()?.to_usize();
-                    let index_from_bottom =
-                        convert_stack_index(&self.stack, index_from_top)?;
+                    let index_from_top = self.operand_stack.pop()?.to_usize();
+                    let index_from_bottom = convert_operand_stack_index(
+                        &self.operand_stack,
+                        index_from_top,
+                    )?;
 
-                    let Some(value) =
-                        self.stack.values.get(index_from_bottom).copied()
+                    let Some(value) = self
+                        .operand_stack
+                        .values
+                        .get(index_from_bottom)
+                        .copied()
                     else {
                         unreachable!(
                             "We computed the index from the top, based on the \
@@ -395,28 +400,30 @@ impl Eval {
                         );
                     };
 
-                    self.stack.push(value);
+                    self.operand_stack.push(value);
                 } else if identifier == "drop" {
-                    let index_from_top = self.stack.pop()?.to_usize();
-                    let index_from_bottom =
-                        convert_stack_index(&self.stack, index_from_top)?;
+                    let index_from_top = self.operand_stack.pop()?.to_usize();
+                    let index_from_bottom = convert_operand_stack_index(
+                        &self.operand_stack,
+                        index_from_top,
+                    )?;
 
                     // This could theoretically panic, but actually won't, for
                     // the same reason that the index must be valid in the
                     // implementation of `copy`.
-                    self.stack.values.remove(index_from_bottom);
+                    self.operand_stack.values.remove(index_from_bottom);
                 } else if identifier == "jump" {
-                    let index = self.stack.pop()?.to_usize();
+                    let index = self.operand_stack.pop()?.to_usize();
                     self.next_operator = index;
                 } else if identifier == "jump_if" {
-                    let index = self.stack.pop()?.to_usize();
-                    let condition = self.stack.pop()?.to_i32();
+                    let index = self.operand_stack.pop()?.to_usize();
+                    let condition = self.operand_stack.pop()?.to_i32();
 
                     if condition != 0 {
                         self.next_operator = index;
                     }
                 } else if identifier == "assert" {
-                    let value = self.stack.pop()?.to_i32();
+                    let value = self.operand_stack.pop()?.to_i32();
 
                     if value == 0 {
                         return Err(Effect::AssertionFailed);
@@ -424,17 +431,17 @@ impl Eval {
                 } else if identifier == "yield" {
                     return Err(Effect::Yield);
                 } else if identifier == "read" {
-                    let address = self.stack.pop()?.to_usize();
+                    let address = self.operand_stack.pop()?.to_usize();
 
                     let Some(value) = self.memory.values.get(address).copied()
                     else {
                         return Err(Effect::InvalidAddress);
                     };
 
-                    self.stack.push(value);
+                    self.operand_stack.push(value);
                 } else if identifier == "write" {
-                    let value = self.stack.pop()?;
-                    let address = self.stack.pop()?.to_usize();
+                    let value = self.operand_stack.pop()?;
+                    let address = self.operand_stack.pop()?.to_usize();
 
                     if address < self.memory.values.len() {
                         self.memory.values[address] = value;
@@ -446,7 +453,7 @@ impl Eval {
                 }
             }
             Operator::Integer { value } => {
-                self.stack.push(*value);
+                self.operand_stack.push(*value);
             }
             Operator::Reference { name } => {
                 let label =
@@ -470,7 +477,7 @@ impl Eval {
                     };
                     let operator: u32 = operator;
 
-                    self.stack.push(operator);
+                    self.operand_stack.push(operator);
                 } else {
                     return Err(Effect::InvalidReference);
                 }
@@ -502,15 +509,15 @@ struct Label {
     pub operator: usize,
 }
 
-fn convert_stack_index(
-    stack: &Stack,
+fn convert_operand_stack_index(
+    operand_stack: &OperandStack,
     index_from_top: usize,
 ) -> Result<usize, Effect> {
-    let index_from_bottom = stack
+    let index_from_bottom = operand_stack
         .values
         .len()
         .checked_sub(1)
         .and_then(|index| index.checked_sub(index_from_top));
 
-    index_from_bottom.ok_or(Effect::InvalidStackIndex)
+    index_from_bottom.ok_or(Effect::InvalidOperandStackIndex)
 }

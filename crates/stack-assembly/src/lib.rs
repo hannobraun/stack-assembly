@@ -47,7 +47,7 @@
 //! let mut eval = Eval::start(script);
 //! eval.run();
 //!
-//! assert_eq!(eval.stack.to_i32_slice(), &[3]);
+//! assert_eq!(eval.operand_stack.to_i32_slice(), &[3]);
 //! ```
 //!
 //! [`Eval`] is the main entry point to the library's API.
@@ -80,7 +80,7 @@
 //! // `run` has returned, meaning an effect has triggered. Let's make sure that
 //! // went as expected.
 //! assert_eq!(eval.effect, Some(Effect::Yield));
-//! let Ok(value) = eval.stack.pop() else {
+//! let Ok(value) = eval.operand_stack.pop() else {
 //!     unreachable!("We know that the script pushes a value before yielding.");
 //! };
 //!
@@ -103,7 +103,7 @@
 mod effect;
 mod eval;
 mod memory;
-mod stack;
+mod operand_stack;
 mod value;
 
 #[cfg(test)]
@@ -113,6 +113,6 @@ pub use self::{
     effect::Effect,
     eval::Eval,
     memory::Memory,
-    stack::{Stack, StackUnderflow},
+    operand_stack::{OperandStack, OperandStackUnderflow},
     value::Value,
 };

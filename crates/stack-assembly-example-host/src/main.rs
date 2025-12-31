@@ -2,7 +2,7 @@ use std::{fs::File, io::Read, path::PathBuf, process, thread, time::Duration};
 
 use anyhow::Context;
 use clap::Parser;
-use stack_assembly::{Effect, Eval, Stack};
+use stack_assembly::{Effect, Eval, OperandStack};
 
 fn main() -> anyhow::Result<()> {
     /// Example host for the StackAssembly programming language
@@ -27,12 +27,12 @@ fn main() -> anyhow::Result<()> {
                 eprintln!();
                 eprintln!("Evaluation has finished.");
 
-                print_stack(&eval.stack);
+                print_operand_stack(&eval.operand_stack);
 
                 process::exit(0);
             }
             Effect::Yield => {
-                print_stack(&eval.stack);
+                print_operand_stack(&eval.operand_stack);
                 eval.effect = None;
 
                 // Let's not execute scripts that fast, to give the user a
@@ -45,7 +45,7 @@ fn main() -> anyhow::Result<()> {
                 eprintln!();
                 eprintln!("Script triggered effect: {effect:?}");
 
-                print_stack(&eval.stack);
+                print_operand_stack(&eval.operand_stack);
 
                 process::exit(2);
             }
@@ -53,10 +53,10 @@ fn main() -> anyhow::Result<()> {
     }
 }
 
-fn print_stack(stack: &Stack) {
-    let mut values = stack.values.iter().peekable();
+fn print_operand_stack(operand_stack: &OperandStack) {
+    let mut values = operand_stack.values.iter().peekable();
 
-    print!("Stack: ");
+    print!("Operand Stack: ");
 
     while let Some(value) = values.next() {
         print!("{value:?}");

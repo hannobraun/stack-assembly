@@ -3,8 +3,8 @@ use std::fmt;
 /// # A unit of data
 ///
 /// StackAssembly is an _untyped_ languages. All of its values, both on the
-/// [`Stack`] and in [`Memory`], are 32 bits wide. Depending on the situation,
-/// they may be interpreted as unsigned or signed.
+/// [`OperandStack`] and in [`Memory`], are 32 bits wide. Depending on the
+/// situation, they may be interpreted as unsigned or signed.
 ///
 /// You can create an instance of `Value` through its `From` implementations.
 ///
@@ -15,7 +15,7 @@ use std::fmt;
 /// Value::from(5u32);
 /// ```
 ///
-/// [`Stack`]: crate::Stack
+/// [`OperandStack`]: crate::OperandStack
 /// [`Memory`]: crate::Memory
 #[derive(Clone, Copy, Eq, PartialEq, bytemuck::Pod, bytemuck::Zeroable)]
 #[repr(transparent)]

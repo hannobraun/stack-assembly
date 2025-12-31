@@ -9,7 +9,7 @@ fn copy() {
     eval.run();
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
-    assert_eq!(eval.stack.to_u32_slice(), &[3, 5, 8, 5]);
+    assert_eq!(eval.operand_stack.to_u32_slice(), &[3, 5, 8, 5]);
 }
 
 #[test]
@@ -20,8 +20,8 @@ fn copy_trigger_effect_on_invalid_index() {
     let mut eval = Eval::start("0 copy");
     eval.run();
 
-    assert_eq!(eval.effect, Some(Effect::InvalidStackIndex));
-    assert_eq!(eval.stack.to_u32_slice(), &[]);
+    assert_eq!(eval.effect, Some(Effect::InvalidOperandStackIndex));
+    assert_eq!(eval.operand_stack.to_u32_slice(), &[]);
 }
 
 #[test]
@@ -32,5 +32,5 @@ fn drop() {
     eval.run();
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
-    assert_eq!(eval.stack.to_u32_slice(), &[3, 8]);
+    assert_eq!(eval.operand_stack.to_u32_slice(), &[3, 8]);
 }

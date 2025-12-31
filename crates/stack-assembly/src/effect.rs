@@ -36,29 +36,29 @@ pub enum Effect {
     /// not refer to an address that is within the bounds of the memory.
     InvalidAddress,
 
+    /// # Index doesn't refer to valid value on the operand stack
+    ///
+    /// Can trigger when evaluating the `copy` or `drop` operators, if their
+    /// _index_ input is too large to refer to a value on the operand stack.
+    InvalidOperandStackIndex,
+
     /// # Evaluated a reference that is not paired with a matching label
     ///
     /// Can trigger when evaluating a reference, if that reference does not
     /// refer to a label.
     InvalidReference,
 
-    /// # An index that supposedly refers to a value on the stack, doesn't
+    /// # Tried popping a value from an empty operand stack
     ///
-    /// Can trigger when evaluating the `copy` or `drop` operators, if their
-    /// _index_ input is too large to refer to a value on the stack.
-    InvalidStackIndex,
+    /// Can trigger when evaluating any operator that has more inputs than the
+    /// number of values currently on the operand stack.
+    OperandStackUnderflow,
 
     /// # Ran out of operators to evaluate
     ///
     /// Triggers when evaluation reaches the end of the script, where no more
     /// operators are available. This signals the regular end of the evaluation.
     OutOfOperators,
-
-    /// # Tried popping a value from an empty stack
-    ///
-    /// Can trigger when evaluating any operator that has more inputs than the
-    /// number of values currently on the stack.
-    StackUnderflow,
 
     /// # Evaluated an identifier that the language does not recognize
     ///

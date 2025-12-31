@@ -11,7 +11,7 @@ fn and() {
     eval.run();
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
-    assert_eq!(eval.stack.to_u32_slice(), &[0xf000]);
+    assert_eq!(eval.operand_stack.to_u32_slice(), &[0xf000]);
 }
 
 #[test]
@@ -22,7 +22,7 @@ fn or() {
     eval.run();
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
-    assert_eq!(eval.stack.to_u32_slice(), &[0xfff0]);
+    assert_eq!(eval.operand_stack.to_u32_slice(), &[0xfff0]);
 }
 
 #[test]
@@ -33,7 +33,7 @@ fn xor() {
     eval.run();
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
-    assert_eq!(eval.stack.to_u32_slice(), &[0x0ff0]);
+    assert_eq!(eval.operand_stack.to_u32_slice(), &[0x0ff0]);
 }
 
 #[test]
@@ -44,7 +44,7 @@ fn count_ones() {
     eval.run();
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
-    assert_eq!(eval.stack.to_u32_slice(), &[8]);
+    assert_eq!(eval.operand_stack.to_u32_slice(), &[8]);
 }
 
 #[test]
@@ -56,7 +56,7 @@ fn leading_zeros() {
     eval.run();
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
-    assert_eq!(eval.stack.to_u32_slice(), &[4]);
+    assert_eq!(eval.operand_stack.to_u32_slice(), &[4]);
 }
 
 #[test]
@@ -69,7 +69,7 @@ fn trailing_zeros() {
     eval.run();
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
-    assert_eq!(eval.stack.to_u32_slice(), &[4]);
+    assert_eq!(eval.operand_stack.to_u32_slice(), &[4]);
 }
 
 #[test]
@@ -82,7 +82,7 @@ fn rotate_left() {
     eval.run();
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
-    assert_eq!(eval.stack.to_u32_slice(), &[0x0000000f]);
+    assert_eq!(eval.operand_stack.to_u32_slice(), &[0x0000000f]);
 }
 
 #[test]
@@ -94,7 +94,7 @@ fn rotate_right() {
     eval.run();
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
-    assert_eq!(eval.stack.to_u32_slice(), &[0xf0000000]);
+    assert_eq!(eval.operand_stack.to_u32_slice(), &[0xf0000000]);
 }
 
 #[test]
@@ -109,7 +109,7 @@ fn shift_left() {
     eval.run();
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
-    assert_eq!(eval.stack.to_u32_slice(), &[0xf0000000]);
+    assert_eq!(eval.operand_stack.to_u32_slice(), &[0xf0000000]);
 }
 
 #[test]
@@ -123,7 +123,7 @@ fn shift_right_unsigned() {
     eval.run();
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
-    assert_eq!(eval.stack.to_u32_slice(), &[0x0000000f]);
+    assert_eq!(eval.operand_stack.to_u32_slice(), &[0x0000000f]);
 }
 
 #[test]
@@ -137,5 +137,5 @@ fn shift_right_signed() {
     eval.run();
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
-    assert_eq!(eval.stack.to_u32_slice(), &[0xff00000f]);
+    assert_eq!(eval.operand_stack.to_u32_slice(), &[0xff00000f]);
 }

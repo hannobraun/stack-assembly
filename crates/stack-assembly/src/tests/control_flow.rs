@@ -10,13 +10,13 @@ fn jump() {
 
     eval.run();
     assert_eq!(eval.effect, Some(Effect::Yield));
-    assert_eq!(eval.stack.to_u32_slice(), &[1]);
+    assert_eq!(eval.operand_stack.to_u32_slice(), &[1]);
 
     eval.effect = None;
 
     eval.run();
     assert_eq!(eval.effect, Some(Effect::Yield));
-    assert_eq!(eval.stack.to_u32_slice(), &[1, 1]);
+    assert_eq!(eval.operand_stack.to_u32_slice(), &[1, 1]);
 }
 
 #[test]
@@ -29,7 +29,7 @@ fn jump_if_behaves_like_jump_on_nonzero_condition() {
     eval.run();
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
-    assert_eq!(eval.stack.to_u32_slice(), &[2]);
+    assert_eq!(eval.operand_stack.to_u32_slice(), &[2]);
 }
 
 #[test]
@@ -42,7 +42,7 @@ fn jump_if_does_nothing_on_zero_condition() {
     eval.run();
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
-    assert_eq!(eval.stack.to_u32_slice(), &[1, 2]);
+    assert_eq!(eval.operand_stack.to_u32_slice(), &[1, 2]);
 }
 
 #[test]
@@ -54,5 +54,5 @@ fn invalid_reference_triggers_effect() {
     eval.run();
 
     assert_eq!(eval.effect, Some(Effect::InvalidReference));
-    assert_eq!(eval.stack.to_u32_slice(), &[]);
+    assert_eq!(eval.operand_stack.to_u32_slice(), &[]);
 }
