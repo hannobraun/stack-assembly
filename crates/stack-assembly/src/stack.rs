@@ -25,10 +25,10 @@ impl OperandStack {
 
     /// # Pop a value from the top of the stack
     ///
-    /// Return [`StackUnderflow`], if no value is available on the stack, which
-    /// provides an automatic conversion to [`Effect`].
-    pub fn pop(&mut self) -> Result<Value, StackUnderflow> {
-        self.values.pop().ok_or(StackUnderflow)
+    /// Return [`OperandStackUnderflow`], if no value is available on the stack,
+    /// which provides an automatic conversion to [`Effect`].
+    pub fn pop(&mut self) -> Result<Value, OperandStackUnderflow> {
+        self.values.pop().ok_or(OperandStackUnderflow)
     }
 
     /// # Access the stack as a slice of `i32` values
@@ -46,10 +46,10 @@ impl OperandStack {
 ///
 /// See [`OperandStack::pop`].
 #[derive(Debug)]
-pub struct StackUnderflow;
+pub struct OperandStackUnderflow;
 
-impl From<StackUnderflow> for Effect {
-    fn from(StackUnderflow: StackUnderflow) -> Self {
+impl From<OperandStackUnderflow> for Effect {
+    fn from(OperandStackUnderflow: OperandStackUnderflow) -> Self {
         Effect::StackUnderflow
     }
 }
