@@ -36,10 +36,10 @@ pub enum Effect {
     /// not refer to an address that is within the bounds of the memory.
     InvalidAddress,
 
-    /// # An index that supposedly refers to a value on the stack, doesn't
+    /// # Index doesn't refer to valid value on the operand stack
     ///
     /// Can trigger when evaluating the `copy` or `drop` operators, if their
-    /// _index_ input is too large to refer to a value on the stack.
+    /// _index_ input is too large to refer to a value on the operand stack.
     InvalidOperandStackIndex,
 
     /// # Evaluated a reference that is not paired with a matching label
