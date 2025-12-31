@@ -1,5 +1,5 @@
-# Control flow in StackAssembly is flat, assembly-like. It is based on defining
-# labels and jumping to them.
+# Control flow in StackAssembly is flat, assembly-like. Its unstructured variant
+# is based on defining labels and jumping to them.
 
 3
 @end jump

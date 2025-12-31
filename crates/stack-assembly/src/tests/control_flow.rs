@@ -46,6 +46,94 @@ fn jump_if_does_nothing_on_zero_condition() {
 }
 
 #[test]
+fn return_() {
+    // If the call stack is empty, as is the case when the evaluation starts,
+    // the `return` operator triggers an effect.
+
+    let mut eval = Eval::start("return");
+    eval.run();
+
+    assert_eq!(eval.effect, Some(Effect::Return));
+    assert_eq!(eval.operand_stack.to_u32_slice(), &[]);
+}
+
+#[test]
+fn call_return() {
+    // The `call` operator takes the index of an operator (usually provided by
+    // a reference) as input, arranges for evaluation to continue at that
+    // operator, and pushes a return address to the call stack. `return` pops an
+    // address from the call stack and arranges for evaluation to continue
+    // there.
+
+    let script = "
+        1
+        @2 call
+        3
+        return
+
+        2:
+            2
+            return
+    ";
+
+    let mut eval = Eval::start(script);
+    eval.run();
+
+    assert_eq!(eval.effect, Some(Effect::Return));
+    assert_eq!(eval.operand_stack.to_u32_slice(), &[1, 2, 3]);
+}
+
+#[test]
+fn call_either_jumps_to_first_index_on_non_zero_condition() {
+    // `call_either` is the conditional variant of `call`. It takes a condition
+    // and the indices of two operators. If the condition is non-zero, it
+    // arranges for evaluation to continue at the first operator.
+
+    let script = "
+        1 @then @else call_either
+        return
+
+        then:
+            1
+            return
+        else:
+            2
+            return
+    ";
+
+    let mut eval = Eval::start(script);
+    eval.run();
+
+    assert_eq!(eval.effect, Some(Effect::Return));
+    assert_eq!(eval.operand_stack.to_u32_slice(), &[1]);
+}
+
+#[test]
+fn call_either_jumps_to_second_index_on_non_zero_condition() {
+    // `call_either` is the conditional variant of `call`. It takes a condition
+    // and the indices of two operators. If the condition is non-zero, it
+    // arranges for evaluation to continue at the first operator.
+
+    let script = "
+        0 @then @else call_either
+        return
+
+        then:
+            1
+            return
+        else:
+            2
+            return
+    ";
+
+    let mut eval = Eval::start(script);
+    eval.run();
+
+    assert_eq!(eval.effect, Some(Effect::Return));
+    assert_eq!(eval.operand_stack.to_u32_slice(), &[2]);
+}
+
+#[test]
 fn invalid_reference_triggers_effect() {
     // A reference that is not paired with a matching label can't return a
     // sensible value and must trigger an effect.

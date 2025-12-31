@@ -23,7 +23,7 @@ fn main() -> anyhow::Result<()> {
 
     loop {
         match eval.run() {
-            Effect::OutOfOperators => {
+            Effect::OutOfOperators | Effect::Return => {
                 eprintln!();
                 eprintln!("Evaluation has finished.");
 
