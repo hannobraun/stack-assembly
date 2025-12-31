@@ -510,10 +510,10 @@ struct Label {
 }
 
 fn convert_stack_index(
-    stack: &OperandStack,
+    operand_stack: &OperandStack,
     index_from_top: usize,
 ) -> Result<usize, Effect> {
-    let index_from_bottom = stack
+    let index_from_bottom = operand_stack
         .values
         .len()
         .checked_sub(1)
