@@ -56,7 +56,7 @@ fn main() -> anyhow::Result<()> {
 fn print_operand_stack(operand_stack: &OperandStack) {
     let mut values = operand_stack.values.iter().peekable();
 
-    print!("Stack: ");
+    print!("Operand Stack: ");
 
     while let Some(value) = values.next() {
         print!("{value:?}");
