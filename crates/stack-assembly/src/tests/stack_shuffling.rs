@@ -20,7 +20,7 @@ fn copy_trigger_effect_on_invalid_index() {
     let mut eval = Eval::start("0 copy");
     eval.run();
 
-    assert_eq!(eval.effect, Some(Effect::InvalidStackIndex));
+    assert_eq!(eval.effect, Some(Effect::InvalidOperandStackIndex));
     assert_eq!(eval.operand_stack.to_u32_slice(), &[]);
 }
 

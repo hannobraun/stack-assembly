@@ -519,5 +519,5 @@ fn convert_operand_stack_index(
         .checked_sub(1)
         .and_then(|index| index.checked_sub(index_from_top));
 
-    index_from_bottom.ok_or(Effect::InvalidStackIndex)
+    index_from_bottom.ok_or(Effect::InvalidOperandStackIndex)
 }

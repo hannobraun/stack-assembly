@@ -46,7 +46,7 @@ pub enum Effect {
     ///
     /// Can trigger when evaluating the `copy` or `drop` operators, if their
     /// _index_ input is too large to refer to a value on the stack.
-    InvalidStackIndex,
+    InvalidOperandStackIndex,
 
     /// # Tried popping a value from an empty operand stack
     ///
