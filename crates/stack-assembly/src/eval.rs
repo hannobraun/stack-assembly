@@ -381,7 +381,7 @@ impl Eval {
                     self.operand_stack.push(b);
                 } else if identifier == "copy" {
                     let index_from_top = self.operand_stack.pop()?.to_usize();
-                    let index_from_bottom = convert_stack_index(
+                    let index_from_bottom = convert_operand_stack_index(
                         &self.operand_stack,
                         index_from_top,
                     )?;
@@ -403,7 +403,7 @@ impl Eval {
                     self.operand_stack.push(value);
                 } else if identifier == "drop" {
                     let index_from_top = self.operand_stack.pop()?.to_usize();
-                    let index_from_bottom = convert_stack_index(
+                    let index_from_bottom = convert_operand_stack_index(
                         &self.operand_stack,
                         index_from_top,
                     )?;
@@ -509,7 +509,7 @@ struct Label {
     pub operator: usize,
 }
 
-fn convert_stack_index(
+fn convert_operand_stack_index(
     operand_stack: &OperandStack,
     index_from_top: usize,
 ) -> Result<usize, Effect> {
