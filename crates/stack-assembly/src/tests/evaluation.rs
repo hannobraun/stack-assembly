@@ -57,6 +57,6 @@ fn stack_underflow_triggers_effect() {
     let mut eval = Eval::start("1 +");
     eval.run();
 
-    assert_eq!(eval.effect, Some(Effect::StackUnderflow));
+    assert_eq!(eval.effect, Some(Effect::OperandStackUnderflow));
     assert_eq!(eval.operand_stack.to_u32_slice(), &[]);
 }

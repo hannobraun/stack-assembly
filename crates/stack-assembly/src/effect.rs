@@ -58,7 +58,7 @@ pub enum Effect {
     ///
     /// Can trigger when evaluating any operator that has more inputs than the
     /// number of values currently on the stack.
-    StackUnderflow,
+    OperandStackUnderflow,
 
     /// # Evaluated an identifier that the language does not recognize
     ///

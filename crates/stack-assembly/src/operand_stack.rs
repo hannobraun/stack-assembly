@@ -50,6 +50,6 @@ pub struct OperandStackUnderflow;
 
 impl From<OperandStackUnderflow> for Effect {
     fn from(OperandStackUnderflow: OperandStackUnderflow) -> Self {
-        Effect::StackUnderflow
+        Effect::OperandStackUnderflow
     }
 }
