@@ -429,6 +429,15 @@ impl Eval {
 
                     let index = self.operand_stack.pop()?.to_usize();
                     self.next_operator = index;
+                } else if identifier == "call_either" {
+                    self.call_stack.push(self.next_operator);
+
+                    let else_ = self.operand_stack.pop()?.to_usize();
+                    let then = self.operand_stack.pop()?.to_usize();
+                    let condition = self.operand_stack.pop()?.to_i32();
+
+                    self.next_operator =
+                        if condition != 0 { then } else { else_ };
                 } else if identifier == "return" {
                     let Some(index) = self.call_stack.pop() else {
                         return Err(Effect::Return);
