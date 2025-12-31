@@ -12,12 +12,12 @@ use crate::{Effect, Value};
 /// [`Eval`]: crate::Eval
 /// [`operand_stack`]: struct.Eval.html#structfield.operand_stack
 #[derive(Debug)]
-pub struct Stack {
+pub struct OperandStack {
     /// # The values on the stack
     pub values: Vec<Value>,
 }
 
-impl Stack {
+impl OperandStack {
     /// # Push a value to top of the stack
     pub fn push(&mut self, value: impl Into<Value>) {
         self.values.push(value.into());
@@ -44,7 +44,7 @@ impl Stack {
 
 /// # Tried to pop a value from an empty stack
 ///
-/// See [`Stack::pop`].
+/// See [`OperandStack::pop`].
 #[derive(Debug)]
 pub struct StackUnderflow;
 

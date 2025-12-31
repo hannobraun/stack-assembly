@@ -2,7 +2,7 @@ use std::{fs::File, io::Read, path::PathBuf, process, thread, time::Duration};
 
 use anyhow::Context;
 use clap::Parser;
-use stack_assembly::{Effect, Eval, Stack};
+use stack_assembly::{Effect, Eval, OperandStack};
 
 fn main() -> anyhow::Result<()> {
     /// Example host for the StackAssembly programming language
@@ -53,7 +53,7 @@ fn main() -> anyhow::Result<()> {
     }
 }
 
-fn print_stack(stack: &Stack) {
+fn print_stack(stack: &OperandStack) {
     let mut values = stack.values.iter().peekable();
 
     print!("Stack: ");

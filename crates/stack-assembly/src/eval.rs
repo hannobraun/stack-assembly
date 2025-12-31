@@ -1,4 +1,4 @@
-use crate::{Effect, Memory, Stack, Value};
+use crate::{Effect, Memory, OperandStack, Value};
 
 /// # The ongoing evaluation of a script
 ///
@@ -109,7 +109,7 @@ pub struct Eval {
     /// restrict any experimental or non-standard use cases.
     ///
     /// [`memory`]: #structfield.memory
-    pub operand_stack: Stack,
+    pub operand_stack: OperandStack,
 
     /// # The memory
     ///
@@ -186,7 +186,7 @@ impl Eval {
             labels,
             next_operator: 0,
             effect: None,
-            operand_stack: Stack { values: Vec::new() },
+            operand_stack: OperandStack { values: Vec::new() },
             memory: Memory {
                 values: vec![Value::from(0); 1024],
             },
@@ -510,7 +510,7 @@ struct Label {
 }
 
 fn convert_stack_index(
-    stack: &Stack,
+    stack: &OperandStack,
     index_from_top: usize,
 ) -> Result<usize, Effect> {
     let index_from_bottom = stack

@@ -113,6 +113,6 @@ pub use self::{
     effect::Effect,
     eval::Eval,
     memory::Memory,
-    stack::{Stack, StackUnderflow},
+    stack::{OperandStack, StackUnderflow},
     value::Value,
 };
