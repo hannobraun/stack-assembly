@@ -48,10 +48,10 @@ pub enum Effect {
     /// _index_ input is too large to refer to a value on the stack.
     InvalidStackIndex,
 
-    /// # Tried popping a value from an empty stack
+    /// # Tried popping a value from an empty operand stack
     ///
     /// Can trigger when evaluating any operator that has more inputs than the
-    /// number of values currently on the stack.
+    /// number of values currently on the operand stack.
     OperandStackUnderflow,
 
     /// # Ran out of operators to evaluate
