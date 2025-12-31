@@ -1,0 +1,37 @@
+# Control flow in StackAssembly is flat, assembly-like. It is based on defining
+# labels and jumping to them.
+#
+# `call` and `return` are two of the operators that provide structured control
+# flow.
+
+3
+@5 call
+8
+
+# Here we push the value `3` to the stack, then unconditionally call the
+# operator after the `5:` label, defined below, which pushes `5`. Since there's
+# also a `return` there, as we'll see, evaluation continues here, pushing `8`.
+
+8 = assert
+5 = assert
+3 = assert
+
+# After verifying that these three values are indeed on the operand stack, that
+# stack is empty.
+
+return
+
+# We must `return` explicitly, as otherwise evaluation would just continue at
+# the `5:` label, which comes next. We don't want that, as we only intended to
+# call that once, which we did above.
+#
+# Since the call stack is empty at this point, this `return` ends the
+# evaluation.
+
+5:
+    5
+    return
+
+# Finally, we must define the label that we called above. When called, we push
+# `5` to the stack, then `return` to continue the evaluation right after the
+# call.

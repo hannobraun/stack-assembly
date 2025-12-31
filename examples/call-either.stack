@@ -1,0 +1,53 @@
+# Control flow in StackAssembly is flat, assembly-like. It is based on defining
+# labels and jumping to them.
+#
+# `call_either` and `return` are two of the operators that provide structured
+# control flow.
+
+1 @3 @5 call_either
+
+# `call_either` is the conditional variant of `call`. It accepts three
+# arguments:
+#
+# - The _condition_, which is `1` here. As a non-zero value, `call_either`
+#   interprets it as "true".
+# - The _then_ index, which here is provided by the `@3` reference. Since the
+#   condition is true, this is the label that `call_either` calls.
+# - The _else_ index, which here is provided by the `@5` reference. Since the
+#   condition is true, `call_either` will ignore this. Otherwise, it would call
+#   it.
+#
+# The two references, `@3` and `@5`, refer to the `3:` and `5:` labels, defined
+# below.
+
+3 = assert
+
+# As we'll see, the code at `3:` pushes the value `3` to the operand stack, then
+# returns here. We verify that this value was indeed pushed here, leaving the
+# operand stack empty.
+
+return
+
+# We must `return` explicitly, as otherwise evaluation would just continue at
+# the `3:` label, which comes next. We don't want that, as we only intended to
+# call that once, which we did above.
+#
+# Since the call stack is empty at this point, this `return` ends the
+# evaluation.
+
+3:
+    3
+    return
+
+5:
+    0 assert
+
+# Finally, we must define the labels that we referenced above, or otherwise
+# those references would be invalid, and evaluating them would trigger the
+# respective effect.
+#
+# The code after the `3:` label, when called, pushes the value `3` then returns
+# to the caller, as we saw above.
+#
+# The code after `5:` deliberately fails an assertion, triggering the
+# respective effect, further demonstrating that it is never called.
