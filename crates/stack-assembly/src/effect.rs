@@ -57,7 +57,9 @@ pub enum Effect {
     /// # Ran out of operators to evaluate
     ///
     /// Triggers when evaluation reaches the end of the script, where no more
-    /// operators are available. This signals the regular end of the evaluation.
+    /// operators are available. This is not an error, which makes it one of the
+    /// ways to signal the regular end of evaluation, alongside
+    /// [`Effect::Return`].
     OutOfOperators,
 
     /// # Evaluated `return` while call stack was empty
