@@ -444,9 +444,9 @@ impl Eval {
 
                     self.next_operator = index;
                 } else if identifier == "assert" {
-                    let value = self.operand_stack.pop()?.to_bool();
+                    let condition = self.operand_stack.pop()?.to_bool();
 
-                    if !value {
+                    if !condition {
                         return Err(Effect::AssertionFailed);
                     }
                 } else if identifier == "yield" {
