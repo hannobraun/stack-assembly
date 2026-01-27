@@ -419,9 +419,9 @@ impl Eval {
                     self.next_operator = index;
                 } else if identifier == "jump_if" {
                     let index = self.operand_stack.pop()?.to_usize();
-                    let condition = self.operand_stack.pop()?.to_i32();
+                    let condition = self.operand_stack.pop()?.to_bool();
 
-                    if condition != 0 {
+                    if condition {
                         self.next_operator = index;
                     }
                 } else if identifier == "call" {
@@ -434,10 +434,9 @@ impl Eval {
 
                     let else_ = self.operand_stack.pop()?.to_usize();
                     let then = self.operand_stack.pop()?.to_usize();
-                    let condition = self.operand_stack.pop()?.to_i32();
+                    let condition = self.operand_stack.pop()?.to_bool();
 
-                    self.next_operator =
-                        if condition != 0 { then } else { else_ };
+                    self.next_operator = if condition { then } else { else_ };
                 } else if identifier == "return" {
                     let Some(index) = self.call_stack.pop() else {
                         return Err(Effect::Return);
@@ -445,9 +444,9 @@ impl Eval {
 
                     self.next_operator = index;
                 } else if identifier == "assert" {
-                    let value = self.operand_stack.pop()?.to_i32();
+                    let value = self.operand_stack.pop()?.to_bool();
 
-                    if value == 0 {
+                    if !value {
                         return Err(Effect::AssertionFailed);
                     }
                 } else if identifier == "yield" {

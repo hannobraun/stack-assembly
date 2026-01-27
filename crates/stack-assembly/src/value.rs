@@ -68,6 +68,14 @@ impl Value {
 
         index
     }
+
+    /// # Convert to a `bool`
+    ///
+    /// A zero value is considered `false`, while any other value is considered
+    /// `true`.
+    pub fn to_bool(self) -> bool {
+        self.inner != 0
+    }
 }
 
 impl From<i32> for Value {
