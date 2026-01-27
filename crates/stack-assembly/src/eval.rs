@@ -289,35 +289,35 @@ impl Eval {
                     let b = self.operand_stack.pop()?.to_i32();
                     let a = self.operand_stack.pop()?.to_i32();
 
-                    let c = if a < b { 1 } else { 0 };
+                    let c = a < b;
 
                     self.operand_stack.push(c);
                 } else if identifier == "<=" {
                     let b = self.operand_stack.pop()?.to_i32();
                     let a = self.operand_stack.pop()?.to_i32();
 
-                    let c = if a <= b { 1 } else { 0 };
+                    let c = a <= b;
 
                     self.operand_stack.push(c);
                 } else if identifier == "=" {
                     let b = self.operand_stack.pop()?.to_i32();
                     let a = self.operand_stack.pop()?.to_i32();
 
-                    let c = if a == b { 1 } else { 0 };
+                    let c = a == b;
 
                     self.operand_stack.push(c);
                 } else if identifier == ">" {
                     let b = self.operand_stack.pop()?.to_i32();
                     let a = self.operand_stack.pop()?.to_i32();
 
-                    let c = if a > b { 1 } else { 0 };
+                    let c = a > b;
 
                     self.operand_stack.push(c);
                 } else if identifier == ">=" {
                     let b = self.operand_stack.pop()?.to_i32();
                     let a = self.operand_stack.pop()?.to_i32();
 
-                    let c = if a >= b { 1 } else { 0 };
+                    let c = a >= b;
 
                     self.operand_stack.push(c);
                 } else if identifier == "and" {

@@ -78,6 +78,13 @@ impl Value {
     }
 }
 
+impl From<bool> for Value {
+    fn from(value: bool) -> Self {
+        let inner = if value { 1 } else { 0 };
+        Self { inner }
+    }
+}
+
 impl From<i32> for Value {
     fn from(value: i32) -> Self {
         let inner = u32::from_le_bytes(value.to_le_bytes());
