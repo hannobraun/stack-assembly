@@ -68,6 +68,21 @@ impl Value {
 
         index
     }
+
+    /// # Convert to a `bool`
+    ///
+    /// A zero value is considered `false`, while any other value is considered
+    /// `true`.
+    pub fn to_bool(self) -> bool {
+        self.inner != 0
+    }
+}
+
+impl From<bool> for Value {
+    fn from(value: bool) -> Self {
+        let inner = if value { 1 } else { 0 };
+        Self { inner }
+    }
 }
 
 impl From<i32> for Value {
