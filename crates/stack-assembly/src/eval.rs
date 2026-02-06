@@ -280,107 +280,80 @@ impl Eval {
                         return Err(Effect::IntegerOverflow);
                     }
 
-                    let quotient = a / b;
-                    let remainder = a % b;
-
-                    self.operand_stack.push(quotient);
-                    self.operand_stack.push(remainder);
+                    self.operand_stack.push(a / b);
+                    self.operand_stack.push(a % b);
                 } else if identifier == "<" {
                     let b = self.operand_stack.pop()?.to_i32();
                     let a = self.operand_stack.pop()?.to_i32();
 
-                    let c = a < b;
-
-                    self.operand_stack.push(c);
+                    self.operand_stack.push(a < b);
                 } else if identifier == "<=" {
                     let b = self.operand_stack.pop()?.to_i32();
                     let a = self.operand_stack.pop()?.to_i32();
 
-                    let c = a <= b;
-
-                    self.operand_stack.push(c);
+                    self.operand_stack.push(a <= b);
                 } else if identifier == "=" {
                     let b = self.operand_stack.pop()?.to_i32();
                     let a = self.operand_stack.pop()?.to_i32();
 
-                    let c = a == b;
-
-                    self.operand_stack.push(c);
+                    self.operand_stack.push(a == b);
                 } else if identifier == ">" {
                     let b = self.operand_stack.pop()?.to_i32();
                     let a = self.operand_stack.pop()?.to_i32();
 
-                    let c = a > b;
-
-                    self.operand_stack.push(c);
+                    self.operand_stack.push(a > b);
                 } else if identifier == ">=" {
                     let b = self.operand_stack.pop()?.to_i32();
                     let a = self.operand_stack.pop()?.to_i32();
 
-                    let c = a >= b;
-
-                    self.operand_stack.push(c);
+                    self.operand_stack.push(a >= b);
                 } else if identifier == "and" {
                     let b = self.operand_stack.pop()?.to_i32();
                     let a = self.operand_stack.pop()?.to_i32();
 
-                    let c = a & b;
-
-                    self.operand_stack.push(c);
+                    self.operand_stack.push(a & b);
                 } else if identifier == "or" {
                     let b = self.operand_stack.pop()?.to_i32();
                     let a = self.operand_stack.pop()?.to_i32();
 
-                    let c = a | b;
-
-                    self.operand_stack.push(c);
+                    self.operand_stack.push(a | b);
                 } else if identifier == "xor" {
                     let b = self.operand_stack.pop()?.to_i32();
                     let a = self.operand_stack.pop()?.to_i32();
 
-                    let c = a ^ b;
-
-                    self.operand_stack.push(c);
+                    self.operand_stack.push(a ^ b);
                 } else if identifier == "count_ones" {
                     let a = self.operand_stack.pop()?.to_i32();
-                    let b = a.count_ones();
-                    self.operand_stack.push(b);
+
+                    self.operand_stack.push(a.count_ones());
                 } else if identifier == "leading_zeros" {
                     let a = self.operand_stack.pop()?.to_i32();
-                    let b = a.leading_zeros();
-                    self.operand_stack.push(b);
+
+                    self.operand_stack.push(a.leading_zeros());
                 } else if identifier == "trailing_zeros" {
                     let a = self.operand_stack.pop()?.to_i32();
-                    let b = a.trailing_zeros();
-                    self.operand_stack.push(b);
+
+                    self.operand_stack.push(a.trailing_zeros());
                 } else if identifier == "rotate_left" {
                     let num_positions = self.operand_stack.pop()?.to_u32();
                     let a = self.operand_stack.pop()?.to_i32();
 
-                    let b = a.rotate_left(num_positions);
-
-                    self.operand_stack.push(b);
+                    self.operand_stack.push(a.rotate_left(num_positions));
                 } else if identifier == "rotate_right" {
                     let num_positions = self.operand_stack.pop()?.to_u32();
                     let a = self.operand_stack.pop()?.to_i32();
 
-                    let b = a.rotate_right(num_positions);
-
-                    self.operand_stack.push(b);
+                    self.operand_stack.push(a.rotate_right(num_positions));
                 } else if identifier == "shift_left" {
                     let num_positions = self.operand_stack.pop()?.to_i32();
                     let a = self.operand_stack.pop()?.to_i32();
 
-                    let b = a << num_positions;
-
-                    self.operand_stack.push(b);
+                    self.operand_stack.push(a << num_positions);
                 } else if identifier == "shift_right" {
                     let num_positions = self.operand_stack.pop()?.to_i32();
                     let a = self.operand_stack.pop()?.to_i32();
 
-                    let b = a >> num_positions;
-
-                    self.operand_stack.push(b);
+                    self.operand_stack.push(a >> num_positions);
                 } else if identifier == "copy" {
                     let index_from_top = self.operand_stack.pop()?.to_usize();
                     let index_from_bottom = convert_operand_stack_index(
@@ -416,6 +389,7 @@ impl Eval {
                     self.operand_stack.values.remove(index_from_bottom);
                 } else if identifier == "jump" {
                     let index = self.operand_stack.pop()?.to_usize();
+
                     self.next_operator = index;
                 } else if identifier == "jump_if" {
                     let index = self.operand_stack.pop()?.to_usize();
@@ -428,6 +402,7 @@ impl Eval {
                     self.call_stack.push(self.next_operator);
 
                     let index = self.operand_stack.pop()?.to_usize();
+
                     self.next_operator = index;
                 } else if identifier == "call_either" {
                     self.call_stack.push(self.next_operator);
@@ -480,28 +455,26 @@ impl Eval {
                 let label =
                     self.labels.iter().find(|label| &label.name == name);
 
-                if let Some(&Label { ref name, operator }) = label {
-                    let Ok(operator) = operator.try_into() else {
-                        panic!(
-                            "Operator index `{operator}` of label `{name}` is \
-                            out of bounds. This can only happen on platforms \
-                            where the width of Rust's `usize` is wider than 32 \
-                            bits, with a script that consists of at least 2^32 \
-                            operators.\n\
-                            \n\
-                            Scripts that large seem barely realistic in the \
-                            first place, more so on a 32-bit platform. At \
-                            best, this is a niche use case that StackAssembly \
-                            happens to not support, making this panic an \
-                            acceptable outcome."
-                        );
-                    };
-                    let operator: u32 = operator;
-
-                    self.operand_stack.push(operator);
-                } else {
+                let Some(&Label { ref name, operator }) = label else {
                     return Err(Effect::InvalidReference);
-                }
+                };
+
+                let Ok(operator) = operator.try_into() else {
+                    panic!(
+                        "Operator index `{operator}` of label `{name}` is out \
+                        of bounds. This can only happen on platforms where the \
+                        width of Rust's `usize` is wider than 32 bits, with a \
+                        script that consists of at least 2^32 operators.\n\
+                        \n\
+                        Scripts that large seem barely realistic in the first \
+                        place, more so on a 32-bit platform. At best, this is \
+                        a niche use case that StackAssembly happens to not \
+                        support, making this panic an acceptable outcome."
+                    );
+                };
+                let operator: u32 = operator;
+
+                self.operand_stack.push(operator);
             }
         }
 
