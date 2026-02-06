@@ -1,4 +1,7 @@
-use crate::{Effect, Memory, OperandStack, Value};
+use crate::{
+    Effect, Memory, OperandStack, Value,
+    script::{Label, Operator},
+};
 
 /// # The ongoing evaluation of a script
 ///
@@ -480,27 +483,6 @@ impl Eval {
 
         Ok(())
     }
-}
-
-#[derive(Debug)]
-enum Operator {
-    Identifier { value: String },
-    Integer { value: i32 },
-    Reference { name: String },
-}
-
-impl Operator {
-    pub fn integer_u32(value: u32) -> Self {
-        Self::Integer {
-            value: i32::from_le_bytes(value.to_le_bytes()),
-        }
-    }
-}
-
-#[derive(Debug)]
-struct Label {
-    pub name: String,
-    pub operator: usize,
 }
 
 fn convert_operand_stack_index(

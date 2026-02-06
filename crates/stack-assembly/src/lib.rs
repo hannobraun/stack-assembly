@@ -104,6 +104,7 @@ mod effect;
 mod eval;
 mod memory;
 mod operand_stack;
+mod script;
 mod value;
 
 #[cfg(test)]
