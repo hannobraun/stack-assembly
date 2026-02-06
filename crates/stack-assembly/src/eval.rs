@@ -324,12 +324,15 @@ impl Eval {
                     self.operand_stack.push(a ^ b);
                 } else if identifier == "count_ones" {
                     let a = self.operand_stack.pop()?.to_i32();
+
                     self.operand_stack.push(a.count_ones());
                 } else if identifier == "leading_zeros" {
                     let a = self.operand_stack.pop()?.to_i32();
+
                     self.operand_stack.push(a.leading_zeros());
                 } else if identifier == "trailing_zeros" {
                     let a = self.operand_stack.pop()?.to_i32();
+
                     self.operand_stack.push(a.trailing_zeros());
                 } else if identifier == "rotate_left" {
                     let num_positions = self.operand_stack.pop()?.to_u32();
@@ -386,6 +389,7 @@ impl Eval {
                     self.operand_stack.values.remove(index_from_bottom);
                 } else if identifier == "jump" {
                     let index = self.operand_stack.pop()?.to_usize();
+
                     self.next_operator = index;
                 } else if identifier == "jump_if" {
                     let index = self.operand_stack.pop()?.to_usize();
@@ -398,6 +402,7 @@ impl Eval {
                     self.call_stack.push(self.next_operator);
 
                     let index = self.operand_stack.pop()?.to_usize();
+
                     self.next_operator = index;
                 } else if identifier == "call_either" {
                     self.call_stack.push(self.next_operator);
