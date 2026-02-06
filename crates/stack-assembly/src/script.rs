@@ -1,4 +1,10 @@
 #[derive(Debug)]
+pub struct Script {
+    pub operators: Vec<Operator>,
+    pub labels: Vec<Label>,
+}
+
+#[derive(Debug)]
 pub enum Operator {
     Identifier { value: String },
     Integer { value: i32 },

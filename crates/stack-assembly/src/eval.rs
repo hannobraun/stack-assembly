@@ -1,6 +1,6 @@
 use crate::{
     Effect, Memory, OperandStack, Value,
-    script::{Label, Operator},
+    script::{Label, Operator, Script},
 };
 
 /// # The ongoing evaluation of a script
@@ -23,8 +23,7 @@ use crate::{
 /// ```
 #[derive(Debug)]
 pub struct Eval {
-    operators: Vec<Operator>,
-    labels: Vec<Label>,
+    script: Script,
     next_operator: usize,
     call_stack: Vec<usize>,
 
@@ -186,8 +185,7 @@ impl Eval {
         }
 
         Self {
-            operators,
-            labels,
+            script: Script { operators, labels },
             next_operator: 0,
             call_stack: Vec::new(),
             effect: None,
@@ -250,7 +248,8 @@ impl Eval {
     }
 
     fn evaluate_next_operator(&mut self) -> Result<(), Effect> {
-        let Some(operator) = self.operators.get(self.next_operator) else {
+        let Some(operator) = self.script.operators.get(self.next_operator)
+        else {
             return Err(Effect::OutOfOperators);
         };
         self.next_operator += 1;
@@ -456,7 +455,7 @@ impl Eval {
             }
             Operator::Reference { name } => {
                 let label =
-                    self.labels.iter().find(|label| &label.name == name);
+                    self.script.labels.iter().find(|label| &label.name == name);
 
                 let Some(&Label { ref name, operator }) = label else {
                     return Err(Effect::InvalidReference);
