@@ -344,11 +344,11 @@ impl Eval {
                     // implementation of `copy`.
                     self.operand_stack.values.remove(index_from_bottom);
                 } else if identifier == "jump" {
-                    let index = self.operand_stack.pop()?.to_usize();
+                    let index = self.operand_stack.pop()?.to_u32();
 
                     self.next_operator.value = index;
                 } else if identifier == "jump_if" {
-                    let index = self.operand_stack.pop()?.to_usize();
+                    let index = self.operand_stack.pop()?.to_u32();
                     let condition = self.operand_stack.pop()?.to_bool();
 
                     if condition {
@@ -357,14 +357,14 @@ impl Eval {
                 } else if identifier == "call" {
                     self.call_stack.push(self.next_operator);
 
-                    let index = self.operand_stack.pop()?.to_usize();
+                    let index = self.operand_stack.pop()?.to_u32();
 
                     self.next_operator.value = index;
                 } else if identifier == "call_either" {
                     self.call_stack.push(self.next_operator);
 
-                    let else_ = self.operand_stack.pop()?.to_usize();
-                    let then = self.operand_stack.pop()?.to_usize();
+                    let else_ = self.operand_stack.pop()?.to_u32();
+                    let then = self.operand_stack.pop()?.to_u32();
                     let condition = self.operand_stack.pop()?.to_bool();
 
                     self.next_operator = {
@@ -414,27 +414,11 @@ impl Eval {
                 let label =
                     self.script.labels.iter().find(|label| &label.name == name);
 
-                let Some(&Label { ref name, operator }) = label else {
+                let Some(&Label { name: _, operator }) = label else {
                     return Err(Effect::InvalidReference);
                 };
 
-                let Ok(operator) = operator.value.try_into() else {
-                    panic!(
-                        "Operator index `{operator}` of label `{name}` is out \
-                        of bounds. This can only happen on platforms where the \
-                        width of Rust's `usize` is wider than 32 bits, with a \
-                        script that consists of at least 2^32 operators.\n\
-                        \n\
-                        Scripts that large seem barely realistic in the first \
-                        place, more so on a 32-bit platform. At best, this is \
-                        a niche use case that StackAssembly happens to not \
-                        support, making this panic an acceptable outcome.",
-                        operator = operator.value,
-                    );
-                };
-                let operator: u32 = operator;
-
-                self.operand_stack.push(operator);
+                self.operand_stack.push(operator.value);
             }
         }
 
