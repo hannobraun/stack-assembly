@@ -1,6 +1,6 @@
 use crate::{
     Effect, Memory, OperandStack, Value,
-    script::{Label, Operator, Script},
+    script::{Label, Operator, OperatorIndex, Script},
 };
 
 /// # The ongoing evaluation of a script
@@ -24,8 +24,8 @@ use crate::{
 #[derive(Debug)]
 pub struct Eval {
     script: Script,
-    next_operator: usize,
-    call_stack: Vec<usize>,
+    next_operator: OperatorIndex,
+    call_stack: Vec<OperatorIndex>,
 
     /// # The active effect, if one has triggered
     ///
@@ -143,7 +143,7 @@ impl Eval {
     pub fn start(script: &str) -> Self {
         Self {
             script: Script::compile(script),
-            next_operator: 0,
+            next_operator: OperatorIndex { value: 0 },
             call_stack: Vec::new(),
             effect: None,
             operand_stack: OperandStack { values: Vec::new() },
@@ -205,11 +205,12 @@ impl Eval {
     }
 
     fn evaluate_next_operator(&mut self) -> Result<(), Effect> {
-        let Some(operator) = self.script.operators.get(self.next_operator)
+        let Some(operator) =
+            self.script.operators.get(self.next_operator.value)
         else {
             return Err(Effect::OutOfOperators);
         };
-        self.next_operator += 1;
+        self.next_operator.value += 1;
 
         match operator {
             Operator::Identifier { value: identifier } => {
@@ -349,20 +350,20 @@ impl Eval {
                 } else if identifier == "jump" {
                     let index = self.operand_stack.pop()?.to_usize();
 
-                    self.next_operator = index;
+                    self.next_operator.value = index;
                 } else if identifier == "jump_if" {
                     let index = self.operand_stack.pop()?.to_usize();
                     let condition = self.operand_stack.pop()?.to_bool();
 
                     if condition {
-                        self.next_operator = index;
+                        self.next_operator.value = index;
                     }
                 } else if identifier == "call" {
                     self.call_stack.push(self.next_operator);
 
                     let index = self.operand_stack.pop()?.to_usize();
 
-                    self.next_operator = index;
+                    self.next_operator.value = index;
                 } else if identifier == "call_either" {
                     self.call_stack.push(self.next_operator);
 
@@ -370,7 +371,10 @@ impl Eval {
                     let then = self.operand_stack.pop()?.to_usize();
                     let condition = self.operand_stack.pop()?.to_bool();
 
-                    self.next_operator = if condition { then } else { else_ };
+                    self.next_operator = {
+                        let value = if condition { then } else { else_ };
+                        OperatorIndex { value }
+                    };
                 } else if identifier == "return" {
                     let Some(index) = self.call_stack.pop() else {
                         return Err(Effect::Return);
@@ -418,7 +422,7 @@ impl Eval {
                     return Err(Effect::InvalidReference);
                 };
 
-                let Ok(operator) = operator.try_into() else {
+                let Ok(operator) = operator.value.try_into() else {
                     panic!(
                         "Operator index `{operator}` of label `{name}` is out \
                         of bounds. This can only happen on platforms where the \
@@ -428,7 +432,8 @@ impl Eval {
                         Scripts that large seem barely realistic in the first \
                         place, more so on a 32-bit platform. At best, this is \
                         a niche use case that StackAssembly happens to not \
-                        support, making this panic an acceptable outcome."
+                        support, making this panic an acceptable outcome.",
+                        operator = operator.value,
                     );
                 };
                 let operator: u32 = operator;

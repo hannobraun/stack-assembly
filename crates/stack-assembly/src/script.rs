@@ -20,7 +20,9 @@ impl Script {
                 {
                     labels.push(Label {
                         name: name.to_string(),
-                        operator: operators.len(),
+                        operator: OperatorIndex {
+                            value: operators.len(),
+                        },
                     });
                     continue;
                 } else if let Some(("", name)) = token.split_once("@") {
@@ -68,8 +70,13 @@ impl Operator {
     }
 }
 
+#[derive(Clone, Copy, Debug)]
+pub struct OperatorIndex {
+    pub value: usize,
+}
+
 #[derive(Debug)]
 pub struct Label {
     pub name: String,
-    pub operator: usize,
+    pub operator: OperatorIndex,
 }
