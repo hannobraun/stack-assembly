@@ -388,10 +388,7 @@ impl Eval {
                 } else if identifier == "read" {
                     let address = self.operand_stack.pop()?.to_usize();
 
-                    let Some(value) = self.memory.values.get(address).copied()
-                    else {
-                        return Err(Effect::InvalidAddress);
-                    };
+                    let value = self.memory.read(address)?;
 
                     self.operand_stack.push(value);
                 } else if identifier == "write" {

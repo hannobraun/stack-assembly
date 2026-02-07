@@ -1,6 +1,6 @@
 use std::fmt;
 
-use crate::Value;
+use crate::{Effect, Value};
 
 /// # A linear memory, freely addressable per word
 ///
@@ -19,6 +19,15 @@ pub struct Memory {
 }
 
 impl Memory {
+    /// # Read the value at the provided address
+    pub fn read(&self, address: usize) -> Result<Value, InvalidAddress> {
+        let Some(value) = self.values.get(address).copied() else {
+            return Err(InvalidAddress);
+        };
+
+        Ok(value)
+    }
+
     /// # Access the memory as a slice of `i32` values
     pub fn to_i32_slice(&self) -> &[i32] {
         bytemuck::cast_slice(&self.values)
@@ -50,5 +59,14 @@ impl fmt::Debug for Memory {
         write!(f, "]")?;
 
         Ok(())
+    }
+}
+
+#[derive(Debug)]
+pub struct InvalidAddress;
+
+impl From<InvalidAddress> for Effect {
+    fn from(InvalidAddress: InvalidAddress) -> Self {
+        Effect::InvalidAddress
     }
 }
