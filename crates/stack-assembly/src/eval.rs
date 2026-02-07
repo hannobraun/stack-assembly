@@ -386,23 +386,16 @@ impl Eval {
                 } else if identifier == "yield" {
                     return Err(Effect::Yield);
                 } else if identifier == "read" {
-                    let address = self.operand_stack.pop()?.to_usize();
+                    let address = self.operand_stack.pop()?.to_u32();
 
-                    let Some(value) = self.memory.values.get(address).copied()
-                    else {
-                        return Err(Effect::InvalidAddress);
-                    };
+                    let value = self.memory.read(address)?;
 
                     self.operand_stack.push(value);
                 } else if identifier == "write" {
                     let value = self.operand_stack.pop()?;
-                    let address = self.operand_stack.pop()?.to_usize();
+                    let address = self.operand_stack.pop()?.to_u32();
 
-                    if address < self.memory.values.len() {
-                        self.memory.values[address] = value;
-                    } else {
-                        return Err(Effect::InvalidAddress);
-                    }
+                    self.memory.write(address, value)?;
                 } else {
                     return Err(Effect::UnknownIdentifier);
                 }
