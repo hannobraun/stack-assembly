@@ -386,7 +386,7 @@ impl Eval {
                 } else if identifier == "yield" {
                     return Err(Effect::Yield);
                 } else if identifier == "read" {
-                    let address = self.operand_stack.pop()?.to_usize();
+                    let address = self.operand_stack.pop()?.to_u32();
 
                     let value = self.memory.read(address)?;
 

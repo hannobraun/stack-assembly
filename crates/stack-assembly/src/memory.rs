@@ -20,7 +20,14 @@ pub struct Memory {
 
 impl Memory {
     /// # Read the value at the provided address
-    pub fn read(&self, address: usize) -> Result<Value, InvalidAddress> {
+    pub fn read(&self, address: u32) -> Result<Value, InvalidAddress> {
+        let Ok(address): Result<usize, _> = address.try_into() else {
+            // It is not possible to have memories larger than what can be
+            // addressed by `usize`. So by definition, any address that's too
+            // large to convert to `usize`, can not be valid.
+            return Err(InvalidAddress);
+        };
+
         let Some(value) = self.values.get(address).copied() else {
             return Err(InvalidAddress);
         };
