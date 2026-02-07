@@ -1,4 +1,7 @@
-use crate::{Effect, Memory, OperandStack, Value};
+use crate::{
+    Effect, Memory, OperandStack, Value,
+    script::{Label, Operator, Script},
+};
 
 /// # The ongoing evaluation of a script
 ///
@@ -20,8 +23,7 @@ use crate::{Effect, Memory, OperandStack, Value};
 /// ```
 #[derive(Debug)]
 pub struct Eval {
-    operators: Vec<Operator>,
-    labels: Vec<Label>,
+    script: Script,
     next_operator: usize,
     call_stack: Vec<usize>,
 
@@ -139,52 +141,8 @@ impl Eval {
     /// for evaluation. To evaluate any operators, you must call [`Eval::run`]
     /// or [`Eval::step`].
     pub fn start(script: &str) -> Self {
-        let mut operators = Vec::new();
-        let mut labels = Vec::new();
-
-        for line in script.lines() {
-            for token in line.split_whitespace() {
-                if token.starts_with("#") {
-                    // This is a comment. Ignore the rest of the line.
-                    break;
-                }
-
-                let operator = if let Some((name, "")) = token.rsplit_once(":")
-                {
-                    labels.push(Label {
-                        name: name.to_string(),
-                        operator: operators.len(),
-                    });
-                    continue;
-                } else if let Some(("", name)) = token.split_once("@") {
-                    Operator::Reference {
-                        name: name.to_string(),
-                    }
-                } else if let Some(("", value)) = token.split_once("0x")
-                    && let Ok(value) = i32::from_str_radix(value, 16)
-                {
-                    Operator::Integer { value }
-                } else if let Some(("", value)) = token.split_once("0x")
-                    && let Ok(value) = u32::from_str_radix(value, 16)
-                {
-                    Operator::integer_u32(value)
-                } else if let Ok(value) = token.parse::<i32>() {
-                    Operator::Integer { value }
-                } else if let Ok(value) = token.parse::<u32>() {
-                    Operator::integer_u32(value)
-                } else {
-                    Operator::Identifier {
-                        value: token.to_string(),
-                    }
-                };
-
-                operators.push(operator);
-            }
-        }
-
         Self {
-            operators,
-            labels,
+            script: Script::compile(script),
             next_operator: 0,
             call_stack: Vec::new(),
             effect: None,
@@ -247,7 +205,8 @@ impl Eval {
     }
 
     fn evaluate_next_operator(&mut self) -> Result<(), Effect> {
-        let Some(operator) = self.operators.get(self.next_operator) else {
+        let Some(operator) = self.script.operators.get(self.next_operator)
+        else {
             return Err(Effect::OutOfOperators);
         };
         self.next_operator += 1;
@@ -453,7 +412,7 @@ impl Eval {
             }
             Operator::Reference { name } => {
                 let label =
-                    self.labels.iter().find(|label| &label.name == name);
+                    self.script.labels.iter().find(|label| &label.name == name);
 
                 let Some(&Label { ref name, operator }) = label else {
                     return Err(Effect::InvalidReference);
@@ -480,27 +439,6 @@ impl Eval {
 
         Ok(())
     }
-}
-
-#[derive(Debug)]
-enum Operator {
-    Identifier { value: String },
-    Integer { value: i32 },
-    Reference { name: String },
-}
-
-impl Operator {
-    pub fn integer_u32(value: u32) -> Self {
-        Self::Integer {
-            value: i32::from_le_bytes(value.to_le_bytes()),
-        }
-    }
-}
-
-#[derive(Debug)]
-struct Label {
-    pub name: String,
-    pub operator: usize,
 }
 
 fn convert_operand_stack_index(
