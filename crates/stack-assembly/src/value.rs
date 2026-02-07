@@ -49,6 +49,10 @@ impl Value {
     /// ## Panics
     ///
     /// Panics, if `usize` can not represent this value.
+    ///
+    /// ## Compatibility Note
+    ///
+    /// This deprecated method will be removed in a future release.
     #[deprecated(
         since = "0.2.0",
         note = "\
