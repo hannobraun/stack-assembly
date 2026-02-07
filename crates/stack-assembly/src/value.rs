@@ -49,6 +49,14 @@ impl Value {
     /// ## Panics
     ///
     /// Panics, if `usize` can not represent this value.
+    #[deprecated(
+        since = "0.2.0",
+        note = "\
+            No longer used internally by the StackAssembly implementation \
+            because it can panic, if usize is less than 32 bits wide. Use \
+            `Value::to_32` instead and convert to `usize` yourself, using \
+            whatever approach best fits your use case."
+    )]
     pub fn to_usize(self) -> usize {
         let Ok(index) = self.inner.try_into() else {
             panic!(
