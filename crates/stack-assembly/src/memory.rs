@@ -38,9 +38,16 @@ impl Memory {
     /// # Write a value to an address
     pub fn write(
         &mut self,
-        address: usize,
+        address: u32,
         value: Value,
     ) -> Result<(), InvalidAddress> {
+        let Ok(address): Result<usize, _> = address.try_into() else {
+            // It is not possible to have memories larger than what can be
+            // addressed by `usize`. So by definition, any address that's too
+            // large to convert to `usize`, can not be valid.
+            return Err(InvalidAddress);
+        };
+
         if address >= self.values.len() {
             return Err(InvalidAddress);
         }

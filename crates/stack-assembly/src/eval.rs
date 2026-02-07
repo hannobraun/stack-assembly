@@ -393,7 +393,7 @@ impl Eval {
                     self.operand_stack.push(value);
                 } else if identifier == "write" {
                     let value = self.operand_stack.pop()?;
-                    let address = self.operand_stack.pop()?.to_usize();
+                    let address = self.operand_stack.pop()?.to_u32();
 
                     self.memory.write(address, value)?;
                 } else {
