@@ -311,7 +311,7 @@ impl Eval {
 
                     self.operand_stack.push(a >> num_positions);
                 } else if identifier == "copy" {
-                    let index_from_top = self.operand_stack.pop()?.to_usize();
+                    let index_from_top = self.operand_stack.pop()?.to_u32();
                     let index_from_bottom = convert_operand_stack_index(
                         &self.operand_stack,
                         index_from_top,
@@ -333,7 +333,7 @@ impl Eval {
 
                     self.operand_stack.push(value);
                 } else if identifier == "drop" {
-                    let index_from_top = self.operand_stack.pop()?.to_usize();
+                    let index_from_top = self.operand_stack.pop()?.to_u32();
                     let index_from_bottom = convert_operand_stack_index(
                         &self.operand_stack,
                         index_from_top,
@@ -421,8 +421,15 @@ impl Eval {
 
 fn convert_operand_stack_index(
     operand_stack: &OperandStack,
-    index_from_top: usize,
+    index_from_top: u32,
 ) -> Result<usize, Effect> {
+    let Ok(index_from_top): Result<usize, _> = index_from_top.try_into() else {
+        // It is not possible to have a stack larger than what `usize` can
+        // address. So by definition, any index that's too large to convert to
+        // `usize`, can not be valid.
+        return Err(Effect::InvalidOperandStackIndex);
+    };
+
     let index_from_bottom = operand_stack
         .values
         .len()
