@@ -28,6 +28,21 @@ impl Memory {
         Ok(value)
     }
 
+    /// # Write a value to an address
+    pub fn write(
+        &mut self,
+        address: usize,
+        value: Value,
+    ) -> Result<(), InvalidAddress> {
+        if address >= self.values.len() {
+            return Err(InvalidAddress);
+        }
+
+        self.values[address] = value;
+
+        Ok(())
+    }
+
     /// # Access the memory as a slice of `i32` values
     pub fn to_i32_slice(&self) -> &[i32] {
         bytemuck::cast_slice(&self.values)

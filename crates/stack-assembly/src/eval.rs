@@ -395,11 +395,7 @@ impl Eval {
                     let value = self.operand_stack.pop()?;
                     let address = self.operand_stack.pop()?.to_usize();
 
-                    if address < self.memory.values.len() {
-                        self.memory.values[address] = value;
-                    } else {
-                        return Err(Effect::InvalidAddress);
-                    }
+                    self.memory.write(address, value)?;
                 } else {
                     return Err(Effect::UnknownIdentifier);
                 }
