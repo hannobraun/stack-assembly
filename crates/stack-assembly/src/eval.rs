@@ -205,11 +205,7 @@ impl Eval {
     }
 
     fn evaluate_next_operator(&mut self) -> Result<(), Effect> {
-        let Some(operator) =
-            self.script.operators.get(self.next_operator.value)
-        else {
-            return Err(Effect::OutOfOperators);
-        };
+        let operator = self.script.get_operator(self.next_operator)?;
         self.next_operator.value += 1;
 
         match operator {

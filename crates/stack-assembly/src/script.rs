@@ -1,3 +1,5 @@
+use crate::Effect;
+
 #[derive(Debug)]
 pub struct Script {
     pub operators: Vec<Operator>,
@@ -53,6 +55,17 @@ impl Script {
 
         Self { operators, labels }
     }
+
+    pub fn get_operator(
+        &self,
+        index: OperatorIndex,
+    ) -> Result<&Operator, InvalidOperatorIndex> {
+        let Some(operator) = self.operators.get(index.value) else {
+            return Err(InvalidOperatorIndex);
+        };
+
+        Ok(operator)
+    }
 }
 
 #[derive(Debug)]
@@ -79,4 +92,13 @@ pub struct OperatorIndex {
 pub struct Label {
     pub name: String,
     pub operator: OperatorIndex,
+}
+
+#[derive(Debug)]
+pub struct InvalidOperatorIndex;
+
+impl From<InvalidOperatorIndex> for Effect {
+    fn from(InvalidOperatorIndex: InvalidOperatorIndex) -> Self {
+        Effect::OutOfOperators
+    }
 }
