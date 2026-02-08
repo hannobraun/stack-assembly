@@ -1,13 +1,15 @@
-use crate::{Effect, Eval, Value};
+use crate::{Effect, Eval, Script, Value};
 
 #[test]
 fn read() {
     // `read` reads a word from memory at the given address, pushing it to the
     // stack. It does not modify the memory.
 
-    let mut eval = Eval::start("1 read 1 read");
+    let script = Script::compile("1 read 1 read");
+
+    let mut eval = Eval::start();
     eval.memory.values[1] = Value::from(3);
-    eval.run();
+    eval.run(&script);
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
     assert_eq!(eval.operand_stack.to_u32_slice(), &[3, 3]);
@@ -18,13 +20,15 @@ fn read_triggers_effect_on_out_of_bounds_access() {
     // If the address passed to `read` is out of bounds, that triggers the
     // respective effect.
 
-    let mut eval = Eval::start("1025 read");
+    let script = Script::compile("1025 read");
+
+    let mut eval = Eval::start();
     assert!(
         eval.memory.values.len() < 1025,
         "Test can't work, because it makes wrong assumption about memory size.",
     );
 
-    eval.run();
+    eval.run(&script);
     assert_eq!(eval.effect, Some(Effect::InvalidAddress));
     assert_eq!(eval.operand_stack.to_u32_slice(), &[]);
 }
@@ -33,8 +37,10 @@ fn read_triggers_effect_on_out_of_bounds_access() {
 fn write() {
     // `write` writes a word to memory at the given address.
 
-    let mut eval = Eval::start("1 3 write");
-    eval.run();
+    let script = Script::compile("1 3 write");
+
+    let mut eval = Eval::start();
+    eval.run(&script);
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
     assert_eq!(eval.operand_stack.to_u32_slice(), &[]);
@@ -46,13 +52,15 @@ fn write_triggers_effect_on_out_of_bounds_access() {
     // If the address passed to `write` is out of bounds, that triggers the
     // respective effect.
 
-    let mut eval = Eval::start("1025 3 write");
+    let script = Script::compile("1025 3 write");
+
+    let mut eval = Eval::start();
     assert!(
         eval.memory.values.len() < 1025,
         "Test can't work, because it makes wrong assumption about memory size.",
     );
 
-    eval.run();
+    eval.run(&script);
     assert_eq!(eval.effect, Some(Effect::InvalidAddress));
     assert_eq!(eval.operand_stack.to_u32_slice(), &[]);
 }

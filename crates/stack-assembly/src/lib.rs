@@ -40,12 +40,12 @@
 //! evaluate it.
 //!
 //! ```
-//! use stack_assembly::Eval;
+//! use stack_assembly::{Eval, Script};
 //!
-//! let script = "1 2 +";
+//! let script = Script::compile("1 2 +");
 //!
-//! let mut eval = Eval::start(script);
-//! eval.run();
+//! let mut eval = Eval::start();
+//! eval.run(&script);
 //!
 //! assert_eq!(eval.operand_stack.to_i32_slice(), &[3]);
 //! ```
@@ -63,19 +63,19 @@
 //! provide additional capabilities to the script.
 //!
 //! ```
-//! use stack_assembly::{Effect, Eval};
+//! use stack_assembly::{Effect, Eval, Script};
 //!
 //! // A script that seems to want to print the value `3`.
-//! let script = "
+//! let script = Script::compile("
 //!     3 @print jump
 //!
 //!     print:
 //!         yield
-//! ";
+//! ");
 //!
 //! // Start the evaluation and advance it until the script triggers an effect.
-//! let mut eval = Eval::start(script);
-//! eval.run();
+//! let mut eval = Eval::start();
+//! eval.run(&script);
 //!
 //! // `run` has returned, meaning an effect has triggered. Let's make sure that
 //! // went as expected.

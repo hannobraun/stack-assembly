@@ -12,18 +12,17 @@ use crate::{
 /// ## Example
 ///
 /// ```
-/// use stack_assembly::Eval;
+/// use stack_assembly::{Eval, Script};
 ///
-/// let script = "1 2 +";
+/// let script = Script::compile("1 2 +");
 ///
-/// let mut eval = Eval::start(script);
-/// eval.run();
+/// let mut eval = Eval::start();
+/// eval.run(&script);
 ///
 /// assert_eq!(eval.operand_stack.to_i32_slice(), &[3]);
 /// ```
 #[derive(Debug)]
 pub struct Eval {
-    script: Script,
     next_operator: OperatorIndex,
     call_stack: Vec<OperatorIndex>,
 
@@ -57,24 +56,24 @@ pub struct Eval {
     /// ### Example
     ///
     /// ```
-    /// use stack_assembly::{Effect, Eval};
+    /// use stack_assembly::{Effect, Eval, Script};
     ///
     /// // This script increments a number in a loop, yielding control to the
     /// // host every time it did so.
-    /// let script = "
+    /// let script = Script::compile("
     ///     0
     ///
     ///     increment:
     ///         1 +
     ///         yield
     ///         @increment jump
-    /// ";
+    /// ");
     ///
-    /// let mut eval = Eval::start(script);
+    /// let mut eval = Eval::start();
     ///
     /// // When running the script for the first time, we expect that it has
     /// // incremented the number once, before yielding.
-    /// eval.run();
+    /// eval.run(&script);
     /// assert_eq!(eval.effect, Some(Effect::Yield));
     /// assert_eq!(eval.operand_stack.to_u32_slice(), &[1]);
     ///
@@ -84,7 +83,7 @@ pub struct Eval {
     /// // Since we handled the effect correctly, we can now assume that the
     /// // script has incremented the number a second time, before yielding
     /// // again.
-    /// eval.run();
+    /// eval.run(&script);
     /// assert_eq!(eval.effect, Some(Effect::Yield));
     /// assert_eq!(eval.operand_stack.to_u32_slice(), &[2]);
     /// ```
@@ -140,9 +139,8 @@ impl Eval {
     /// Compile the provided script and return an `Eval` instance that is ready
     /// for evaluation. To evaluate any operators, you must call [`Eval::run`]
     /// or [`Eval::step`].
-    pub fn start(script: &str) -> Self {
+    pub fn start() -> Self {
         Self {
-            script: Script::compile(script),
             next_operator: OperatorIndex { value: 0 },
             call_stack: Vec::new(),
             effect: None,
@@ -164,9 +162,9 @@ impl Eval {
     ///
     /// [`effect`]: #structfield.effect
     /// [`next_operator`]: #structfield.next_operator
-    pub fn run(&mut self) -> &mut Effect {
+    pub fn run(&mut self, script: &Script) -> &mut Effect {
         while self.effect.is_none() {
-            self.step();
+            self.step(script);
         }
 
         // It's a bit of a shame we have to unwrap the `Option` like this, but
@@ -194,18 +192,21 @@ impl Eval {
     ///
     /// [`effect`]: #structfield.effect
     /// [`next_operator`]: #structfield.next_operator
-    pub fn step(&mut self) {
+    pub fn step(&mut self, script: &Script) {
         if self.effect.is_some() {
             return;
         }
 
-        if let Err(effect) = self.evaluate_next_operator() {
+        if let Err(effect) = self.evaluate_next_operator(script) {
             self.effect = Some(effect);
         }
     }
 
-    fn evaluate_next_operator(&mut self) -> Result<(), Effect> {
-        let operator = self.script.get_operator(self.next_operator)?;
+    fn evaluate_next_operator(
+        &mut self,
+        script: &Script,
+    ) -> Result<(), Effect> {
+        let operator = script.get_operator(self.next_operator)?;
         self.next_operator.value += 1;
 
         match operator {
@@ -404,7 +405,7 @@ impl Eval {
                 self.operand_stack.push(*value);
             }
             Operator::Reference { name } => {
-                let operator = self.script.resolve_reference(name)?;
+                let operator = script.resolve_reference(name)?;
                 self.operand_stack.push(operator.value);
             }
         }
