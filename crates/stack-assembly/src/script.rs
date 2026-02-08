@@ -1,5 +1,12 @@
 use crate::Effect;
 
+/// # A compiled script
+///
+/// To evaluate a script, you must first compile its textual representation into
+/// an instance of this struct, using [`Script::compile`]. Afterwards, you can
+/// evaluate the script using [`Eval`].
+///
+/// [`Eval`]: crate::Eval
 #[derive(Debug)]
 pub struct Script {
     operators: Vec<Operator>,
@@ -7,6 +14,7 @@ pub struct Script {
 }
 
 impl Script {
+    /// # Compile the source text of a script into an instance of `Script`
     pub fn compile(script: &str) -> Self {
         let mut operators = Vec::new();
         let mut labels = Vec::new();

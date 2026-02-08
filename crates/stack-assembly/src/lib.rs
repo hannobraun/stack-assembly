@@ -115,5 +115,6 @@ pub use self::{
     eval::Eval,
     memory::Memory,
     operand_stack::{OperandStack, OperandStackUnderflow},
+    script::Script,
     value::Value,
 };
