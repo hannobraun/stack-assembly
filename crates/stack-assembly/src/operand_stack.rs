@@ -11,7 +11,7 @@ use crate::{Effect, Value};
 ///
 /// [`Eval`]: crate::Eval
 /// [`operand_stack`]: struct.Eval.html#structfield.operand_stack
-#[derive(Debug)]
+#[derive(Debug, Default)]
 pub struct OperandStack {
     /// # The values on the stack
     pub values: Vec<Value>,
