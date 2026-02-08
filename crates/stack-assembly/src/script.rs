@@ -89,6 +89,19 @@ impl Script {
 
         Ok(operator)
     }
+
+    pub(crate) fn resolve_reference(
+        &self,
+        name: &str,
+    ) -> Result<OperatorIndex, InvalidReference> {
+        let label = self.labels.iter().find(|label| label.name == name);
+
+        let Some(&Label { name: _, operator }) = label else {
+            return Err(InvalidReference);
+        };
+
+        Ok(operator)
+    }
 }
 
 #[derive(Debug)]
@@ -123,5 +136,14 @@ pub struct InvalidOperatorIndex;
 impl From<InvalidOperatorIndex> for Effect {
     fn from(InvalidOperatorIndex: InvalidOperatorIndex) -> Self {
         Effect::OutOfOperators
+    }
+}
+
+#[derive(Debug)]
+pub struct InvalidReference;
+
+impl From<InvalidReference> for Effect {
+    fn from(InvalidReference: InvalidReference) -> Self {
+        Effect::InvalidReference
     }
 }

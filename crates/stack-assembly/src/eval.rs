@@ -1,6 +1,6 @@
 use crate::{
     Effect, Memory, OperandStack, Value,
-    script::{Label, Operator, OperatorIndex, Script},
+    script::{Operator, OperatorIndex, Script},
 };
 
 /// # The ongoing evaluation of a script
@@ -404,13 +404,7 @@ impl Eval {
                 self.operand_stack.push(*value);
             }
             Operator::Reference { name } => {
-                let label =
-                    self.script.labels.iter().find(|label| &label.name == name);
-
-                let Some(&Label { name: _, operator }) = label else {
-                    return Err(Effect::InvalidReference);
-                };
-
+                let operator = self.script.resolve_reference(name)?;
                 self.operand_stack.push(operator.value);
             }
         }
