@@ -2,7 +2,7 @@ use std::{fs::File, io::Read, path::PathBuf, process, thread, time::Duration};
 
 use anyhow::Context;
 use clap::Parser;
-use stack_assembly::{Effect, Eval, OperandStack};
+use stack_assembly::{Effect, Eval, OperandStack, Script};
 
 fn main() -> anyhow::Result<()> {
     /// Example host for the StackAssembly programming language
@@ -19,10 +19,12 @@ fn main() -> anyhow::Result<()> {
         .read_to_string(&mut script)
         .context("Reading from script file.")?;
 
-    let mut eval = Eval::start(&script);
+    let script = Script::compile(&script);
+
+    let mut eval = Eval::start();
 
     loop {
-        match eval.run() {
+        match eval.run(&script) {
             Effect::OutOfOperators | Effect::Return => {
                 eprintln!();
                 eprintln!("Evaluation has finished.");

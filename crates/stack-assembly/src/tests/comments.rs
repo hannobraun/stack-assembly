@@ -1,15 +1,17 @@
-use crate::{Effect, Eval};
+use crate::{Effect, Eval, Script};
 
 #[test]
 fn full_line_comment() {
     // A line that starts with `#` is a comment and gets ignored.
 
-    let script = "\
+    let script = Script::compile(
+        "\
         # 3 5 8
-    ";
+        ",
+    );
 
-    let mut eval = Eval::start(script);
-    eval.run();
+    let mut eval = Eval::start();
+    eval.run(&script);
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
     assert_eq!(eval.operand_stack.to_u32_slice(), &[]);
@@ -20,8 +22,10 @@ fn end_of_line_comment() {
     // If a `#` appears somewhere within a line, everything from there on gets
     // ignored.
 
-    let mut eval = Eval::start("3 # 5 8");
-    eval.run();
+    let script = Script::compile("3 # 5 8");
+
+    let mut eval = Eval::start();
+    eval.run(&script);
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
     assert_eq!(eval.operand_stack.to_u32_slice(), &[3]);
@@ -31,8 +35,10 @@ fn end_of_line_comment() {
 fn comment_without_whitespace() {
     // Any `#` introduces a comment, even if not delineated by whitespace.
 
-    let mut eval = Eval::start("3 #5 8");
-    eval.run();
+    let script = Script::compile("3 #5 8");
+
+    let mut eval = Eval::start();
+    eval.run(&script);
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
     assert_eq!(eval.operand_stack.to_u32_slice(), &[3]);

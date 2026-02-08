@@ -1,12 +1,14 @@
-use crate::{Effect, Eval};
+use crate::{Effect, Eval, Script};
 
 #[test]
 fn evaluate_positive_integers() {
     // Integers are tokens that consist of base-10 digits. Evaluating an integer
     // pushes the value it represents to the stack.
 
-    let mut eval = Eval::start("3 5");
-    eval.run();
+    let script = Script::compile("3 5");
+
+    let mut eval = Eval::start();
+    eval.run(&script);
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
     assert_eq!(eval.operand_stack.to_i32_slice(), &[3, 5]);
@@ -16,8 +18,10 @@ fn evaluate_positive_integers() {
 fn evaluate_negative_integer() {
     // Negative integers are also supported.
 
-    let mut eval = Eval::start("-1");
-    eval.run();
+    let script = Script::compile("-1");
+
+    let mut eval = Eval::start();
+    eval.run(&script);
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
     assert_eq!(eval.operand_stack.to_i32_slice(), &[-1]);
@@ -27,8 +31,10 @@ fn evaluate_negative_integer() {
 fn evaluate_hexadecimal_integer() {
     // Hexadecimal integer notation is supported.
 
-    let mut eval = Eval::start("0xf0f0");
-    eval.run();
+    let script = Script::compile("0xf0f0");
+
+    let mut eval = Eval::start();
+    eval.run(&script);
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
     assert_eq!(eval.operand_stack.to_i32_slice(), &[0xf0f0]);
@@ -40,8 +46,10 @@ fn evaluate_full_range_of_unsigned_decimal_integers() {
     // 32-bit values are still supported, as long as they fit into an unsigned
     // 32-bit value.
 
-    let mut eval = Eval::start("2147483648");
-    eval.run();
+    let script = Script::compile("2147483648");
+
+    let mut eval = Eval::start();
+    eval.run(&script);
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
     assert_eq!(eval.operand_stack.to_u32_slice(), &[2147483648]);
@@ -53,8 +61,10 @@ fn evaluate_full_range_of_unsigned_hexadecimal_integers() {
     // complement) 32-bit values are still supported, as long as they fit into
     // an unsigned 32-bit value.
 
-    let mut eval = Eval::start("0x80000000");
-    eval.run();
+    let script = Script::compile("0x80000000");
+
+    let mut eval = Eval::start();
+    eval.run(&script);
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
     assert_eq!(eval.operand_stack.to_u32_slice(), &[0x80000000]);
@@ -70,13 +80,15 @@ fn trigger_effect_on_integer_overflow() {
     // effect instead. This is tracked in the following issue:
     // https://github.com/hannobraun/stack-assembly/issues/22
 
-    let mut eval = Eval::start("4294967295 4294967296");
+    let script = Script::compile("4294967295 4294967296");
 
-    eval.step();
+    let mut eval = Eval::start();
+
+    eval.step(&script);
     assert_eq!(eval.effect, None);
     assert_eq!(eval.operand_stack.to_u32_slice(), &[4294967295]);
 
-    eval.step();
+    eval.step(&script);
     assert_eq!(eval.effect, Some(Effect::UnknownIdentifier));
     assert_eq!(eval.operand_stack.to_u32_slice(), &[4294967295]);
 }

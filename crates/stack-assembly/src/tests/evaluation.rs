@@ -1,23 +1,15 @@
-use crate::{Effect, Eval};
+use crate::{Effect, Eval, Script};
 
 #[test]
 fn empty_script_triggers_out_of_tokens() {
     // Running an empty script directly triggers the "out of operators" effect.
 
-    let mut eval = Eval::start("");
-    eval.run();
+    let script = Script::compile("");
+
+    let mut eval = Eval::start();
+    eval.run(&script);
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
-    assert_eq!(eval.operand_stack.to_u32_slice(), &[]);
-}
-
-#[test]
-fn starting_evaluation_does_not_evaluate_any_operators() {
-    // Starting the evaluation readies it, but does not yet evaluate any
-    // operators.
-
-    let eval = Eval::start("yield");
-    assert_eq!(eval.effect, None);
     assert_eq!(eval.operand_stack.to_u32_slice(), &[]);
 }
 
@@ -27,8 +19,10 @@ fn yield_operator_triggers_the_respective_effect() {
     // script and the host. It triggers an effect, that the host may interpret
     // in whatever way it deems appropriate.
 
-    let mut eval = Eval::start("yield");
-    eval.run();
+    let script = Script::compile("yield");
+
+    let mut eval = Eval::start();
+    eval.run(&script);
 
     assert_eq!(eval.effect, Some(Effect::Yield));
     assert_eq!(eval.operand_stack.to_u32_slice(), &[]);
@@ -38,13 +32,15 @@ fn yield_operator_triggers_the_respective_effect() {
 fn active_effect_prevents_evaluation_from_advancing() {
     // An active effect prevents the evaluation from advancing.
 
-    let mut eval = Eval::start("yield 1");
+    let script = Script::compile("yield 1");
 
-    eval.run();
+    let mut eval = Eval::start();
+
+    eval.run(&script);
     assert_eq!(eval.effect, Some(Effect::Yield));
     assert_eq!(eval.operand_stack.to_u32_slice(), &[]);
 
-    eval.run();
+    eval.run(&script);
     assert_eq!(eval.effect, Some(Effect::Yield));
     assert_eq!(eval.operand_stack.to_u32_slice(), &[]);
 }
@@ -54,8 +50,10 @@ fn stack_underflow_triggers_effect() {
     // Popping a value from an empty stack is a stack underflow and triggers an
     // effect.
 
-    let mut eval = Eval::start("1 +");
-    eval.run();
+    let script = Script::compile("1 +");
+
+    let mut eval = Eval::start();
+    eval.run(&script);
 
     assert_eq!(eval.effect, Some(Effect::OperandStackUnderflow));
     assert_eq!(eval.operand_stack.to_u32_slice(), &[]);

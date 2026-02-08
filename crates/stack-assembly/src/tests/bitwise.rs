@@ -1,4 +1,4 @@
-use crate::{Effect, Eval};
+use crate::{Effect, Eval, Script};
 
 // Some of these tests suffer because we don't support integers that are larger
 // than `i32::MAX` yet. We should update them, once we do.
@@ -7,8 +7,10 @@ use crate::{Effect, Eval};
 fn and() {
     // The `and` operator performs the "bitwise and" operation.
 
-    let mut eval = Eval::start("0xf0f0 0xff00 and");
-    eval.run();
+    let script = Script::compile("0xf0f0 0xff00 and");
+
+    let mut eval = Eval::start();
+    eval.run(&script);
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
     assert_eq!(eval.operand_stack.to_u32_slice(), &[0xf000]);
@@ -18,8 +20,10 @@ fn and() {
 fn or() {
     // The `or` operator performs the "bitwise or" operation.
 
-    let mut eval = Eval::start("0xf0f0 0xff00 or");
-    eval.run();
+    let script = Script::compile("0xf0f0 0xff00 or");
+
+    let mut eval = Eval::start();
+    eval.run(&script);
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
     assert_eq!(eval.operand_stack.to_u32_slice(), &[0xfff0]);
@@ -29,8 +33,10 @@ fn or() {
 fn xor() {
     // The `xor` operator performs the "bitwise exclusive-or" operation.
 
-    let mut eval = Eval::start("0xf0f0 0xff00 xor");
-    eval.run();
+    let script = Script::compile("0xf0f0 0xff00 xor");
+
+    let mut eval = Eval::start();
+    eval.run(&script);
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
     assert_eq!(eval.operand_stack.to_u32_slice(), &[0x0ff0]);
@@ -40,8 +46,10 @@ fn xor() {
 fn count_ones() {
     // The `count_ones` operator outputs the number of `1` bits in its input.
 
-    let mut eval = Eval::start("0xf0f0 count_ones");
-    eval.run();
+    let script = Script::compile("0xf0f0 count_ones");
+
+    let mut eval = Eval::start();
+    eval.run(&script);
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
     assert_eq!(eval.operand_stack.to_u32_slice(), &[8]);
@@ -52,8 +60,10 @@ fn leading_zeros() {
     // The `leading_zeros` operator outputs the number of leading zero bits in
     // its input.
 
-    let mut eval = Eval::start("0x0f0f0f0f leading_zeros");
-    eval.run();
+    let script = Script::compile("0x0f0f0f0f leading_zeros");
+
+    let mut eval = Eval::start();
+    eval.run(&script);
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
     assert_eq!(eval.operand_stack.to_u32_slice(), &[4]);
@@ -64,8 +74,10 @@ fn trailing_zeros() {
     // The `trailing_zeros` operator outputs the number of trailing zero bits in
     // its input.
 
-    let mut eval = Eval::start("0xf0f0f0f0 trailing_zeros");
-    eval.run();
+    let script = Script::compile("0xf0f0f0f0 trailing_zeros");
+
+    let mut eval = Eval::start();
+    eval.run(&script);
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
     assert_eq!(eval.operand_stack.to_u32_slice(), &[4]);
@@ -76,8 +88,10 @@ fn rotate_left() {
     // The `rotate_left` operator rotates the bits of its first input to the
     // left, by the number of positions defined by its second input.
 
-    let mut eval = Eval::start("0xf0000000 4 rotate_left");
-    eval.run();
+    let script = Script::compile("0xf0000000 4 rotate_left");
+
+    let mut eval = Eval::start();
+    eval.run(&script);
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
     assert_eq!(eval.operand_stack.to_u32_slice(), &[0x0000000f]);
@@ -88,8 +102,10 @@ fn rotate_right() {
     // The `rotate_right` operator rotates the bits of its first input to the
     // right, by the number of positions defined by its second input.
 
-    let mut eval = Eval::start("0x0000000f 4 rotate_right");
-    eval.run();
+    let script = Script::compile("0x0000000f 4 rotate_right");
+
+    let mut eval = Eval::start();
+    eval.run(&script);
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
     assert_eq!(eval.operand_stack.to_u32_slice(), &[0xf0000000]);
@@ -102,8 +118,10 @@ fn shift_left() {
     // shift to the left, there is no meaningful distinction between arithmetic
     // and logical shift.
 
-    let mut eval = Eval::start("0xff000000 4 shift_left");
-    eval.run();
+    let script = Script::compile("0xff000000 4 shift_left");
+
+    let mut eval = Eval::start();
+    eval.run(&script);
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
     assert_eq!(eval.operand_stack.to_u32_slice(), &[0xf0000000]);
@@ -116,8 +134,10 @@ fn shift_right_unsigned() {
     // unsigned input, there is no meaningful distinction between arithmetic and
     // logical shift.
 
-    let mut eval = Eval::start("0x000000ff 4 shift_right");
-    eval.run();
+    let script = Script::compile("0x000000ff 4 shift_right");
+
+    let mut eval = Eval::start();
+    eval.run(&script);
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
     assert_eq!(eval.operand_stack.to_u32_slice(), &[0x0000000f]);
@@ -129,8 +149,10 @@ fn shift_right_signed() {
     // right, by the number of positions defined by its second input. This is an
     // arithmetic shift, meaning the sign of the input is preserved.
 
-    let mut eval = Eval::start("0xf00000ff 4 shift_right");
-    eval.run();
+    let script = Script::compile("0xf00000ff 4 shift_right");
+
+    let mut eval = Eval::start();
+    eval.run(&script);
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
     assert_eq!(eval.operand_stack.to_u32_slice(), &[0xff00000f]);

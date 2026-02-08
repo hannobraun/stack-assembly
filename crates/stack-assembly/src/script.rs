@@ -1,12 +1,20 @@
 use crate::Effect;
 
+/// # A compiled script
+///
+/// To evaluate a script, you must first compile its textual representation into
+/// an instance of this struct, using [`Script::compile`]. Afterwards, you can
+/// evaluate the script using [`Eval`].
+///
+/// [`Eval`]: crate::Eval
 #[derive(Debug)]
 pub struct Script {
-    pub operators: Vec<Operator>,
-    pub labels: Vec<Label>,
+    operators: Vec<Operator>,
+    labels: Vec<Label>,
 }
 
 impl Script {
+    /// # Compile the source text of a script into an instance of `Script`
     pub fn compile(script: &str) -> Self {
         let mut operators = Vec::new();
         let mut labels = Vec::new();
@@ -72,7 +80,7 @@ impl Script {
         Self { operators, labels }
     }
 
-    pub fn get_operator(
+    pub(crate) fn get_operator(
         &self,
         index: OperatorIndex,
     ) -> Result<&Operator, InvalidOperatorIndex> {
@@ -85,6 +93,19 @@ impl Script {
 
         let Some(operator) = self.operators.get(index) else {
             return Err(InvalidOperatorIndex);
+        };
+
+        Ok(operator)
+    }
+
+    pub(crate) fn resolve_reference(
+        &self,
+        name: &str,
+    ) -> Result<OperatorIndex, InvalidReference> {
+        let label = self.labels.iter().find(|label| label.name == name);
+
+        let Some(&Label { name: _, operator }) = label else {
+            return Err(InvalidReference);
         };
 
         Ok(operator)
@@ -123,5 +144,14 @@ pub struct InvalidOperatorIndex;
 impl From<InvalidOperatorIndex> for Effect {
     fn from(InvalidOperatorIndex: InvalidOperatorIndex) -> Self {
         Effect::OutOfOperators
+    }
+}
+
+#[derive(Debug)]
+pub struct InvalidReference;
+
+impl From<InvalidReference> for Effect {
+    fn from(InvalidReference: InvalidReference) -> Self {
+        Effect::InvalidReference
     }
 }

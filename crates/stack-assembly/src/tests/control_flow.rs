@@ -1,4 +1,4 @@
-use crate::{Effect, Eval};
+use crate::{Effect, Eval, Script};
 
 #[test]
 fn jump() {
@@ -6,15 +6,17 @@ fn jump() {
     // a reference) as input, then arranges for evaluation to continue at that
     // operator.
 
-    let mut eval = Eval::start("start: 1 yield @start jump");
+    let script = Script::compile("start: 1 yield @start jump");
 
-    eval.run();
+    let mut eval = Eval::start();
+
+    eval.run(&script);
     assert_eq!(eval.effect, Some(Effect::Yield));
     assert_eq!(eval.operand_stack.to_u32_slice(), &[1]);
 
     eval.effect = None;
 
-    eval.run();
+    eval.run(&script);
     assert_eq!(eval.effect, Some(Effect::Yield));
     assert_eq!(eval.operand_stack.to_u32_slice(), &[1, 1]);
 }
@@ -25,8 +27,10 @@ fn jump_if_behaves_like_jump_on_nonzero_condition() {
     // to an operator index, it takes a condition. If that condition is
     // non-zero, `jump_if` behaves like `jump`.
 
-    let mut eval = Eval::start("1 @target jump_if 1 target: 2");
-    eval.run();
+    let script = Script::compile("1 @target jump_if 1 target: 2");
+
+    let mut eval = Eval::start();
+    eval.run(&script);
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
     assert_eq!(eval.operand_stack.to_u32_slice(), &[2]);
@@ -38,8 +42,10 @@ fn jump_if_does_nothing_on_zero_condition() {
     // to an operator index, it takes a condition. If that condition is zero,
     // `jump_if` does nothing.
 
-    let mut eval = Eval::start("0 @target jump_if 1 target: 2");
-    eval.run();
+    let script = Script::compile("0 @target jump_if 1 target: 2");
+
+    let mut eval = Eval::start();
+    eval.run(&script);
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
     assert_eq!(eval.operand_stack.to_u32_slice(), &[1, 2]);
@@ -50,8 +56,10 @@ fn return_() {
     // If the call stack is empty, as is the case when the evaluation starts,
     // the `return` operator triggers an effect.
 
-    let mut eval = Eval::start("return");
-    eval.run();
+    let script = Script::compile("return");
+
+    let mut eval = Eval::start();
+    eval.run(&script);
 
     assert_eq!(eval.effect, Some(Effect::Return));
     assert_eq!(eval.operand_stack.to_u32_slice(), &[]);
@@ -65,7 +73,8 @@ fn call_return() {
     // address from the call stack and arranges for evaluation to continue
     // there.
 
-    let script = "
+    let script = Script::compile(
+        "
         1
         @2 call
         3
@@ -74,10 +83,11 @@ fn call_return() {
         2:
             2
             return
-    ";
+        ",
+    );
 
-    let mut eval = Eval::start(script);
-    eval.run();
+    let mut eval = Eval::start();
+    eval.run(&script);
 
     assert_eq!(eval.effect, Some(Effect::Return));
     assert_eq!(eval.operand_stack.to_u32_slice(), &[1, 2, 3]);
@@ -89,7 +99,8 @@ fn call_either_jumps_to_first_index_on_non_zero_condition() {
     // and the indices of two operators. If the condition is non-zero, it
     // arranges for evaluation to continue at the first operator.
 
-    let script = "
+    let script = Script::compile(
+        "
         1 @then @else call_either
         return
 
@@ -99,10 +110,11 @@ fn call_either_jumps_to_first_index_on_non_zero_condition() {
         else:
             2
             return
-    ";
+        ",
+    );
 
-    let mut eval = Eval::start(script);
-    eval.run();
+    let mut eval = Eval::start();
+    eval.run(&script);
 
     assert_eq!(eval.effect, Some(Effect::Return));
     assert_eq!(eval.operand_stack.to_u32_slice(), &[1]);
@@ -114,7 +126,8 @@ fn call_either_jumps_to_second_index_on_non_zero_condition() {
     // and the indices of two operators. If the condition is non-zero, it
     // arranges for evaluation to continue at the first operator.
 
-    let script = "
+    let script = Script::compile(
+        "
         0 @then @else call_either
         return
 
@@ -124,10 +137,11 @@ fn call_either_jumps_to_second_index_on_non_zero_condition() {
         else:
             2
             return
-    ";
+        ",
+    );
 
-    let mut eval = Eval::start(script);
-    eval.run();
+    let mut eval = Eval::start();
+    eval.run(&script);
 
     assert_eq!(eval.effect, Some(Effect::Return));
     assert_eq!(eval.operand_stack.to_u32_slice(), &[2]);
@@ -138,8 +152,10 @@ fn invalid_reference_triggers_effect() {
     // A reference that is not paired with a matching label can't return a
     // sensible value and must trigger an effect.
 
-    let mut eval = Eval::start("@invalid");
-    eval.run();
+    let script = Script::compile("@invalid");
+
+    let mut eval = Eval::start();
+    eval.run(&script);
 
     assert_eq!(eval.effect, Some(Effect::InvalidReference));
     assert_eq!(eval.operand_stack.to_u32_slice(), &[]);

@@ -1,11 +1,13 @@
-use crate::{Effect, Eval};
+use crate::{Effect, Eval, Script};
 
 #[test]
 fn add() {
     // The `+` operator consumes two inputs and pushes their sum.
 
-    let mut eval = Eval::start("1 2 +");
-    eval.run();
+    let script = Script::compile("1 2 +");
+
+    let mut eval = Eval::start();
+    eval.run(&script);
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
     assert_eq!(eval.operand_stack.to_i32_slice(), &[3]);
@@ -15,8 +17,10 @@ fn add() {
 fn add_wraps_on_signed_overflow() {
     // An addition wraps, if it overflows the range of a signed 32-bit integer.
 
-    let mut eval = Eval::start("2147483647 1 +");
-    eval.run();
+    let script = Script::compile("2147483647 1 +");
+
+    let mut eval = Eval::start();
+    eval.run(&script);
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
     assert_eq!(eval.operand_stack.to_i32_slice(), &[-2147483648]);
@@ -31,8 +35,10 @@ fn add_wraps_on_unsigned_overflow() {
     // `-1`, due to the limitation tracked in this issue:
     // https://github.com/hannobraun/stack-assembly/issues/18
 
-    let mut eval = Eval::start("-1 1 +");
-    eval.run();
+    let script = Script::compile("-1 1 +");
+
+    let mut eval = Eval::start();
+    eval.run(&script);
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
     assert_eq!(eval.operand_stack.to_i32_slice(), &[0]);
@@ -42,8 +48,10 @@ fn add_wraps_on_unsigned_overflow() {
 fn subtract() {
     // The `-` operator consumes two inputs and pushes their difference.
 
-    let mut eval = Eval::start("2 1 -");
-    eval.run();
+    let script = Script::compile("2 1 -");
+
+    let mut eval = Eval::start();
+    eval.run(&script);
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
     assert_eq!(eval.operand_stack.to_i32_slice(), &[1]);
@@ -54,8 +62,10 @@ fn subtract_wraps_on_signed_overflow() {
     // A subtraction wraps, if it overflows the range of a signed 32-bit
     // integer.
 
-    let mut eval = Eval::start("-2147483648 1 -");
-    eval.run();
+    let script = Script::compile("-2147483648 1 -");
+
+    let mut eval = Eval::start();
+    eval.run(&script);
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
     assert_eq!(eval.operand_stack.to_i32_slice(), &[2147483647]);
@@ -66,8 +76,10 @@ fn subtract_wraps_on_unsigned_overflow() {
     // A subtraction wraps, if it overflows the range of an unsigned 32-bit
     // integer.
 
-    let mut eval = Eval::start("0 1 -");
-    eval.run();
+    let script = Script::compile("0 1 -");
+
+    let mut eval = Eval::start();
+    eval.run(&script);
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
     assert_eq!(eval.operand_stack.to_i32_slice(), &[-1]);
@@ -77,8 +89,10 @@ fn subtract_wraps_on_unsigned_overflow() {
 fn multiply() {
     // The `*` operator consumes two inputs and pushes their product.
 
-    let mut eval = Eval::start("2 3 *");
-    eval.run();
+    let script = Script::compile("2 3 *");
+
+    let mut eval = Eval::start();
+    eval.run(&script);
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
     assert_eq!(eval.operand_stack.to_i32_slice(), &[6]);
@@ -89,8 +103,10 @@ fn multiply_wraps_on_signed_overflow() {
     // A multiplication wraps, if it overflows the range of a signed 32-bit
     // integer.
 
-    let mut eval = Eval::start("2147483647 2 *");
-    eval.run();
+    let script = Script::compile("2147483647 2 *");
+
+    let mut eval = Eval::start();
+    eval.run(&script);
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
     assert_eq!(eval.operand_stack.to_i32_slice(), &[-2]);
@@ -105,8 +121,10 @@ fn multiply_wraps_on_unsigned_overflow() {
     // `-1`, due to the limitation tracked in this issue:
     // https://github.com/hannobraun/stack-assembly/issues/18
 
-    let mut eval = Eval::start("-1 2 *");
-    eval.run();
+    let script = Script::compile("-1 2 *");
+
+    let mut eval = Eval::start();
+    eval.run(&script);
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
     assert_eq!(eval.operand_stack.to_i32_slice(), &[-2]);
@@ -117,8 +135,10 @@ fn divide() {
     // The `/` operator consumes two inputs and performs integer division,
     // pushing their quotient and the remainder.
 
-    let mut eval = Eval::start("5 2 /");
-    eval.run();
+    let script = Script::compile("5 2 /");
+
+    let mut eval = Eval::start();
+    eval.run(&script);
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
     assert_eq!(eval.operand_stack.to_i32_slice(), &[2, 1]);
@@ -135,8 +155,10 @@ fn divide_treats_its_inputs_as_signed() {
     // that won't work for the other. The `/` operator treats its inputs as
     // signed.
 
-    let mut eval = Eval::start("5 -2 /");
-    eval.run();
+    let script = Script::compile("5 -2 /");
+
+    let mut eval = Eval::start();
+    eval.run(&script);
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
     assert_eq!(eval.operand_stack.to_i32_slice(), &[-2, 1]);
@@ -147,8 +169,10 @@ fn divide_by_zero_triggers_effect() {
     // A division by zero cannot be reasonably handled and triggers the
     // respective effect.
 
-    let mut eval = Eval::start("1 0 /");
-    eval.run();
+    let script = Script::compile("1 0 /");
+
+    let mut eval = Eval::start();
+    eval.run(&script);
 
     assert_eq!(eval.effect, Some(Effect::DivisionByZero));
     assert_eq!(eval.operand_stack.to_i32_slice(), &[]);
@@ -164,8 +188,10 @@ fn divide_triggers_effect_on_overflow() {
     // watching for the inputs that trigger the overflow and not doing the
     // division then.
 
-    let mut eval = Eval::start("-2147483648 -1 /");
-    eval.run();
+    let script = Script::compile("-2147483648 -1 /");
+
+    let mut eval = Eval::start();
+    eval.run(&script);
 
     assert_eq!(eval.effect, Some(Effect::IntegerOverflow));
     assert_eq!(eval.operand_stack.to_i32_slice(), &[]);
