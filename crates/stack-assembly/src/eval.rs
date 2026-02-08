@@ -21,7 +21,7 @@ use crate::{
 ///
 /// assert_eq!(eval.operand_stack.to_i32_slice(), &[3]);
 /// ```
-#[derive(Debug)]
+#[derive(Debug, Default)]
 pub struct Eval {
     next_operator: OperatorIndex,
     call_stack: Vec<OperatorIndex>,
@@ -140,13 +140,7 @@ impl Eval {
     /// for evaluation. To evaluate any operators, you must call [`Eval::run`]
     /// or [`Eval::step`].
     pub fn start() -> Self {
-        Self {
-            next_operator: OperatorIndex::default(),
-            call_stack: Vec::new(),
-            effect: None,
-            operand_stack: OperandStack::default(),
-            memory: Memory::default(),
-        }
+        Self::default()
     }
 
     /// # Advance the evaluation until it triggers an effect
