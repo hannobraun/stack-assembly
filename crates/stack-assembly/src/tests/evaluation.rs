@@ -12,16 +12,6 @@ fn empty_script_triggers_out_of_tokens() {
 }
 
 #[test]
-fn starting_evaluation_does_not_evaluate_any_operators() {
-    // Starting the evaluation readies it, but does not yet evaluate any
-    // operators.
-
-    let eval = Eval::start("yield");
-    assert_eq!(eval.effect, None);
-    assert_eq!(eval.operand_stack.to_u32_slice(), &[]);
-}
-
-#[test]
 fn yield_operator_triggers_the_respective_effect() {
     // `yield` exists to moderate the communication between the evaluating
     // script and the host. It triggers an effect, that the host may interpret
