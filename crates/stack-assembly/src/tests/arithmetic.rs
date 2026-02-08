@@ -6,7 +6,7 @@ fn add() {
 
     let script = Script::compile("1 2 +");
 
-    let mut eval = Eval::start();
+    let mut eval = Eval::new();
     eval.run(&script);
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
@@ -19,7 +19,7 @@ fn add_wraps_on_signed_overflow() {
 
     let script = Script::compile("2147483647 1 +");
 
-    let mut eval = Eval::start();
+    let mut eval = Eval::new();
     eval.run(&script);
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
@@ -37,7 +37,7 @@ fn add_wraps_on_unsigned_overflow() {
 
     let script = Script::compile("-1 1 +");
 
-    let mut eval = Eval::start();
+    let mut eval = Eval::new();
     eval.run(&script);
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
@@ -50,7 +50,7 @@ fn subtract() {
 
     let script = Script::compile("2 1 -");
 
-    let mut eval = Eval::start();
+    let mut eval = Eval::new();
     eval.run(&script);
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
@@ -64,7 +64,7 @@ fn subtract_wraps_on_signed_overflow() {
 
     let script = Script::compile("-2147483648 1 -");
 
-    let mut eval = Eval::start();
+    let mut eval = Eval::new();
     eval.run(&script);
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
@@ -78,7 +78,7 @@ fn subtract_wraps_on_unsigned_overflow() {
 
     let script = Script::compile("0 1 -");
 
-    let mut eval = Eval::start();
+    let mut eval = Eval::new();
     eval.run(&script);
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
@@ -91,7 +91,7 @@ fn multiply() {
 
     let script = Script::compile("2 3 *");
 
-    let mut eval = Eval::start();
+    let mut eval = Eval::new();
     eval.run(&script);
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
@@ -105,7 +105,7 @@ fn multiply_wraps_on_signed_overflow() {
 
     let script = Script::compile("2147483647 2 *");
 
-    let mut eval = Eval::start();
+    let mut eval = Eval::new();
     eval.run(&script);
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
@@ -123,7 +123,7 @@ fn multiply_wraps_on_unsigned_overflow() {
 
     let script = Script::compile("-1 2 *");
 
-    let mut eval = Eval::start();
+    let mut eval = Eval::new();
     eval.run(&script);
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
@@ -137,7 +137,7 @@ fn divide() {
 
     let script = Script::compile("5 2 /");
 
-    let mut eval = Eval::start();
+    let mut eval = Eval::new();
     eval.run(&script);
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
@@ -157,7 +157,7 @@ fn divide_treats_its_inputs_as_signed() {
 
     let script = Script::compile("5 -2 /");
 
-    let mut eval = Eval::start();
+    let mut eval = Eval::new();
     eval.run(&script);
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
@@ -171,7 +171,7 @@ fn divide_by_zero_triggers_effect() {
 
     let script = Script::compile("1 0 /");
 
-    let mut eval = Eval::start();
+    let mut eval = Eval::new();
     eval.run(&script);
 
     assert_eq!(eval.effect, Some(Effect::DivisionByZero));
@@ -190,7 +190,7 @@ fn divide_triggers_effect_on_overflow() {
 
     let script = Script::compile("-2147483648 -1 /");
 
-    let mut eval = Eval::start();
+    let mut eval = Eval::new();
     eval.run(&script);
 
     assert_eq!(eval.effect, Some(Effect::IntegerOverflow));

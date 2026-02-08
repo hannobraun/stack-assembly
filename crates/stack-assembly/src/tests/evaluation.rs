@@ -6,7 +6,7 @@ fn empty_script_triggers_out_of_tokens() {
 
     let script = Script::compile("");
 
-    let mut eval = Eval::start();
+    let mut eval = Eval::new();
     eval.run(&script);
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
@@ -21,7 +21,7 @@ fn yield_operator_triggers_the_respective_effect() {
 
     let script = Script::compile("yield");
 
-    let mut eval = Eval::start();
+    let mut eval = Eval::new();
     eval.run(&script);
 
     assert_eq!(eval.effect, Some(Effect::Yield));
@@ -34,7 +34,7 @@ fn active_effect_prevents_evaluation_from_advancing() {
 
     let script = Script::compile("yield 1");
 
-    let mut eval = Eval::start();
+    let mut eval = Eval::new();
 
     eval.run(&script);
     assert_eq!(eval.effect, Some(Effect::Yield));
@@ -52,7 +52,7 @@ fn stack_underflow_triggers_effect() {
 
     let script = Script::compile("1 +");
 
-    let mut eval = Eval::start();
+    let mut eval = Eval::new();
     eval.run(&script);
 
     assert_eq!(eval.effect, Some(Effect::OperandStackUnderflow));

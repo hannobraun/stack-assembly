@@ -7,7 +7,7 @@ fn read() {
 
     let script = Script::compile("1 read 1 read");
 
-    let mut eval = Eval::start();
+    let mut eval = Eval::new();
     eval.memory.values[1] = Value::from(3);
     eval.run(&script);
 
@@ -22,7 +22,7 @@ fn read_triggers_effect_on_out_of_bounds_access() {
 
     let script = Script::compile("1025 read");
 
-    let mut eval = Eval::start();
+    let mut eval = Eval::new();
     assert!(
         eval.memory.values.len() < 1025,
         "Test can't work, because it makes wrong assumption about memory size.",
@@ -39,7 +39,7 @@ fn write() {
 
     let script = Script::compile("1 3 write");
 
-    let mut eval = Eval::start();
+    let mut eval = Eval::new();
     eval.run(&script);
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
@@ -54,7 +54,7 @@ fn write_triggers_effect_on_out_of_bounds_access() {
 
     let script = Script::compile("1025 3 write");
 
-    let mut eval = Eval::start();
+    let mut eval = Eval::new();
     assert!(
         eval.memory.values.len() < 1025,
         "Test can't work, because it makes wrong assumption about memory size.",

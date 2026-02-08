@@ -6,7 +6,7 @@ use crate::{
 /// # The ongoing evaluation of a script
 ///
 /// This is the main entry point into this library's API. To evaluate a script,
-/// you can pass it to [`Eval::start`], then use [`Eval::run`] or [`Eval::step`]
+/// you can pass it to [`Eval::new`], then use [`Eval::run`] or [`Eval::step`]
 /// to advance the evaluation.
 ///
 /// ## Example
@@ -16,7 +16,7 @@ use crate::{
 ///
 /// let script = Script::compile("1 2 +");
 ///
-/// let mut eval = Eval::start();
+/// let mut eval = Eval::new();
 /// eval.run(&script);
 ///
 /// assert_eq!(eval.operand_stack.to_i32_slice(), &[3]);
@@ -33,7 +33,7 @@ pub struct Eval {
     /// the host that a different communication channel (like [`operand_stack`]
     /// or [`memory`]) is ready to be accessed.
     ///
-    /// [`Eval::start`] initializes this field to `None`. [`Eval::run`] and
+    /// [`Eval::new`] initializes this field to `None`. [`Eval::run`] and
     /// [`Eval::step`] may store an effect here, if the script triggers one. If
     /// that is the case, the host may handle the effect, to allow evaluation
     /// to continue.
@@ -69,7 +69,7 @@ pub struct Eval {
     ///         @increment jump
     /// ");
     ///
-    /// let mut eval = Eval::start();
+    /// let mut eval = Eval::new();
     ///
     /// // When running the script for the first time, we expect that it has
     /// // incremented the number once, before yielding.
@@ -139,7 +139,7 @@ impl Eval {
     /// Compile the provided script and return an `Eval` instance that is ready
     /// for evaluation. To evaluate any operators, you must call [`Eval::run`]
     /// or [`Eval::step`].
-    pub fn start() -> Self {
+    pub fn new() -> Self {
         Self::default()
     }
 
