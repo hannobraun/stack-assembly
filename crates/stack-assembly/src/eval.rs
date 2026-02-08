@@ -141,7 +141,7 @@ impl Eval {
     /// or [`Eval::step`].
     pub fn start() -> Self {
         Self {
-            next_operator: OperatorIndex { value: 0 },
+            next_operator: OperatorIndex::default(),
             call_stack: Vec::new(),
             effect: None,
             operand_stack: OperandStack { values: Vec::new() },
