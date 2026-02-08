@@ -11,8 +11,18 @@ use crate::{Effect, Value};
 /// script and host. Please refer to [`Eval`]'s [`memory`] field for more
 /// information on that.
 ///
+/// ## Constructing a `Memory` instance
+///
+/// By default, `Memory` has a size of 1024 words and is initially empty. This
+/// is controlled by its [`Default` implementation].
+///
+/// If you want to override this size, you can do so by overwriting the
+/// [`values`] field with a [`Vec`] of the desired length.
+///
 /// [`Eval`]: crate::Eval
 /// [`memory`]: struct.Eval.html#structfield.memory
+/// [`Default` implementation]: #impl-Default-for-Memory
+/// [`values`]: #structfield.values
 pub struct Memory {
     /// # The values in the memory
     pub values: Vec<Value>,
@@ -65,6 +75,14 @@ impl Memory {
     /// # Access the memory as a slice of `u32` values
     pub fn to_u32_slice(&self) -> &[u32] {
         bytemuck::cast_slice(&self.values)
+    }
+}
+
+impl Default for Memory {
+    fn default() -> Self {
+        Self {
+            values: vec![Value::from(0); 1024],
+        }
     }
 }
 

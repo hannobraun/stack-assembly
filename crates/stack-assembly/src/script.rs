@@ -127,7 +127,7 @@ impl Operator {
     }
 }
 
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Copy, Debug, Default)]
 pub struct OperatorIndex {
     pub value: u32,
 }
