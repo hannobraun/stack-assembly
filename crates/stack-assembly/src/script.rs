@@ -72,7 +72,7 @@ impl Script {
         Self { operators, labels }
     }
 
-    pub fn get_operator(
+    pub(crate) fn get_operator(
         &self,
         index: OperatorIndex,
     ) -> Result<&Operator, InvalidOperatorIndex> {
