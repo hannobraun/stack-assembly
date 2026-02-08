@@ -2,8 +2,8 @@ use crate::Effect;
 
 #[derive(Debug)]
 pub struct Script {
-    pub operators: Vec<Operator>,
-    pub labels: Vec<Label>,
+    operators: Vec<Operator>,
+    labels: Vec<Label>,
 }
 
 impl Script {
