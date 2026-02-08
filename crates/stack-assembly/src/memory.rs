@@ -68,6 +68,14 @@ impl Memory {
     }
 }
 
+impl Default for Memory {
+    fn default() -> Self {
+        Self {
+            values: vec![Value::from(0); 1024],
+        }
+    }
+}
+
 impl fmt::Debug for Memory {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         // This is not perfect, but it's way more compact than the derived

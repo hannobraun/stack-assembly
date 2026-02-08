@@ -1,5 +1,5 @@
 use crate::{
-    Effect, Memory, OperandStack, Value,
+    Effect, Memory, OperandStack,
     script::{Operator, OperatorIndex, Script},
 };
 
@@ -145,9 +145,7 @@ impl Eval {
             call_stack: Vec::new(),
             effect: None,
             operand_stack: OperandStack::default(),
-            memory: Memory {
-                values: vec![Value::from(0); 1024],
-            },
+            memory: Memory::default(),
         }
     }
 
