@@ -7,7 +7,7 @@ fn smaller_outputs_one_if_smaller() {
 
     let script = Script::compile("-1 0 <");
 
-    let mut eval = Eval::start();
+    let mut eval = Eval::new();
     eval.run(&script);
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
@@ -20,7 +20,7 @@ fn smaller_outputs_zero_if_equal() {
 
     let script = Script::compile("0 0 <");
 
-    let mut eval = Eval::start();
+    let mut eval = Eval::new();
     eval.run(&script);
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
@@ -34,7 +34,7 @@ fn smaller_outputs_zero_if_larger() {
 
     let script = Script::compile("0 -1 <");
 
-    let mut eval = Eval::start();
+    let mut eval = Eval::new();
     eval.run(&script);
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
@@ -48,7 +48,7 @@ fn smaller_equals_outputs_one_if_smaller() {
 
     let script = Script::compile("-1 0 <=");
 
-    let mut eval = Eval::start();
+    let mut eval = Eval::new();
     eval.run(&script);
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
@@ -61,7 +61,7 @@ fn smaller_equals_outputs_one_if_equal() {
 
     let script = Script::compile("0 0 <=");
 
-    let mut eval = Eval::start();
+    let mut eval = Eval::new();
     eval.run(&script);
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
@@ -75,7 +75,7 @@ fn smaller_equals_outputs_zero_if_larger() {
 
     let script = Script::compile("0 -1 <=");
 
-    let mut eval = Eval::start();
+    let mut eval = Eval::new();
     eval.run(&script);
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
@@ -88,7 +88,7 @@ fn equals_outputs_one_if_equal() {
 
     let script = Script::compile("3 3 =");
 
-    let mut eval = Eval::start();
+    let mut eval = Eval::new();
     eval.run(&script);
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
@@ -101,7 +101,7 @@ fn equals_outputs_zero_if_not_equal() {
 
     let script = Script::compile("3 5 =");
 
-    let mut eval = Eval::start();
+    let mut eval = Eval::new();
     eval.run(&script);
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
@@ -115,7 +115,7 @@ fn larger_outputs_zero_if_smaller() {
 
     let script = Script::compile("-1 0 >");
 
-    let mut eval = Eval::start();
+    let mut eval = Eval::new();
     eval.run(&script);
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
@@ -128,7 +128,7 @@ fn larger_outputs_zero_if_equal() {
 
     let script = Script::compile("0 0 >");
 
-    let mut eval = Eval::start();
+    let mut eval = Eval::new();
     eval.run(&script);
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
@@ -142,7 +142,7 @@ fn larger_outputs_one_if_larger() {
 
     let script = Script::compile("0 -1 >");
 
-    let mut eval = Eval::start();
+    let mut eval = Eval::new();
     eval.run(&script);
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
@@ -156,7 +156,7 @@ fn larger_equals_outputs_zero_if_smaller() {
 
     let script = Script::compile("-1 0 >=");
 
-    let mut eval = Eval::start();
+    let mut eval = Eval::new();
     eval.run(&script);
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
@@ -169,7 +169,7 @@ fn larger_equals_outputs_one_if_equal() {
 
     let script = Script::compile("0 0 >=");
 
-    let mut eval = Eval::start();
+    let mut eval = Eval::new();
     eval.run(&script);
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
@@ -183,7 +183,7 @@ fn larger_equals_outputs_one_if_larger() {
 
     let script = Script::compile("0 -1 >=");
 
-    let mut eval = Eval::start();
+    let mut eval = Eval::new();
     eval.run(&script);
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));

@@ -44,7 +44,7 @@
 //!
 //! let script = Script::compile("1 2 +");
 //!
-//! let mut eval = Eval::start();
+//! let mut eval = Eval::new();
 //! eval.run(&script);
 //!
 //! assert_eq!(eval.operand_stack.to_i32_slice(), &[3]);
@@ -74,7 +74,7 @@
 //! ");
 //!
 //! // Start the evaluation and advance it until the script triggers an effect.
-//! let mut eval = Eval::start();
+//! let mut eval = Eval::new();
 //! eval.run(&script);
 //!
 //! // `run` has returned, meaning an effect has triggered. Let's make sure that

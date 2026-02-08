@@ -8,7 +8,7 @@ fn jump() {
 
     let script = Script::compile("start: 1 yield @start jump");
 
-    let mut eval = Eval::start();
+    let mut eval = Eval::new();
 
     eval.run(&script);
     assert_eq!(eval.effect, Some(Effect::Yield));
@@ -29,7 +29,7 @@ fn jump_if_behaves_like_jump_on_nonzero_condition() {
 
     let script = Script::compile("1 @target jump_if 1 target: 2");
 
-    let mut eval = Eval::start();
+    let mut eval = Eval::new();
     eval.run(&script);
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
@@ -44,7 +44,7 @@ fn jump_if_does_nothing_on_zero_condition() {
 
     let script = Script::compile("0 @target jump_if 1 target: 2");
 
-    let mut eval = Eval::start();
+    let mut eval = Eval::new();
     eval.run(&script);
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
@@ -58,7 +58,7 @@ fn return_() {
 
     let script = Script::compile("return");
 
-    let mut eval = Eval::start();
+    let mut eval = Eval::new();
     eval.run(&script);
 
     assert_eq!(eval.effect, Some(Effect::Return));
@@ -86,7 +86,7 @@ fn call_return() {
         ",
     );
 
-    let mut eval = Eval::start();
+    let mut eval = Eval::new();
     eval.run(&script);
 
     assert_eq!(eval.effect, Some(Effect::Return));
@@ -113,7 +113,7 @@ fn call_either_jumps_to_first_index_on_non_zero_condition() {
         ",
     );
 
-    let mut eval = Eval::start();
+    let mut eval = Eval::new();
     eval.run(&script);
 
     assert_eq!(eval.effect, Some(Effect::Return));
@@ -140,7 +140,7 @@ fn call_either_jumps_to_second_index_on_non_zero_condition() {
         ",
     );
 
-    let mut eval = Eval::start();
+    let mut eval = Eval::new();
     eval.run(&script);
 
     assert_eq!(eval.effect, Some(Effect::Return));
@@ -154,7 +154,7 @@ fn invalid_reference_triggers_effect() {
 
     let script = Script::compile("@invalid");
 
-    let mut eval = Eval::start();
+    let mut eval = Eval::new();
     eval.run(&script);
 
     assert_eq!(eval.effect, Some(Effect::InvalidReference));

@@ -10,7 +10,7 @@ fn full_line_comment() {
         ",
     );
 
-    let mut eval = Eval::start();
+    let mut eval = Eval::new();
     eval.run(&script);
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
@@ -24,7 +24,7 @@ fn end_of_line_comment() {
 
     let script = Script::compile("3 # 5 8");
 
-    let mut eval = Eval::start();
+    let mut eval = Eval::new();
     eval.run(&script);
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
@@ -37,7 +37,7 @@ fn comment_without_whitespace() {
 
     let script = Script::compile("3 #5 8");
 
-    let mut eval = Eval::start();
+    let mut eval = Eval::new();
     eval.run(&script);
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));

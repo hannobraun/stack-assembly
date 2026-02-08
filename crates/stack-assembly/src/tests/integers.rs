@@ -7,7 +7,7 @@ fn evaluate_positive_integers() {
 
     let script = Script::compile("3 5");
 
-    let mut eval = Eval::start();
+    let mut eval = Eval::new();
     eval.run(&script);
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
@@ -20,7 +20,7 @@ fn evaluate_negative_integer() {
 
     let script = Script::compile("-1");
 
-    let mut eval = Eval::start();
+    let mut eval = Eval::new();
     eval.run(&script);
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
@@ -33,7 +33,7 @@ fn evaluate_hexadecimal_integer() {
 
     let script = Script::compile("0xf0f0");
 
-    let mut eval = Eval::start();
+    let mut eval = Eval::new();
     eval.run(&script);
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
@@ -48,7 +48,7 @@ fn evaluate_full_range_of_unsigned_decimal_integers() {
 
     let script = Script::compile("2147483648");
 
-    let mut eval = Eval::start();
+    let mut eval = Eval::new();
     eval.run(&script);
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
@@ -63,7 +63,7 @@ fn evaluate_full_range_of_unsigned_hexadecimal_integers() {
 
     let script = Script::compile("0x80000000");
 
-    let mut eval = Eval::start();
+    let mut eval = Eval::new();
     eval.run(&script);
 
     assert_eq!(eval.effect, Some(Effect::OutOfOperators));
@@ -82,7 +82,7 @@ fn trigger_effect_on_integer_overflow() {
 
     let script = Script::compile("4294967295 4294967296");
 
-    let mut eval = Eval::start();
+    let mut eval = Eval::new();
 
     eval.step(&script);
     assert_eq!(eval.effect, None);

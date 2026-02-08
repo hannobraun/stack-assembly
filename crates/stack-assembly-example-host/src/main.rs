@@ -21,7 +21,7 @@ fn main() -> anyhow::Result<()> {
 
     let script = Script::compile(&script);
 
-    let mut eval = Eval::start();
+    let mut eval = Eval::new();
 
     loop {
         match eval.run(&script) {
