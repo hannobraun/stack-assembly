@@ -109,8 +109,11 @@ impl Eval {
     /// [`effect`]: #structfield.effect
     /// [`next_operator`]: #structfield.next_operator
     pub fn step(&mut self, script: &Script) -> Option<Effect> {
+        let operator = self.next_operator;
+        self.next_operator.value += 1;
+
         if self.effect.is_none()
-            && let Err(effect) = self.evaluate_next_operator(script)
+            && let Err(effect) = self.evaluate_next_operator(operator, script)
         {
             self.effect = Some(effect);
         }
@@ -128,10 +131,10 @@ impl Eval {
 
     fn evaluate_next_operator(
         &mut self,
+        operator: OperatorIndex,
         script: &Script,
     ) -> Result<(), Effect> {
-        let operator = script.get_operator(self.next_operator)?;
-        self.next_operator.value += 1;
+        let operator = script.get_operator(operator)?;
 
         match operator {
             Operator::Identifier { value: identifier } => {
