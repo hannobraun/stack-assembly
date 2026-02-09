@@ -184,6 +184,14 @@ impl Eval {
         self.effect
     }
 
+    /// # Clear the active effect, if any
+    ///
+    /// If no effect is active, this call does nothing. Return the effect that
+    /// has been cleared.
+    pub fn clear_effect(&mut self) -> Option<Effect> {
+        self.effect.take()
+    }
+
     fn evaluate_next_operator(
         &mut self,
         script: &Script,

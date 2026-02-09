@@ -14,7 +14,7 @@ fn jump() {
     assert_eq!(effect, Effect::Yield);
     assert_eq!(eval.operand_stack.to_u32_slice(), &[1]);
 
-    eval.effect = None;
+    eval.clear_effect();
 
     let effect = eval.run(&script);
     assert_eq!(effect, Effect::Yield);
