@@ -25,9 +25,7 @@ use crate::{
 pub struct Eval {
     next_operator: OperatorIndex,
     call_stack: Vec<OperatorIndex>,
-
-    /// # The active effect, if one has triggered
-    pub effect: Option<Effect>,
+    effect: Option<Effect>,
 
     /// # The operand stack
     ///
