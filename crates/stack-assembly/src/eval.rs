@@ -90,7 +90,7 @@ impl Eval {
     /// [`next_operator`]: #structfield.next_operator
     pub fn run(&mut self, script: &Script) -> Effect {
         loop {
-            if let Some(effect) = self.step(script) {
+            if let Some((effect, _)) = self.step(script) {
                 return effect;
             }
         }
@@ -108,7 +108,7 @@ impl Eval {
     ///
     /// [`effect`]: #structfield.effect
     /// [`next_operator`]: #structfield.next_operator
-    pub fn step(&mut self, script: &Script) -> Option<Effect> {
+    pub fn step(&mut self, script: &Script) -> Option<(Effect, OperatorIndex)> {
         let operator = self.next_operator;
         self.next_operator.value += 1;
 
@@ -118,7 +118,7 @@ impl Eval {
             self.effect = Some((effect, operator));
         }
 
-        self.effect.map(|(effect, _)| effect)
+        self.effect
     }
 
     /// # Clear the active effect, if any

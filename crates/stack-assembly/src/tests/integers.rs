@@ -89,6 +89,9 @@ fn trigger_effect_on_integer_overflow() {
     assert_eq!(eval.operand_stack.to_u32_slice(), &[4294967295]);
 
     let effect = eval.step(&script);
-    assert_eq!(effect, Some(Effect::UnknownIdentifier));
+    assert_eq!(
+        effect.map(|(effect, _)| effect),
+        Some(Effect::UnknownIdentifier),
+    );
     assert_eq!(eval.operand_stack.to_u32_slice(), &[4294967295]);
 }
