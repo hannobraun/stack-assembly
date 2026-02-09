@@ -6,7 +6,7 @@
 ///
 /// [`Eval`]: crate::Eval
 /// [`effect`]: struct.Eval.html#structfield.effect
-#[derive(Debug, Eq, PartialEq)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum Effect {
     /// # An assertion failed
     ///
