@@ -10,7 +10,7 @@ fn and() {
     let script = Script::compile("0xf0f0 0xff00 and");
 
     let mut eval = Eval::new();
-    let effect = eval.run(&script);
+    let (effect, _) = eval.run(&script);
 
     assert_eq!(effect, Effect::OutOfOperators);
     assert_eq!(eval.operand_stack.to_u32_slice(), &[0xf000]);
@@ -23,7 +23,7 @@ fn or() {
     let script = Script::compile("0xf0f0 0xff00 or");
 
     let mut eval = Eval::new();
-    let effect = eval.run(&script);
+    let (effect, _) = eval.run(&script);
 
     assert_eq!(effect, Effect::OutOfOperators);
     assert_eq!(eval.operand_stack.to_u32_slice(), &[0xfff0]);
@@ -36,7 +36,7 @@ fn xor() {
     let script = Script::compile("0xf0f0 0xff00 xor");
 
     let mut eval = Eval::new();
-    let effect = eval.run(&script);
+    let (effect, _) = eval.run(&script);
 
     assert_eq!(effect, Effect::OutOfOperators);
     assert_eq!(eval.operand_stack.to_u32_slice(), &[0x0ff0]);
@@ -49,7 +49,7 @@ fn count_ones() {
     let script = Script::compile("0xf0f0 count_ones");
 
     let mut eval = Eval::new();
-    let effect = eval.run(&script);
+    let (effect, _) = eval.run(&script);
 
     assert_eq!(effect, Effect::OutOfOperators);
     assert_eq!(eval.operand_stack.to_u32_slice(), &[8]);
@@ -63,7 +63,7 @@ fn leading_zeros() {
     let script = Script::compile("0x0f0f0f0f leading_zeros");
 
     let mut eval = Eval::new();
-    let effect = eval.run(&script);
+    let (effect, _) = eval.run(&script);
 
     assert_eq!(effect, Effect::OutOfOperators);
     assert_eq!(eval.operand_stack.to_u32_slice(), &[4]);
@@ -77,7 +77,7 @@ fn trailing_zeros() {
     let script = Script::compile("0xf0f0f0f0 trailing_zeros");
 
     let mut eval = Eval::new();
-    let effect = eval.run(&script);
+    let (effect, _) = eval.run(&script);
 
     assert_eq!(effect, Effect::OutOfOperators);
     assert_eq!(eval.operand_stack.to_u32_slice(), &[4]);
@@ -91,7 +91,7 @@ fn rotate_left() {
     let script = Script::compile("0xf0000000 4 rotate_left");
 
     let mut eval = Eval::new();
-    let effect = eval.run(&script);
+    let (effect, _) = eval.run(&script);
 
     assert_eq!(effect, Effect::OutOfOperators);
     assert_eq!(eval.operand_stack.to_u32_slice(), &[0x0000000f]);
@@ -105,7 +105,7 @@ fn rotate_right() {
     let script = Script::compile("0x0000000f 4 rotate_right");
 
     let mut eval = Eval::new();
-    let effect = eval.run(&script);
+    let (effect, _) = eval.run(&script);
 
     assert_eq!(effect, Effect::OutOfOperators);
     assert_eq!(eval.operand_stack.to_u32_slice(), &[0xf0000000]);
@@ -121,7 +121,7 @@ fn shift_left() {
     let script = Script::compile("0xff000000 4 shift_left");
 
     let mut eval = Eval::new();
-    let effect = eval.run(&script);
+    let (effect, _) = eval.run(&script);
 
     assert_eq!(effect, Effect::OutOfOperators);
     assert_eq!(eval.operand_stack.to_u32_slice(), &[0xf0000000]);
@@ -137,7 +137,7 @@ fn shift_right_unsigned() {
     let script = Script::compile("0x000000ff 4 shift_right");
 
     let mut eval = Eval::new();
-    let effect = eval.run(&script);
+    let (effect, _) = eval.run(&script);
 
     assert_eq!(effect, Effect::OutOfOperators);
     assert_eq!(eval.operand_stack.to_u32_slice(), &[0x0000000f]);
@@ -152,7 +152,7 @@ fn shift_right_signed() {
     let script = Script::compile("0xf00000ff 4 shift_right");
 
     let mut eval = Eval::new();
-    let effect = eval.run(&script);
+    let (effect, _) = eval.run(&script);
 
     assert_eq!(effect, Effect::OutOfOperators);
     assert_eq!(eval.operand_stack.to_u32_slice(), &[0xff00000f]);

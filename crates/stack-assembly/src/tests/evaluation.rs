@@ -7,7 +7,7 @@ fn empty_script_triggers_out_of_tokens() {
     let script = Script::compile("");
 
     let mut eval = Eval::new();
-    let effect = eval.run(&script);
+    let (effect, _) = eval.run(&script);
 
     assert_eq!(effect, Effect::OutOfOperators);
     assert_eq!(eval.operand_stack.to_u32_slice(), &[]);
@@ -22,7 +22,7 @@ fn yield_operator_triggers_the_respective_effect() {
     let script = Script::compile("yield");
 
     let mut eval = Eval::new();
-    let effect = eval.run(&script);
+    let (effect, _) = eval.run(&script);
 
     assert_eq!(effect, Effect::Yield);
     assert_eq!(eval.operand_stack.to_u32_slice(), &[]);
@@ -36,11 +36,11 @@ fn active_effect_prevents_evaluation_from_advancing() {
 
     let mut eval = Eval::new();
 
-    let effect = eval.run(&script);
+    let (effect, _) = eval.run(&script);
     assert_eq!(effect, Effect::Yield);
     assert_eq!(eval.operand_stack.to_u32_slice(), &[]);
 
-    let effect = eval.run(&script);
+    let (effect, _) = eval.run(&script);
     assert_eq!(effect, Effect::Yield);
     assert_eq!(eval.operand_stack.to_u32_slice(), &[]);
 }
@@ -53,7 +53,7 @@ fn stack_underflow_triggers_effect() {
     let script = Script::compile("1 +");
 
     let mut eval = Eval::new();
-    let effect = eval.run(&script);
+    let (effect, _) = eval.run(&script);
 
     assert_eq!(effect, Effect::OperandStackUnderflow);
     assert_eq!(eval.operand_stack.to_u32_slice(), &[]);

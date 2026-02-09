@@ -25,7 +25,7 @@ use crate::{
 pub struct Eval {
     next_operator: OperatorIndex,
     call_stack: Vec<OperatorIndex>,
-    effect: Option<Effect>,
+    effect: Option<(Effect, OperatorIndex)>,
 
     /// # The operand stack
     ///
@@ -88,7 +88,7 @@ impl Eval {
     ///
     /// [`effect`]: #structfield.effect
     /// [`next_operator`]: #structfield.next_operator
-    pub fn run(&mut self, script: &Script) -> Effect {
+    pub fn run(&mut self, script: &Script) -> (Effect, OperatorIndex) {
         loop {
             if let Some(effect) = self.step(script) {
                 return effect;
@@ -108,11 +108,14 @@ impl Eval {
     ///
     /// [`effect`]: #structfield.effect
     /// [`next_operator`]: #structfield.next_operator
-    pub fn step(&mut self, script: &Script) -> Option<Effect> {
+    pub fn step(&mut self, script: &Script) -> Option<(Effect, OperatorIndex)> {
+        let operator = self.next_operator;
+        self.next_operator.value += 1;
+
         if self.effect.is_none()
-            && let Err(effect) = self.evaluate_next_operator(script)
+            && let Err(effect) = self.evaluate_operator(operator, script)
         {
-            self.effect = Some(effect);
+            self.effect = Some((effect, operator));
         }
 
         self.effect
@@ -122,16 +125,16 @@ impl Eval {
     ///
     /// If no effect is active, this call does nothing. Return the effect that
     /// has been cleared.
-    pub fn clear_effect(&mut self) -> Option<Effect> {
+    pub fn clear_effect(&mut self) -> Option<(Effect, OperatorIndex)> {
         self.effect.take()
     }
 
-    fn evaluate_next_operator(
+    fn evaluate_operator(
         &mut self,
+        operator: OperatorIndex,
         script: &Script,
     ) -> Result<(), Effect> {
-        let operator = script.get_operator(self.next_operator)?;
-        self.next_operator.value += 1;
+        let operator = script.get_operator(operator)?;
 
         match operator {
             Operator::Identifier { value: identifier } => {

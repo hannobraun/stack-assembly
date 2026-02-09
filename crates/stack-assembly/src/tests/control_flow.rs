@@ -10,13 +10,13 @@ fn jump() {
 
     let mut eval = Eval::new();
 
-    let effect = eval.run(&script);
+    let (effect, _) = eval.run(&script);
     assert_eq!(effect, Effect::Yield);
     assert_eq!(eval.operand_stack.to_u32_slice(), &[1]);
 
     eval.clear_effect();
 
-    let effect = eval.run(&script);
+    let (effect, _) = eval.run(&script);
     assert_eq!(effect, Effect::Yield);
     assert_eq!(eval.operand_stack.to_u32_slice(), &[1, 1]);
 }
@@ -30,7 +30,7 @@ fn jump_if_behaves_like_jump_on_nonzero_condition() {
     let script = Script::compile("1 @target jump_if 1 target: 2");
 
     let mut eval = Eval::new();
-    let effect = eval.run(&script);
+    let (effect, _) = eval.run(&script);
 
     assert_eq!(effect, Effect::OutOfOperators);
     assert_eq!(eval.operand_stack.to_u32_slice(), &[2]);
@@ -45,7 +45,7 @@ fn jump_if_does_nothing_on_zero_condition() {
     let script = Script::compile("0 @target jump_if 1 target: 2");
 
     let mut eval = Eval::new();
-    let effect = eval.run(&script);
+    let (effect, _) = eval.run(&script);
 
     assert_eq!(effect, Effect::OutOfOperators);
     assert_eq!(eval.operand_stack.to_u32_slice(), &[1, 2]);
@@ -59,7 +59,7 @@ fn return_() {
     let script = Script::compile("return");
 
     let mut eval = Eval::new();
-    let effect = eval.run(&script);
+    let (effect, _) = eval.run(&script);
 
     assert_eq!(effect, Effect::Return);
     assert_eq!(eval.operand_stack.to_u32_slice(), &[]);
@@ -87,7 +87,7 @@ fn call_return() {
     );
 
     let mut eval = Eval::new();
-    let effect = eval.run(&script);
+    let (effect, _) = eval.run(&script);
 
     assert_eq!(effect, Effect::Return);
     assert_eq!(eval.operand_stack.to_u32_slice(), &[1, 2, 3]);
@@ -114,7 +114,7 @@ fn call_either_jumps_to_first_index_on_non_zero_condition() {
     );
 
     let mut eval = Eval::new();
-    let effect = eval.run(&script);
+    let (effect, _) = eval.run(&script);
 
     assert_eq!(effect, Effect::Return);
     assert_eq!(eval.operand_stack.to_u32_slice(), &[1]);
@@ -141,7 +141,7 @@ fn call_either_jumps_to_second_index_on_non_zero_condition() {
     );
 
     let mut eval = Eval::new();
-    let effect = eval.run(&script);
+    let (effect, _) = eval.run(&script);
 
     assert_eq!(effect, Effect::Return);
     assert_eq!(eval.operand_stack.to_u32_slice(), &[2]);
@@ -155,7 +155,7 @@ fn invalid_reference_triggers_effect() {
     let script = Script::compile("@invalid");
 
     let mut eval = Eval::new();
-    let effect = eval.run(&script);
+    let (effect, _) = eval.run(&script);
 
     assert_eq!(effect, Effect::InvalidReference);
     assert_eq!(eval.operand_stack.to_u32_slice(), &[]);

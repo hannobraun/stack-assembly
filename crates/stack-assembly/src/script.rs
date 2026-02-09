@@ -127,9 +127,10 @@ impl Operator {
     }
 }
 
-#[derive(Clone, Copy, Debug, Default)]
+/// # Refers to an operator in a script
+#[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
 pub struct OperatorIndex {
-    pub value: u32,
+    pub(crate) value: u32,
 }
 
 #[derive(Debug)]
