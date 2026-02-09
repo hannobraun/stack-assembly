@@ -185,11 +185,9 @@ impl Eval {
     /// [`effect`]: #structfield.effect
     /// [`next_operator`]: #structfield.next_operator
     pub fn step(&mut self, script: &Script) {
-        if self.effect.is_some() {
-            return;
-        }
-
-        if let Err(effect) = self.evaluate_next_operator(script) {
+        if self.effect.is_none()
+            && let Err(effect) = self.evaluate_next_operator(script)
+        {
             self.effect = Some(effect);
         }
     }
