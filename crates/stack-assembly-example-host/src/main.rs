@@ -24,7 +24,7 @@ fn main() -> anyhow::Result<()> {
     let mut eval = Eval::new();
 
     loop {
-        let effect = eval.run(&script);
+        let (effect, _) = eval.run(&script);
 
         match effect {
             Effect::OutOfOperators | Effect::Return => {

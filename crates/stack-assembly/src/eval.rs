@@ -88,9 +88,9 @@ impl Eval {
     ///
     /// [`effect`]: #structfield.effect
     /// [`next_operator`]: #structfield.next_operator
-    pub fn run(&mut self, script: &Script) -> Effect {
+    pub fn run(&mut self, script: &Script) -> (Effect, OperatorIndex) {
         loop {
-            if let Some((effect, _)) = self.step(script) {
+            if let Some(effect) = self.step(script) {
                 return effect;
             }
         }

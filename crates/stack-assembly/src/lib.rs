@@ -75,7 +75,7 @@
 //!
 //! // Start the evaluation and advance it until the script triggers an effect.
 //! let mut eval = Eval::new();
-//! let effect = eval.run(&script);
+//! let (effect, _) = eval.run(&script);
 //!
 //! // `run` has returned, meaning an effect has triggered. Let's make sure that
 //! // went as expected.

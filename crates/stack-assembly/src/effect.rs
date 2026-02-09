@@ -40,7 +40,7 @@
 ///
 /// // When running the script for the first time, we expect that it has
 /// // incremented the number once, before yielding.
-/// let effect = eval.run(&script);
+/// let (effect, _) = eval.run(&script);
 /// assert_eq!(effect, Effect::Yield);
 /// assert_eq!(eval.operand_stack.to_u32_slice(), &[1]);
 ///
@@ -50,7 +50,7 @@
 /// // Since we handled the effect correctly, we can now assume that the
 /// // script has incremented the number a second time, before yielding
 /// // again.
-/// let effect = eval.run(&script);
+/// let (effect, _) = eval.run(&script);
 /// assert_eq!(effect, Effect::Yield);
 /// assert_eq!(eval.operand_stack.to_u32_slice(), &[2]);
 /// ```
