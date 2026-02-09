@@ -24,7 +24,9 @@ fn main() -> anyhow::Result<()> {
     let mut eval = Eval::new();
 
     loop {
-        match eval.run(&script) {
+        let effect = eval.run(&script);
+
+        match effect {
             Effect::OutOfOperators | Effect::Return => {
                 eprintln!();
                 eprintln!("Evaluation has finished.");
