@@ -154,7 +154,7 @@ impl Eval {
     ///
     /// [`effect`]: #structfield.effect
     /// [`next_operator`]: #structfield.next_operator
-    pub fn run(&mut self, script: &Script) -> &mut Effect {
+    pub fn run(&mut self, script: &Script) -> Effect {
         while self.effect.is_none() {
             self.step(script);
         }
@@ -162,7 +162,7 @@ impl Eval {
         // It's a bit of a shame we have to unwrap the `Option` like this, but
         // I tried doing it from within the loop, and failed due to the borrow
         // checker.
-        let Some(effect) = &mut self.effect else {
+        let Some(effect) = self.effect else {
             unreachable!(
                 "An effect must have triggered, or we wouldn't have exited the \
                 loop just now."
