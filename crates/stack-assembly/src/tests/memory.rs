@@ -9,9 +9,9 @@ fn read() {
 
     let mut eval = Eval::new();
     eval.memory.values[1] = Value::from(3);
-    eval.run(&script);
+    let effect = eval.run(&script);
 
-    assert_eq!(eval.effect, Some(Effect::OutOfOperators));
+    assert_eq!(effect, Effect::OutOfOperators);
     assert_eq!(eval.operand_stack.to_u32_slice(), &[3, 3]);
 }
 
@@ -28,8 +28,8 @@ fn read_triggers_effect_on_out_of_bounds_access() {
         "Test can't work, because it makes wrong assumption about memory size.",
     );
 
-    eval.run(&script);
-    assert_eq!(eval.effect, Some(Effect::InvalidAddress));
+    let effect = eval.run(&script);
+    assert_eq!(effect, Effect::InvalidAddress);
     assert_eq!(eval.operand_stack.to_u32_slice(), &[]);
 }
 
@@ -40,9 +40,9 @@ fn write() {
     let script = Script::compile("1 3 write");
 
     let mut eval = Eval::new();
-    eval.run(&script);
+    let effect = eval.run(&script);
 
-    assert_eq!(eval.effect, Some(Effect::OutOfOperators));
+    assert_eq!(effect, Effect::OutOfOperators);
     assert_eq!(eval.operand_stack.to_u32_slice(), &[]);
     assert_eq!(eval.memory.values[1], Value::from(3));
 }
@@ -60,7 +60,7 @@ fn write_triggers_effect_on_out_of_bounds_access() {
         "Test can't work, because it makes wrong assumption about memory size.",
     );
 
-    eval.run(&script);
-    assert_eq!(eval.effect, Some(Effect::InvalidAddress));
+    let effect = eval.run(&script);
+    assert_eq!(effect, Effect::InvalidAddress);
     assert_eq!(eval.operand_stack.to_u32_slice(), &[]);
 }

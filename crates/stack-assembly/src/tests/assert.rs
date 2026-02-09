@@ -8,9 +8,9 @@ fn assert_consumes_input() {
     let script = Script::compile("1 assert");
 
     let mut eval = Eval::new();
-    eval.run(&script);
+    let effect = eval.run(&script);
 
-    assert_eq!(eval.effect, Some(Effect::OutOfOperators));
+    assert_eq!(effect, Effect::OutOfOperators);
     assert_eq!(eval.operand_stack.to_i32_slice(), &[]);
 }
 
@@ -21,8 +21,8 @@ fn assert_triggers_effect() {
     let script = Script::compile("0 assert");
 
     let mut eval = Eval::new();
-    eval.run(&script);
+    let effect = eval.run(&script);
 
-    assert_eq!(eval.effect, Some(Effect::AssertionFailed));
+    assert_eq!(effect, Effect::AssertionFailed);
     assert_eq!(eval.operand_stack.to_i32_slice(), &[]);
 }

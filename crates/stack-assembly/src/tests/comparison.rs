@@ -8,9 +8,9 @@ fn smaller_outputs_one_if_smaller() {
     let script = Script::compile("-1 0 <");
 
     let mut eval = Eval::new();
-    eval.run(&script);
+    let effect = eval.run(&script);
 
-    assert_eq!(eval.effect, Some(Effect::OutOfOperators));
+    assert_eq!(effect, Effect::OutOfOperators);
     assert_eq!(eval.operand_stack.to_u32_slice(), &[1]);
 }
 
@@ -21,9 +21,9 @@ fn smaller_outputs_zero_if_equal() {
     let script = Script::compile("0 0 <");
 
     let mut eval = Eval::new();
-    eval.run(&script);
+    let effect = eval.run(&script);
 
-    assert_eq!(eval.effect, Some(Effect::OutOfOperators));
+    assert_eq!(effect, Effect::OutOfOperators);
     assert_eq!(eval.operand_stack.to_u32_slice(), &[0]);
 }
 
@@ -35,9 +35,9 @@ fn smaller_outputs_zero_if_larger() {
     let script = Script::compile("0 -1 <");
 
     let mut eval = Eval::new();
-    eval.run(&script);
+    let effect = eval.run(&script);
 
-    assert_eq!(eval.effect, Some(Effect::OutOfOperators));
+    assert_eq!(effect, Effect::OutOfOperators);
     assert_eq!(eval.operand_stack.to_u32_slice(), &[0]);
 }
 
@@ -49,9 +49,9 @@ fn smaller_equals_outputs_one_if_smaller() {
     let script = Script::compile("-1 0 <=");
 
     let mut eval = Eval::new();
-    eval.run(&script);
+    let effect = eval.run(&script);
 
-    assert_eq!(eval.effect, Some(Effect::OutOfOperators));
+    assert_eq!(effect, Effect::OutOfOperators);
     assert_eq!(eval.operand_stack.to_u32_slice(), &[1]);
 }
 
@@ -62,9 +62,9 @@ fn smaller_equals_outputs_one_if_equal() {
     let script = Script::compile("0 0 <=");
 
     let mut eval = Eval::new();
-    eval.run(&script);
+    let effect = eval.run(&script);
 
-    assert_eq!(eval.effect, Some(Effect::OutOfOperators));
+    assert_eq!(effect, Effect::OutOfOperators);
     assert_eq!(eval.operand_stack.to_u32_slice(), &[1]);
 }
 
@@ -76,9 +76,9 @@ fn smaller_equals_outputs_zero_if_larger() {
     let script = Script::compile("0 -1 <=");
 
     let mut eval = Eval::new();
-    eval.run(&script);
+    let effect = eval.run(&script);
 
-    assert_eq!(eval.effect, Some(Effect::OutOfOperators));
+    assert_eq!(effect, Effect::OutOfOperators);
     assert_eq!(eval.operand_stack.to_u32_slice(), &[0]);
 }
 
@@ -89,9 +89,9 @@ fn equals_outputs_one_if_equal() {
     let script = Script::compile("3 3 =");
 
     let mut eval = Eval::new();
-    eval.run(&script);
+    let effect = eval.run(&script);
 
-    assert_eq!(eval.effect, Some(Effect::OutOfOperators));
+    assert_eq!(effect, Effect::OutOfOperators);
     assert_eq!(eval.operand_stack.to_u32_slice(), &[1]);
 }
 
@@ -102,9 +102,9 @@ fn equals_outputs_zero_if_not_equal() {
     let script = Script::compile("3 5 =");
 
     let mut eval = Eval::new();
-    eval.run(&script);
+    let effect = eval.run(&script);
 
-    assert_eq!(eval.effect, Some(Effect::OutOfOperators));
+    assert_eq!(effect, Effect::OutOfOperators);
     assert_eq!(eval.operand_stack.to_u32_slice(), &[0]);
 }
 
@@ -116,9 +116,9 @@ fn larger_outputs_zero_if_smaller() {
     let script = Script::compile("-1 0 >");
 
     let mut eval = Eval::new();
-    eval.run(&script);
+    let effect = eval.run(&script);
 
-    assert_eq!(eval.effect, Some(Effect::OutOfOperators));
+    assert_eq!(effect, Effect::OutOfOperators);
     assert_eq!(eval.operand_stack.to_u32_slice(), &[0]);
 }
 
@@ -129,9 +129,9 @@ fn larger_outputs_zero_if_equal() {
     let script = Script::compile("0 0 >");
 
     let mut eval = Eval::new();
-    eval.run(&script);
+    let effect = eval.run(&script);
 
-    assert_eq!(eval.effect, Some(Effect::OutOfOperators));
+    assert_eq!(effect, Effect::OutOfOperators);
     assert_eq!(eval.operand_stack.to_u32_slice(), &[0]);
 }
 
@@ -143,9 +143,9 @@ fn larger_outputs_one_if_larger() {
     let script = Script::compile("0 -1 >");
 
     let mut eval = Eval::new();
-    eval.run(&script);
+    let effect = eval.run(&script);
 
-    assert_eq!(eval.effect, Some(Effect::OutOfOperators));
+    assert_eq!(effect, Effect::OutOfOperators);
     assert_eq!(eval.operand_stack.to_u32_slice(), &[1]);
 }
 
@@ -157,9 +157,9 @@ fn larger_equals_outputs_zero_if_smaller() {
     let script = Script::compile("-1 0 >=");
 
     let mut eval = Eval::new();
-    eval.run(&script);
+    let effect = eval.run(&script);
 
-    assert_eq!(eval.effect, Some(Effect::OutOfOperators));
+    assert_eq!(effect, Effect::OutOfOperators);
     assert_eq!(eval.operand_stack.to_u32_slice(), &[0]);
 }
 
@@ -170,9 +170,9 @@ fn larger_equals_outputs_one_if_equal() {
     let script = Script::compile("0 0 >=");
 
     let mut eval = Eval::new();
-    eval.run(&script);
+    let effect = eval.run(&script);
 
-    assert_eq!(eval.effect, Some(Effect::OutOfOperators));
+    assert_eq!(effect, Effect::OutOfOperators);
     assert_eq!(eval.operand_stack.to_u32_slice(), &[1]);
 }
 
@@ -184,8 +184,8 @@ fn larger_equals_outputs_one_if_larger() {
     let script = Script::compile("0 -1 >=");
 
     let mut eval = Eval::new();
-    eval.run(&script);
+    let effect = eval.run(&script);
 
-    assert_eq!(eval.effect, Some(Effect::OutOfOperators));
+    assert_eq!(effect, Effect::OutOfOperators);
     assert_eq!(eval.operand_stack.to_u32_slice(), &[1]);
 }

@@ -8,9 +8,9 @@ fn evaluate_positive_integers() {
     let script = Script::compile("3 5");
 
     let mut eval = Eval::new();
-    eval.run(&script);
+    let effect = eval.run(&script);
 
-    assert_eq!(eval.effect, Some(Effect::OutOfOperators));
+    assert_eq!(effect, Effect::OutOfOperators);
     assert_eq!(eval.operand_stack.to_i32_slice(), &[3, 5]);
 }
 
@@ -21,9 +21,9 @@ fn evaluate_negative_integer() {
     let script = Script::compile("-1");
 
     let mut eval = Eval::new();
-    eval.run(&script);
+    let effect = eval.run(&script);
 
-    assert_eq!(eval.effect, Some(Effect::OutOfOperators));
+    assert_eq!(effect, Effect::OutOfOperators);
     assert_eq!(eval.operand_stack.to_i32_slice(), &[-1]);
 }
 
@@ -34,9 +34,9 @@ fn evaluate_hexadecimal_integer() {
     let script = Script::compile("0xf0f0");
 
     let mut eval = Eval::new();
-    eval.run(&script);
+    let effect = eval.run(&script);
 
-    assert_eq!(eval.effect, Some(Effect::OutOfOperators));
+    assert_eq!(effect, Effect::OutOfOperators);
     assert_eq!(eval.operand_stack.to_i32_slice(), &[0xf0f0]);
 }
 
@@ -49,9 +49,9 @@ fn evaluate_full_range_of_unsigned_decimal_integers() {
     let script = Script::compile("2147483648");
 
     let mut eval = Eval::new();
-    eval.run(&script);
+    let effect = eval.run(&script);
 
-    assert_eq!(eval.effect, Some(Effect::OutOfOperators));
+    assert_eq!(effect, Effect::OutOfOperators);
     assert_eq!(eval.operand_stack.to_u32_slice(), &[2147483648]);
 }
 
@@ -64,9 +64,9 @@ fn evaluate_full_range_of_unsigned_hexadecimal_integers() {
     let script = Script::compile("0x80000000");
 
     let mut eval = Eval::new();
-    eval.run(&script);
+    let effect = eval.run(&script);
 
-    assert_eq!(eval.effect, Some(Effect::OutOfOperators));
+    assert_eq!(effect, Effect::OutOfOperators);
     assert_eq!(eval.operand_stack.to_u32_slice(), &[0x80000000]);
 }
 
@@ -84,11 +84,11 @@ fn trigger_effect_on_integer_overflow() {
 
     let mut eval = Eval::new();
 
-    eval.step(&script);
-    assert_eq!(eval.effect, None);
+    let effect = eval.step(&script);
+    assert_eq!(effect, None);
     assert_eq!(eval.operand_stack.to_u32_slice(), &[4294967295]);
 
-    eval.step(&script);
-    assert_eq!(eval.effect, Some(Effect::UnknownIdentifier));
+    let effect = eval.step(&script);
+    assert_eq!(effect, Some(Effect::UnknownIdentifier));
     assert_eq!(eval.operand_stack.to_u32_slice(), &[4294967295]);
 }

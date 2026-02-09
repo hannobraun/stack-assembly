@@ -11,9 +11,9 @@ fn full_line_comment() {
     );
 
     let mut eval = Eval::new();
-    eval.run(&script);
+    let effect = eval.run(&script);
 
-    assert_eq!(eval.effect, Some(Effect::OutOfOperators));
+    assert_eq!(effect, Effect::OutOfOperators);
     assert_eq!(eval.operand_stack.to_u32_slice(), &[]);
 }
 
@@ -25,9 +25,9 @@ fn end_of_line_comment() {
     let script = Script::compile("3 # 5 8");
 
     let mut eval = Eval::new();
-    eval.run(&script);
+    let effect = eval.run(&script);
 
-    assert_eq!(eval.effect, Some(Effect::OutOfOperators));
+    assert_eq!(effect, Effect::OutOfOperators);
     assert_eq!(eval.operand_stack.to_u32_slice(), &[3]);
 }
 
@@ -38,8 +38,8 @@ fn comment_without_whitespace() {
     let script = Script::compile("3 #5 8");
 
     let mut eval = Eval::new();
-    eval.run(&script);
+    let effect = eval.run(&script);
 
-    assert_eq!(eval.effect, Some(Effect::OutOfOperators));
+    assert_eq!(effect, Effect::OutOfOperators);
     assert_eq!(eval.operand_stack.to_u32_slice(), &[3]);
 }
