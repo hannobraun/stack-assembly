@@ -25,7 +25,7 @@ use crate::{
 pub struct Eval {
     next_operator: OperatorIndex,
     call_stack: Vec<OperatorIndex>,
-    effect: Option<Effect>,
+    effect: Option<(Effect, OperatorIndex)>,
 
     /// # The operand stack
     ///
@@ -115,10 +115,10 @@ impl Eval {
         if self.effect.is_none()
             && let Err(effect) = self.evaluate_operator(operator, script)
         {
-            self.effect = Some(effect);
+            self.effect = Some((effect, operator));
         }
 
-        self.effect
+        self.effect.map(|(effect, _)| effect)
     }
 
     /// # Clear the active effect, if any
@@ -126,7 +126,7 @@ impl Eval {
     /// If no effect is active, this call does nothing. Return the effect that
     /// has been cleared.
     pub fn clear_effect(&mut self) -> Option<Effect> {
-        self.effect.take()
+        self.effect.take().map(|(effect, _)| effect)
     }
 
     fn evaluate_operator(
