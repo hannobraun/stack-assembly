@@ -35,7 +35,7 @@ fn main() -> anyhow::Result<()> {
             }
             Effect::Yield => {
                 print_operand_stack(&eval.operand_stack);
-                eval.effect = None;
+                eval.clear_effect();
 
                 // Let's not execute scripts that fast, to give the user a
                 // chance to read the output.

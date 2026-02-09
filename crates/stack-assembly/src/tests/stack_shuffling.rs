@@ -8,9 +8,9 @@ fn copy() {
     let script = Script::compile("3 5 8 1 copy");
 
     let mut eval = Eval::new();
-    eval.run(&script);
+    let effect = eval.run(&script);
 
-    assert_eq!(eval.effect, Some(Effect::OutOfOperators));
+    assert_eq!(effect, Effect::OutOfOperators);
     assert_eq!(eval.operand_stack.to_u32_slice(), &[3, 5, 8, 5]);
 }
 
@@ -22,9 +22,9 @@ fn copy_trigger_effect_on_invalid_index() {
     let script = Script::compile("0 copy");
 
     let mut eval = Eval::new();
-    eval.run(&script);
+    let effect = eval.run(&script);
 
-    assert_eq!(eval.effect, Some(Effect::InvalidOperandStackIndex));
+    assert_eq!(effect, Effect::InvalidOperandStackIndex);
     assert_eq!(eval.operand_stack.to_u32_slice(), &[]);
 }
 
@@ -35,8 +35,8 @@ fn drop() {
     let script = Script::compile("3 5 8 1 drop");
 
     let mut eval = Eval::new();
-    eval.run(&script);
+    let effect = eval.run(&script);
 
-    assert_eq!(eval.effect, Some(Effect::OutOfOperators));
+    assert_eq!(effect, Effect::OutOfOperators);
     assert_eq!(eval.operand_stack.to_u32_slice(), &[3, 8]);
 }

@@ -25,73 +25,7 @@ use crate::{
 pub struct Eval {
     next_operator: OperatorIndex,
     call_stack: Vec<OperatorIndex>,
-
-    /// # The active effect, if one has triggered
-    ///
-    /// Effects moderate the communication between script and host. The effect
-    /// itself only relays _which_ effect has triggered, but that may signal to
-    /// the host that a different communication channel (like [`operand_stack`]
-    /// or [`memory`]) is ready to be accessed.
-    ///
-    /// [`Eval::new`] initializes this field to `None`. [`Eval::run`] and
-    /// [`Eval::step`] may store an effect here, if the script triggers one. If
-    /// that is the case, the host may handle the effect, to allow evaluation
-    /// to continue.
-    ///
-    /// ## Handling Effects
-    ///
-    /// The host may handle effects however it wishes. But since most effects
-    /// signal error conditions that the script would not expect to recover
-    /// from, a well-behaving host must be careful not to handle effects in
-    /// a way that make reasoning about the script's behavior difficult.
-    ///
-    /// Abandoning the evaluation and reporting an error in the appropriate
-    /// manner, is the only reasonable way to handle most effects. The
-    /// exception to that is [`Effect::Yield`], which does not signal an error
-    /// condition. A script would expect to continue afterwards.
-    ///
-    /// To make that possible, the host must clear the effect by setting this
-    /// field to `None`.
-    ///
-    /// ### Example
-    ///
-    /// ```
-    /// use stack_assembly::{Effect, Eval, Script};
-    ///
-    /// // This script increments a number in a loop, yielding control to the
-    /// // host every time it did so.
-    /// let script = Script::compile("
-    ///     0
-    ///
-    ///     increment:
-    ///         1 +
-    ///         yield
-    ///         @increment jump
-    /// ");
-    ///
-    /// let mut eval = Eval::new();
-    ///
-    /// // When running the script for the first time, we expect that it has
-    /// // incremented the number once, before yielding.
-    /// eval.run(&script);
-    /// assert_eq!(eval.effect, Some(Effect::Yield));
-    /// assert_eq!(eval.operand_stack.to_u32_slice(), &[1]);
-    ///
-    /// // To allow the script to continue, we must clear the effect.
-    /// eval.effect = None;
-    ///
-    /// // Since we handled the effect correctly, we can now assume that the
-    /// // script has incremented the number a second time, before yielding
-    /// // again.
-    /// eval.run(&script);
-    /// assert_eq!(eval.effect, Some(Effect::Yield));
-    /// assert_eq!(eval.operand_stack.to_u32_slice(), &[2]);
-    /// ```
-    ///
-    /// [`next_operator`]: #structfield.next_operator
-    /// [`operand_stack`]: #structfield.operand_stack
-    /// [`memory`]: #structfield.memory
-    pub effect: Option<Effect>,
+    effect: Option<Effect>,
 
     /// # The operand stack
     ///
@@ -154,22 +88,12 @@ impl Eval {
     ///
     /// [`effect`]: #structfield.effect
     /// [`next_operator`]: #structfield.next_operator
-    pub fn run(&mut self, script: &Script) -> &mut Effect {
-        while self.effect.is_none() {
-            self.step(script);
+    pub fn run(&mut self, script: &Script) -> Effect {
+        loop {
+            if let Some(effect) = self.step(script) {
+                return effect;
+            }
         }
-
-        // It's a bit of a shame we have to unwrap the `Option` like this, but
-        // I tried doing it from within the loop, and failed due to the borrow
-        // checker.
-        let Some(effect) = &mut self.effect else {
-            unreachable!(
-                "An effect must have triggered, or we wouldn't have exited the \
-                loop just now."
-            );
-        };
-
-        effect
     }
 
     /// # Advance the evaluation by one step
@@ -184,14 +108,22 @@ impl Eval {
     ///
     /// [`effect`]: #structfield.effect
     /// [`next_operator`]: #structfield.next_operator
-    pub fn step(&mut self, script: &Script) {
-        if self.effect.is_some() {
-            return;
-        }
-
-        if let Err(effect) = self.evaluate_next_operator(script) {
+    pub fn step(&mut self, script: &Script) -> Option<Effect> {
+        if self.effect.is_none()
+            && let Err(effect) = self.evaluate_next_operator(script)
+        {
             self.effect = Some(effect);
         }
+
+        self.effect
+    }
+
+    /// # Clear the active effect, if any
+    ///
+    /// If no effect is active, this call does nothing. Return the effect that
+    /// has been cleared.
+    pub fn clear_effect(&mut self) -> Option<Effect> {
+        self.effect.take()
     }
 
     fn evaluate_next_operator(

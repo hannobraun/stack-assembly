@@ -1,12 +1,60 @@
 /// # An event triggered by scripts, to signal a specific condition
 ///
-/// Evaluating an operator can trigger an effect. Active effects are stored in
-/// in [`Eval`]'s [`effect`] field. Please refer to the documentation of that
-/// field, for more information on effects and how to handle them.
+/// Effects moderate the communication between script and host. The effect
+/// itself only relays _which_ effect has triggered, but that may signal to
+/// the host that a different communication channel (like operand stack or
+/// memory) is ready to be accessed.
 ///
-/// [`Eval`]: crate::Eval
-/// [`effect`]: struct.Eval.html#structfield.effect
-#[derive(Debug, Eq, PartialEq)]
+/// ## Handling Effects
+///
+/// The host may handle effects however it wishes. But since most effects
+/// signal error conditions that the script would not expect to recover
+/// from, a well-behaving host must be careful not to handle effects in
+/// a way that make reasoning about the script's behavior difficult.
+///
+/// Abandoning the evaluation and reporting an error in the appropriate
+/// manner, is the only reasonable way to handle most effects. The
+/// exception to that is [`Effect::Yield`], which does not signal an error
+/// condition. A script would expect to continue afterwards.
+///
+/// To make that possible, the host must clear the effect by setting this
+/// field to `None`.
+///
+/// ### Example
+///
+/// ```
+/// use stack_assembly::{Effect, Eval, Script};
+///
+/// // This script increments a number in a loop, yielding control to the
+/// // host every time it did so.
+/// let script = Script::compile("
+///     0
+///
+///     increment:
+///         1 +
+///         yield
+///         @increment jump
+/// ");
+///
+/// let mut eval = Eval::new();
+///
+/// // When running the script for the first time, we expect that it has
+/// // incremented the number once, before yielding.
+/// let effect = eval.run(&script);
+/// assert_eq!(effect, Effect::Yield);
+/// assert_eq!(eval.operand_stack.to_u32_slice(), &[1]);
+///
+/// // To allow the script to continue, we must clear the effect.
+/// eval.clear_effect();
+///
+/// // Since we handled the effect correctly, we can now assume that the
+/// // script has incremented the number a second time, before yielding
+/// // again.
+/// let effect = eval.run(&script);
+/// assert_eq!(effect, Effect::Yield);
+/// assert_eq!(eval.operand_stack.to_u32_slice(), &[2]);
+/// ```
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum Effect {
     /// # An assertion failed
     ///
