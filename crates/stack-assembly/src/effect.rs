@@ -40,18 +40,18 @@
 ///
 /// // When running the script for the first time, we expect that it has
 /// // incremented the number once, before yielding.
-/// eval.run(&script);
-/// assert_eq!(eval.effect, Some(Effect::Yield));
+/// let effect = eval.run(&script);
+/// assert_eq!(effect, Effect::Yield);
 /// assert_eq!(eval.operand_stack.to_u32_slice(), &[1]);
 ///
 /// // To allow the script to continue, we must clear the effect.
-/// eval.effect = None;
+/// eval.clear_effect();
 ///
 /// // Since we handled the effect correctly, we can now assume that the
 /// // script has incremented the number a second time, before yielding
 /// // again.
-/// eval.run(&script);
-/// assert_eq!(eval.effect, Some(Effect::Yield));
+/// let effect = eval.run(&script);
+/// assert_eq!(effect, Effect::Yield);
 /// assert_eq!(eval.operand_stack.to_u32_slice(), &[2]);
 /// ```
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]

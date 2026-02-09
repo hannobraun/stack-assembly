@@ -75,11 +75,11 @@
 //!
 //! // Start the evaluation and advance it until the script triggers an effect.
 //! let mut eval = Eval::new();
-//! eval.run(&script);
+//! let effect = eval.run(&script);
 //!
 //! // `run` has returned, meaning an effect has triggered. Let's make sure that
 //! // went as expected.
-//! assert_eq!(eval.effect, Some(Effect::Yield));
+//! assert_eq!(effect, Effect::Yield);
 //! let Ok(value) = eval.operand_stack.pop() else {
 //!     unreachable!("We know that the script pushes a value before yielding.");
 //! };
