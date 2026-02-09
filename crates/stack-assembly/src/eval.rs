@@ -113,7 +113,7 @@ impl Eval {
         self.next_operator.value += 1;
 
         if self.effect.is_none()
-            && let Err(effect) = self.evaluate_next_operator(operator, script)
+            && let Err(effect) = self.evaluate_operator(operator, script)
         {
             self.effect = Some(effect);
         }
@@ -129,7 +129,7 @@ impl Eval {
         self.effect.take()
     }
 
-    fn evaluate_next_operator(
+    fn evaluate_operator(
         &mut self,
         operator: OperatorIndex,
         script: &Script,
