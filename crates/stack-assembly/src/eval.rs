@@ -125,8 +125,8 @@ impl Eval {
     ///
     /// If no effect is active, this call does nothing. Return the effect that
     /// has been cleared.
-    pub fn clear_effect(&mut self) -> Option<Effect> {
-        self.effect.take().map(|(effect, _)| effect)
+    pub fn clear_effect(&mut self) -> Option<(Effect, OperatorIndex)> {
+        self.effect.take()
     }
 
     fn evaluate_operator(
