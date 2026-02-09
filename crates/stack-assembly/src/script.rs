@@ -129,7 +129,7 @@ impl Operator {
 
 #[derive(Clone, Copy, Debug, Default)]
 pub struct OperatorIndex {
-    pub value: u32,
+    pub(crate) value: u32,
 }
 
 #[derive(Debug)]
