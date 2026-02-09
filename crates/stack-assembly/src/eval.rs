@@ -184,12 +184,14 @@ impl Eval {
     ///
     /// [`effect`]: #structfield.effect
     /// [`next_operator`]: #structfield.next_operator
-    pub fn step(&mut self, script: &Script) {
+    pub fn step(&mut self, script: &Script) -> Option<Effect> {
         if self.effect.is_none()
             && let Err(effect) = self.evaluate_next_operator(script)
         {
             self.effect = Some(effect);
         }
+
+        self.effect
     }
 
     fn evaluate_next_operator(
