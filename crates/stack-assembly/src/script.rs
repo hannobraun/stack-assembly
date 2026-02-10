@@ -19,15 +19,46 @@ impl Script {
         let mut operators = Vec::new();
         let mut labels = Vec::new();
 
-        for line in script.lines() {
-            for token in line.split_whitespace() {
-                if token.starts_with("#") {
-                    // This is a comment. Ignore the rest of the line.
-                    break;
-                }
+        enum State {
+            Initial,
+            Comment,
+            Token { start: usize },
+        }
+        let mut state = State::Initial;
 
-                parse_token(token, &mut operators, &mut labels);
+        for (i, ch) in script.char_indices() {
+            match (&state, ch) {
+                (State::Initial, '#') => {
+                    state = State::Comment;
+                }
+                (State::Initial, ch) if !ch.is_whitespace() => {
+                    state = State::Token { start: i };
+                }
+                (State::Initial, _) => {
+                    // Token won't start until we're past the whitespace.
+                }
+                (State::Comment, '\n') => {
+                    state = State::Initial;
+                }
+                (State::Comment, _) => {
+                    // Ignoring characters in comments.
+                }
+                (State::Token { start }, ch) if ch.is_whitespace() => {
+                    let token = &script[*start..i];
+                    parse_token(token, &mut operators, &mut labels);
+
+                    state = State::Initial;
+                }
+                (State::Token { start: _ }, _) => {
+                    // We already remembered the start of the token. Nothing
+                    // else to do until it's over.
+                }
             }
+        }
+
+        if let State::Token { start } = state {
+            let token = &script[start..script.len()];
+            parse_token(token, &mut operators, &mut labels);
         }
 
         Self { operators, labels }
