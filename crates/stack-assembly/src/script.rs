@@ -26,54 +26,7 @@ impl Script {
                     break;
                 }
 
-                let operator = if let Some((name, "")) = token.rsplit_once(":")
-                {
-                    let Ok(index) = operators.len().try_into() else {
-                        panic!(
-                            "Trying to create a label for an operator whose \
-                            index can't be represented as `u32`. This is only \
-                            possible on 64-bit platforms, when there are more \
-                            than `u32::MAX` operators in a script.\n\
-                            \n\
-                            That this limit can practically be reached with \
-                            the language as it currently is, seems highly \
-                            unlikely. This makes this panic an acceptable \
-                            outcome.\n\
-                            \n\
-                            Long-term, once the API supports compiler errors, \
-                            this case should result in an such an error \
-                            instead."
-                        );
-                    };
-
-                    labels.push(Label {
-                        name: name.to_string(),
-                        operator: OperatorIndex { value: index },
-                    });
-                    continue;
-                } else if let Some(("", name)) = token.split_once("@") {
-                    Operator::Reference {
-                        name: name.to_string(),
-                    }
-                } else if let Some(("", value)) = token.split_once("0x")
-                    && let Ok(value) = i32::from_str_radix(value, 16)
-                {
-                    Operator::Integer { value }
-                } else if let Some(("", value)) = token.split_once("0x")
-                    && let Ok(value) = u32::from_str_radix(value, 16)
-                {
-                    Operator::integer_u32(value)
-                } else if let Ok(value) = token.parse::<i32>() {
-                    Operator::Integer { value }
-                } else if let Ok(value) = token.parse::<u32>() {
-                    Operator::integer_u32(value)
-                } else {
-                    Operator::Identifier {
-                        value: token.to_string(),
-                    }
-                };
-
-                operators.push(operator);
+                parse_token(token, &mut operators, &mut labels);
             }
         }
 
@@ -110,6 +63,59 @@ impl Script {
 
         Ok(operator)
     }
+}
+
+fn parse_token(
+    token: &str,
+    operators: &mut Vec<Operator>,
+    labels: &mut Vec<Label>,
+) {
+    let operator = if let Some((name, "")) = token.rsplit_once(":") {
+        let Ok(index) = operators.len().try_into() else {
+            panic!(
+                "Trying to create a label for an operator whose index can't be \
+                represented as `u32`. This is only possible on 64-bit \
+                platforms, when there are more than `u32::MAX` operators in a \
+                script.\n\
+                \n\
+                That this limit can practically be reached with the language \
+                as it currently is, seems highly unlikely. This makes this \
+                panic an acceptable outcome.\n\
+                \n\
+                Long-term, once the API supports compiler errors, this case \
+                should result in an such an error instead."
+            );
+        };
+
+        labels.push(Label {
+            name: name.to_string(),
+            operator: OperatorIndex { value: index },
+        });
+
+        return;
+    } else if let Some(("", name)) = token.split_once("@") {
+        Operator::Reference {
+            name: name.to_string(),
+        }
+    } else if let Some(("", value)) = token.split_once("0x")
+        && let Ok(value) = i32::from_str_radix(value, 16)
+    {
+        Operator::Integer { value }
+    } else if let Some(("", value)) = token.split_once("0x")
+        && let Ok(value) = u32::from_str_radix(value, 16)
+    {
+        Operator::integer_u32(value)
+    } else if let Ok(value) = token.parse::<i32>() {
+        Operator::Integer { value }
+    } else if let Ok(value) = token.parse::<u32>() {
+        Operator::integer_u32(value)
+    } else {
+        Operator::Identifier {
+            value: token.to_string(),
+        }
+    };
+
+    operators.push(operator);
 }
 
 #[derive(Debug)]
