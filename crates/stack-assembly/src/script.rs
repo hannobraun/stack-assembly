@@ -1,3 +1,5 @@
+use std::iter;
+
 use crate::Effect;
 
 /// # A compiled script
@@ -93,6 +95,20 @@ impl Script {
         };
 
         Ok(operator)
+    }
+
+    /// # Iterate over all operators in the script
+    pub fn operators(
+        &self,
+    ) -> impl Iterator<Item = (OperatorIndex, &Operator)> {
+        let indices =
+            iter::successors(Some(OperatorIndex::default()), |index| {
+                Some(OperatorIndex {
+                    value: index.value + 1,
+                })
+            });
+
+        indices.zip(&self.operators)
     }
 }
 
