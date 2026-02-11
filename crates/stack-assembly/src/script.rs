@@ -1,4 +1,4 @@
-use std::{iter, ops::Range};
+use std::{collections::BTreeMap, iter, ops::Range};
 
 use crate::Effect;
 
@@ -13,13 +13,17 @@ use crate::Effect;
 pub struct Script {
     operators: Vec<Operator>,
     labels: Vec<Label>,
+    source_map: BTreeMap<OperatorIndex, Range<usize>>,
 }
 
 impl Script {
     /// # Compile the source text of a script into an instance of `Script`
     pub fn compile(script: &str) -> Self {
+        let mut next_index = OperatorIndex::default();
+
         let mut operators = Vec::new();
         let mut labels = Vec::new();
+        let mut source_map = BTreeMap::new();
 
         enum State {
             Initial,
@@ -46,7 +50,14 @@ impl Script {
                     // Ignoring characters in comments.
                 }
                 (State::Token { start }, ch) if ch.is_whitespace() => {
-                    parse_token(script, *start..i, &mut operators, &mut labels);
+                    parse_token(
+                        script,
+                        *start..i,
+                        &mut operators,
+                        &mut labels,
+                        &mut next_index,
+                        &mut source_map,
+                    );
                     state = State::Initial;
                 }
                 (State::Token { start: _ }, _) => {
@@ -62,10 +73,16 @@ impl Script {
                 start..script.len(),
                 &mut operators,
                 &mut labels,
+                &mut next_index,
+                &mut source_map,
             );
         }
 
-        Self { operators, labels }
+        Self {
+            operators,
+            labels,
+            source_map,
+        }
     }
 
     pub(crate) fn get_operator(
@@ -99,6 +116,25 @@ impl Script {
         Ok(operator)
     }
 
+    /// # Map the operator identified by the provided index to the source code
+    ///
+    /// The returned range can be used to index into the source string
+    /// originally provided to [`Script::compile`], to get the sub-string that
+    /// was compiled into the operator identified by the provided index.
+    ///
+    /// Returns `None`, if the provided [`OperatorIndex`] does not refer to an
+    /// operator in the script.
+    pub fn map_operator_to_source(
+        &self,
+        operator: &OperatorIndex,
+    ) -> Result<Range<usize>, InvalidOperatorIndex> {
+        let Some(range) = self.source_map.get(operator).cloned() else {
+            return Err(InvalidOperatorIndex);
+        };
+
+        Ok(range)
+    }
+
     /// # Iterate over all operators in the script
     pub fn operators(
         &self,
@@ -119,8 +155,10 @@ fn parse_token(
     range: Range<usize>,
     operators: &mut Vec<Operator>,
     labels: &mut Vec<Label>,
+    next_index: &mut OperatorIndex,
+    source_map: &mut BTreeMap<OperatorIndex, Range<usize>>,
 ) {
-    let token = &script[range];
+    let token = &script[range.clone()];
 
     let operator = if let Some((name, "")) = token.rsplit_once(":") {
         let Ok(index) = operators.len().try_into() else {
@@ -168,6 +206,9 @@ fn parse_token(
     };
 
     operators.push(operator);
+
+    source_map.insert(*next_index, range);
+    next_index.value += 1;
 }
 
 #[derive(Debug)]
@@ -212,5 +253,31 @@ pub struct InvalidReference;
 impl From<InvalidReference> for Effect {
     fn from(InvalidReference: InvalidReference) -> Self {
         Effect::InvalidReference
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::Script;
+
+    #[test]
+    fn map_operator_to_source() {
+        let source = "0 loop: 1 + @loop jump";
+        let script = Script::compile(source);
+
+        let operators = script
+            .operators()
+            .map(|(operator, _)| {
+                let Ok(range) = script.map_operator_to_source(&operator) else {
+                    unreachable!(
+                        "Using `OperatorIndex` that definitely refers to an \
+                        operator, as it was returned by `Script::operators`."
+                    );
+                };
+                &source[range]
+            })
+            .collect::<Vec<_>>();
+
+        assert_eq!(operators, vec!["0", "1", "+", "@loop", "jump"]);
     }
 }
