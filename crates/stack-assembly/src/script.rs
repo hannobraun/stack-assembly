@@ -1,4 +1,4 @@
-use std::iter;
+use std::{iter, ops::Range};
 
 use crate::Effect;
 
@@ -46,9 +46,7 @@ impl Script {
                     // Ignoring characters in comments.
                 }
                 (State::Token { start }, ch) if ch.is_whitespace() => {
-                    let token = &script[*start..i];
-                    parse_token(token, &mut operators, &mut labels);
-
+                    parse_token(script, *start..i, &mut operators, &mut labels);
                     state = State::Initial;
                 }
                 (State::Token { start: _ }, _) => {
@@ -59,8 +57,12 @@ impl Script {
         }
 
         if let State::Token { start } = state {
-            let token = &script[start..script.len()];
-            parse_token(token, &mut operators, &mut labels);
+            parse_token(
+                script,
+                start..script.len(),
+                &mut operators,
+                &mut labels,
+            );
         }
 
         Self { operators, labels }
@@ -113,10 +115,13 @@ impl Script {
 }
 
 fn parse_token(
-    token: &str,
+    script: &str,
+    range: Range<usize>,
     operators: &mut Vec<Operator>,
     labels: &mut Vec<Label>,
 ) {
+    let token = &script[range];
+
     let operator = if let Some((name, "")) = token.rsplit_once(":") {
         let Ok(index) = operators.len().try_into() else {
             panic!(
