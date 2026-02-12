@@ -40,47 +40,6 @@ impl Value {
         self.inner
     }
 
-    /// # Convert to a `usize`
-    ///
-    /// This is usually possible, unless this library runs on a platform where
-    /// `usize` is less than 32 bits wide. That is considered a niche use case
-    /// which is not fully supported.
-    ///
-    /// ## Panics
-    ///
-    /// Panics, if `usize` can not represent this value.
-    ///
-    /// ## Compatibility Note
-    ///
-    /// This deprecated method will be removed in a future release.
-    #[deprecated(
-        since = "0.2.0",
-        note = "\
-            No longer used internally by the StackAssembly implementation \
-            because it can panic, if usize is less than 32 bits wide. Use \
-            `Value::to_32` instead and convert to `usize` yourself, using \
-            whatever approach best fits your use case."
-    )]
-    pub fn to_usize(self) -> usize {
-        let Ok(index) = self.inner.try_into() else {
-            panic!(
-                "Can't convert value `{value}` to `usize`. This can only \
-                happen  on platforms where Rust's `usize` is less than 32 bits \
-                bits wide. This is a niche use case that isn't fully \
-                supported, making this panic an acceptable outcome.\n\
-                \n\
-                Additionally, since `usize` is only used for storage of values \
-                or operators, the value was invalid in the first place \
-                (meaning the StackAssembly program has a bug), as it wouldn't \
-                be possible to store as many item as the value implies should \
-                be there.",
-                value = self.inner,
-            );
-        };
-
-        index
-    }
-
     /// # Convert to a `bool`
     ///
     /// A zero value is considered `false`, while any other value is considered
