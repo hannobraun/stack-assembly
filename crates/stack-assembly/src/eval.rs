@@ -77,6 +77,26 @@ impl Eval {
         Self::default()
     }
 
+    /// # Access the current call stack
+    ///
+    /// The returned iterator Yields the operators on the call stack, starting
+    /// with the top-most one.
+    pub fn call_stack(&self) -> impl Iterator<Item = OperatorIndex> {
+        self.call_stack.iter().copied().rev().map(|index| {
+            let Some(value) = index.value.checked_sub(1) else {
+                unreachable!(
+                    "Operator indices on call stack identify the operator to \
+                    return to after the call, which is the operator _after_ \
+                    the calling operator. Hence, an operator before that one \
+                    exists, and subtracting from the index of the call stack \
+                    cannot overflow."
+                );
+            };
+
+            OperatorIndex { value }
+        })
+    }
+
     /// # Advance the evaluation until it triggers an effect
     ///
     /// If an effect is currently active (see [`effect`] field), do nothing and
