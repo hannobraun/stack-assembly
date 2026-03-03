@@ -1,4 +1,4 @@
-use std::{collections::BTreeMap, iter, ops::Range};
+use std::{collections::BTreeMap, fmt, iter, ops::Range};
 
 use crate::Effect;
 
@@ -230,6 +230,12 @@ impl Operator {
 #[derive(Clone, Copy, Debug, Default, Eq, Ord, PartialEq, PartialOrd)]
 pub struct OperatorIndex {
     pub(crate) value: u32,
+}
+
+impl fmt::Display for OperatorIndex {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{}", self.value)
+    }
 }
 
 #[derive(Debug)]
