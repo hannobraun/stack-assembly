@@ -17,4 +17,4 @@ version = "*"
 features = ["crossbeam-channel"]
 
 [dependencies.stack-assembly]
-git = "https://github.com/hannobraun/stack-assembly.git"
+path = "../crates/stack-assembly"
