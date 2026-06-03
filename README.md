@@ -22,11 +22,11 @@ increment:
 255 = assert
 ```
 
-StackAssembly serves as a foundation for my personal research into programming language design and implementation. Even though I want it to be complete enough for real code too, that is not its main purpose. If you're wondering if it might work for you, the safe answer is probably "no".
-
 ## Status
 
-The initial implementation is complete, but testing (both automated and in terms of real-world use) has been limited. Feel free to try the language, but don't expect too much in terms of reliability or usefulness.
+StackAssembly was a vehicle for my personal research into programming language design and implementation. I decided to go into a different direction with that though, and I consider StackAssembly to be complete now.
+
+It is possible to to use the language for non-trivial code (as the [Snake game](snake/) in this repository proves), though this is very, very tedious.
 
 ## Documentation
 
