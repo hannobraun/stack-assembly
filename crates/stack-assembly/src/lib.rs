@@ -21,11 +21,6 @@
 //! 255 = assert
 //! ```
 //!
-//! StackAssembly serves as a foundation for my personal research into
-//! programming language design and implementation. Even though I want it to be
-//! complete enough for real code too, that is not its main purpose. If you're
-//! wondering if it might work for you, the safe answer is probably "no".
-//!
 //! Please check out the [repository on GitHub][repository] to learn more about
 //! StackAssembly. This documentation, while it contains some information about
 //! the language itself, is focused on how to use this library, which contains
