@@ -1,4 +1,4 @@
-use std::{collections::BTreeMap, fmt, iter, ops::Range};
+use std::{collections::BTreeMap, fmt, ops::Range};
 
 use crate::Effect;
 
@@ -135,10 +135,10 @@ impl Script {
         Ok(range)
     }
 
-    /// # Iterate over all operators in the script
-    pub fn operators(
-        &self,
-    ) -> impl Iterator<Item = (OperatorIndex, &Operator)> {
+    #[cfg(test)]
+    fn operators(&self) -> impl Iterator<Item = (OperatorIndex, &Operator)> {
+        use std::iter;
+
         let indices =
             iter::successors(Some(OperatorIndex::default()), |index| {
                 Some(OperatorIndex {
