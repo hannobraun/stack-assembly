@@ -45,7 +45,7 @@
 //! assert_eq!(eval.operand_stack.to_i32_slice(), &[3]);
 //! ```
 //!
-//! [`Eval`] is the main entry point to the library's API.
+//! [`Script`] and [`Eval`] are the main entry points to the library's API.
 //!
 //! ### Hosts
 //!
