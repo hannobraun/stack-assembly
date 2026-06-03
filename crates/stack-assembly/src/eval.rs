@@ -5,9 +5,10 @@ use crate::{
 
 /// # The ongoing evaluation of a script
 ///
-/// This is the main entry point into this library's API. To evaluate a script,
-/// you can pass it to [`Eval::new`], then use [`Eval::run`] or [`Eval::step`]
-/// to advance the evaluation.
+/// This, alongside [`Script`] is one of the main entry points into this
+/// library's API. To evaluate a script, first initialize an `Eval` instance
+/// using [`Eval::new`], then use [`Eval::run`] or [`Eval::step`] to advance the
+/// evaluation.
 ///
 /// ## Example
 ///
@@ -68,19 +69,22 @@ pub struct Eval {
 }
 
 impl Eval {
-    /// # Start evaluating the provided script
+    /// # Construct a new instance of `Eval`
     ///
-    /// Compile the provided script and return an `Eval` instance that is ready
-    /// for evaluation. To evaluate any operators, you must call [`Eval::run`]
-    /// or [`Eval::step`].
+    /// To evaluate a script using the returned instance, you must call
+    /// [`Eval::run`] or [`Eval::step`].
     pub fn new() -> Self {
         Self::default()
     }
 
     /// # Access the current call stack
     ///
-    /// The returned iterator Yields the operators on the call stack, starting
-    /// with the top-most one.
+    /// The returned iterator yields operator indices on the call stack,
+    /// starting with the top-most one.
+    ///
+    /// The yielded operator indices identify the operators where evaluation
+    /// will continue after evaluating a `return` operator; _not_ the operators
+    /// that were the source of a call.
     pub fn call_stack(&self) -> impl Iterator<Item = OperatorIndex> {
         self.call_stack.iter().copied().rev().map(|index| {
             let Some(value) = index.value.checked_sub(1) else {
@@ -99,15 +103,14 @@ impl Eval {
 
     /// # Advance the evaluation until it triggers an effect
     ///
-    /// If an effect is currently active (see [`effect`] field), do nothing and
-    /// return immediately. Otherwise, keep evaluating operators until one
-    /// triggers an effect.
+    /// If an effect is currently active, do nothing and return immediately.
+    /// Otherwise, keep evaluating operators until one triggers an effect.
+    ///
+    /// The operator index returned alongside the effect identifies the operator
+    /// that triggered the effect.
     ///
     /// If you need more control over the evaluation, consider using
     /// [`Eval::step`] instead.
-    ///
-    /// [`effect`]: #structfield.effect
-    /// [`next_operator`]: #structfield.next_operator
     pub fn run(&mut self, script: &Script) -> (Effect, OperatorIndex) {
         loop {
             if let Some(effect) = self.step(script) {
@@ -118,16 +121,16 @@ impl Eval {
 
     /// # Advance the evaluation by one step
     ///
-    /// If an effect is currently active (see [`effect`] field), do nothing and
-    /// return immediately. Otherwise, evaluate the next operator. If that
-    /// triggers an effect, store that in the [`effect`] field.
+    /// If an effect is currently active, do nothing and return immediately.
+    /// Otherwise, evaluate the next operator. If that triggers an effect,
+    /// return that.
+    ///
+    /// The operator index returned alongside the effect identifies the operator
+    /// that triggered the effect.
     ///
     /// This function may be used for advancing the evaluation of the script in
     /// a controlled manner. If you just want to keep evaluating until the next
-    /// effect, consider using [`Eval::run`] instead.
-    ///
-    /// [`effect`]: #structfield.effect
-    /// [`next_operator`]: #structfield.next_operator
+    /// effect triggers, consider using [`Eval::run`] instead.
     pub fn step(&mut self, script: &Script) -> Option<(Effect, OperatorIndex)> {
         let operator = self.next_operator;
         self.next_operator.value += 1;
@@ -143,8 +146,11 @@ impl Eval {
 
     /// # Clear the active effect, if any
     ///
-    /// If no effect is active, this call does nothing. Return the effect that
-    /// has been cleared.
+    /// If no effect is active, this call does nothing. If an effect has been
+    /// cleared, return that.
+    ///
+    /// The operator index returned alongside the effect identifies the operator
+    /// that triggered the effect.
     pub fn clear_effect(&mut self) -> Option<(Effect, OperatorIndex)> {
         self.effect.take()
     }
