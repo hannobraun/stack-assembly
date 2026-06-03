@@ -17,8 +17,8 @@
 /// exception to that is [`Effect::Yield`], which does not signal an error
 /// condition. A script would expect to continue afterwards.
 ///
-/// To make that possible, the host must clear the effect by setting this
-/// field to `None`.
+/// To make that possible, the host must clear the effect by calling
+/// [`Eval::clear_effect`].
 ///
 /// ### Example
 ///
@@ -54,6 +54,8 @@
 /// assert_eq!(effect, Effect::Yield);
 /// assert_eq!(eval.operand_stack.to_u32_slice(), &[2]);
 /// ```
+///
+/// [`Eval::clear_effect`]: crate::Eval::clear_effect
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum Effect {
     /// # An assertion failed

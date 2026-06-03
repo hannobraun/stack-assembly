@@ -18,7 +18,7 @@ pub struct OperandStack {
 }
 
 impl OperandStack {
-    /// # Push a value to top of the stack
+    /// # Push a value to the top of the stack
     pub fn push(&mut self, value: impl Into<Value>) {
         self.values.push(value.into());
     }
