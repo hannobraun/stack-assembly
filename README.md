@@ -22,11 +22,11 @@ increment:
 255 = assert
 ```
 
-StackAssembly serves as a foundation for my personal research into programming language design and implementation. Even though I want it to be complete enough for real code too, that is not its main purpose. If you're wondering if it might work for you, the safe answer is probably "no".
-
 ## Status
 
-The initial implementation is complete, but testing (both automated and in terms of real-world use) has been limited. Feel free to try the language, but don't expect too much in terms of reliability or usefulness.
+StackAssembly was a vehicle for my personal research into programming language design and implementation. I decided to go into a different direction with that though, and I consider StackAssembly to be complete now.
+
+It is possible to to use the language for non-trivial code (as the [Snake game](snake/) in this repository proves), though this is very, very tedious.
 
 ## Documentation
 
@@ -38,7 +38,7 @@ Check out the `examples/` directory to see some StackAssembly code. To run a scr
 2. Make sure you have a recent version of [Rust] installed on your system.
 3. From within this repository, run the following command: `cargo run -- path/to/script.stack`
 
-For example, to run the "control flow" example from the root directory of this repository, execute this command: `cargo run -- examples/control-flow.stack`
+For example, to run the "arithmetic" example from the root directory of this repository, execute this command: `cargo run -- examples/arithmetic.stack`
 
 For a larger-scale example of StackAssembly code, check out the [Snake game](snake/) in this repository.
 
@@ -47,7 +47,7 @@ For a larger-scale example of StackAssembly code, check out the [Snake game](sna
 
 ### Interpreter API
 
-The StackAssembly interpreter is packaged as a library. [That library's documentation][api] covers mainly the interpreter API, but also provides information on the language.
+The StackAssembly interpreter is packaged as a library. [That library's documentation][api] covers mainly the interpreter API, but also provides information about the language.
 
 [api]: https://docs.rs/stack-assembly/latest/stack_assembly/
 
@@ -55,10 +55,10 @@ With a working [Rust] setup, you can also build this documentation locally, by r
 
 ### Additional Documentation
 
-[The initial design document][design] can serve as a (not fully complete) introduction to the language. The [test suite] covers the full language in all its detail, basically serving the role of a specification, but is not as friendly to approach.
+[The initial design document][design] can serve as an introduction to the language, though it's not fully complete. The [test suite] covers the full language in all its detail, basically serving the role of a specification, but is not as friendly to approach.
 
 [design]: https://www.hannobraun.com/designing-stack-assembly/
-[test suite]: src/tests/
+[test suite]: crates/stack-assembly/src/tests/
 
 ## License
 
