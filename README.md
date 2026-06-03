@@ -38,7 +38,7 @@ Check out the `examples/` directory to see some StackAssembly code. To run a scr
 2. Make sure you have a recent version of [Rust] installed on your system.
 3. From within this repository, run the following command: `cargo run -- path/to/script.stack`
 
-For example, to run the "control flow" example from the root directory of this repository, execute this command: `cargo run -- examples/control-flow.stack`
+For example, to run the "arithmetic" example from the root directory of this repository, execute this command: `cargo run -- examples/arithmetic.stack`
 
 For a larger-scale example of StackAssembly code, check out the [Snake game](snake/) in this repository.
 
