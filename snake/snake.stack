@@ -1,0 +1,600 @@
+main:
+    @mem_input 8 @buf_init call
+
+    @mem_length call 3 write
+
+    1 0
+    @mem_velocity call
+        @vec2_write call
+
+    @body_init call
+    @fruit_init call
+
+    @loop jump
+
+loop:
+    @update_timer call
+    @loop_after_tick_handling jump_if
+
+    @apply_input call
+    @update_body call
+    @update_fruit call
+    @collide_head_and_body call
+
+    loop_after_tick_handling:
+        @draw call
+
+        @loop jump
+
+
+# Timer
+
+update_timer:
+    # Check if it's time for the next tick.
+    @mem_timer call read
+    @timer_tick_ms call
+        <=
+
+    # If it's not time yet, skip the next part.
+    0 copy @update_timer_return jump_if
+
+    # Update the timer.
+    @mem_timer call           # for the `write` below
+    @mem_timer call read
+    @timer_tick_ms call
+        -
+        write
+
+    update_timer_return:
+        return
+
+timer_tick_ms:
+    100
+    return
+
+
+# Input
+
+apply_input:
+    # Skip the next part, if the buffer is empty.
+    @mem_input @buf_is_empty call
+    @apply_input_return
+        jump_if
+
+    @mem_input @buf_consume call
+
+    0 copy 0 = @apply_input_up jump_if
+    0 copy 1 = @apply_input_left jump_if
+    0 copy 2 = @apply_input_down jump_if
+    3 = @apply_input_right jump_if
+
+    apply_input_up:
+        0 -1
+        @apply_input_update_velocity jump
+    apply_input_left:
+        -1 0
+        @apply_input_update_velocity jump
+    apply_input_down:
+        0 1
+        @apply_input_update_velocity jump
+    apply_input_right:
+        1 0
+        @apply_input_update_velocity jump
+
+    apply_input_update_velocity:
+        @mem_velocity call
+            @vec2_write call
+
+    apply_input_return:
+        return
+
+
+# Game Logic
+
+update_body:
+    @body_head_read call
+    @mem_velocity call @vec2_read call
+        @vec2_add call
+
+    @wrap_position call
+
+    @body_head_push call
+
+    @mem_length call read
+    @mem_body @buf_length call
+        >=
+        @update_body_return jump_if
+
+    @body_tail_drop call
+
+    update_body_return:
+        return
+
+wrap_position:
+    # on stack: x y
+
+    # Wrap y
+    @wrap_coordinate call
+
+    # on stack: x y'
+
+    # Wrap x
+    1 copy 2 drop
+    @wrap_coordinate call
+
+    # on stack: y' x'
+
+    1 copy 2 drop
+
+    return
+
+wrap_coordinate:
+    wrap_coordinate_handle_small:
+        0 copy 0 >=
+        @wrap_coordinate_handle_large
+            jump_if
+
+        @display_size call +
+
+    wrap_coordinate_handle_large:
+        0 copy @display_size call <
+        @wrap_coordinate_return
+            jump_if
+
+        @display_size call -
+
+    wrap_coordinate_return:
+        return
+
+update_fruit:
+    @mem_fruit call
+        @vec2_read call
+
+    # on stack: fruit_x fruit_y
+    @body_head_read call
+
+    # on stack: fruit_x fruit_y head_x head_y
+    @vec2_equals call
+
+    # on stack: is_equal
+    1 xor
+
+    # on_stack: is_not_equal
+    @update_fruit_return jump_if
+
+    @mem_length call read
+        3 +
+
+    # on stack: new_length
+    @mem_length call
+    1 copy 2 drop
+        write
+
+    @fruit_init call
+
+    update_fruit_return:
+        return
+
+collide_head_and_body:
+    @body_head_index call
+    0
+
+    collide_head_and_body_loop:
+        # on stack: head_index segment_index
+        1 copy
+        1 copy
+            <=
+            @collide_head_and_body_return jump_if
+
+        # on stack: head_index segment_index
+        0 copy @body_read_segment call
+        3 copy @body_read_segment call
+            @vec2_equals call
+
+        # on stack: head_index segment_index do_collide
+        @collide_head_and_body_handle_collision jump_if
+
+        1 +
+        @collide_head_and_body_loop jump
+
+    collide_head_and_body_return:
+        0 drop
+        0 drop
+        return
+
+    collide_head_and_body_handle_collision:
+        0 drop
+        0 drop
+        @main jump
+
+
+# Game State - Body
+
+body_init:
+    @mem_body 1024 @buf_init call
+    16 16 @body_head_push call
+    return
+
+body_head_push:
+    # on stack: pos_x pos_y
+    16 shift_left or
+
+    # on stack: pos_yx
+    @mem_body @buf_write call
+
+    return
+
+body_head_read:
+    @body_head_index call @body_read_segment call
+    return
+
+body_head_index:
+    @mem_body @buf_length call 1 -
+    return
+
+body_read_segment:
+    # on stack: index
+    @mem_body
+    1 copy 2 drop
+        @buf_read call
+
+    # on stack: pos_yx
+    0 copy 0x0000ffff and
+
+    # on stack: pos_yx x
+    1 copy 2 drop 0xffff0000 and 16 shift_right
+
+    # on stack: x y
+    return
+
+body_tail_drop:
+    @mem_body @buf_drop call
+    return
+
+
+# Game State - Fruit
+
+fruit_init:
+    @random_coordinate call
+    @random_coordinate call
+
+    # on stack: x y
+    @mem_fruit call
+        @vec2_write call
+
+    return
+
+
+# Display
+
+draw:
+    @clear_pixels call
+    @draw_body call
+    @draw_fruit call
+    @submit call
+    return
+
+clear_pixels:
+    0
+
+    clear_pixels_loop:
+        0 copy 1024 >= @clear_pixels_return jump_if
+        0 copy 0x00000000 write
+        1 +
+        @clear_pixels_loop jump
+
+    clear_pixels_return:
+        0 drop
+        return
+
+draw_body:
+    0
+
+    draw_body_loop:
+        0 copy
+        @mem_body @buf_length call
+            >=
+            @draw_body_return jump_if
+
+
+        0 copy @body_read_segment call
+            0x00ff00ff
+            @set_pixel call
+
+        1 +
+
+        @draw_body_loop jump
+
+    draw_body_return:
+        0 drop
+        return
+
+draw_fruit:
+    @mem_fruit call @vec2_read call
+    0xff0000ff
+        @set_pixel call
+
+    return
+
+set_pixel:
+    # on stack: x y color
+    2 copy 3 drop
+    2 copy 3 drop
+        @x_y_to_index call
+
+    # on stack: color xy_index
+    1 copy 2 drop
+
+    # on stack: xy_index color
+    write
+
+    return
+
+x_y_to_index:
+    @display_size call * +
+    return
+
+submit:
+    0 yield
+    return
+
+display_size:
+    32
+    return
+
+
+# Memory
+
+mem_timer:
+    1024
+    return
+
+mem_input:
+    @mem_timer call 1 +
+    return
+
+mem_length:
+    @mem_input call
+    @mem_input @buf_size_of call
+        +
+
+    return
+
+mem_velocity:
+    @mem_length call 1 +
+    return
+
+mem_body:
+    @mem_velocity call 2 +
+    return
+
+mem_fruit:
+    @mem_body call
+    @mem_body @buf_size_of call
+        +
+
+    return
+
+
+# Utilities - buf
+
+buf_init:
+    # on stack: buf capacity
+    1 copy @_buf_addr_capacity call
+
+    # on stack: buf capacity addr_capacity
+    1 copy 2 drop write
+
+    # on stack: buf
+    0 copy @_buf_addr_index_read call 0 write
+    @_buf_addr_index_write call 0 write
+
+    return
+
+buf_capacity:
+    @_buf_addr_capacity call read
+    return
+
+buf_length:
+    0 copy @_buf_index_write call
+    1 copy 2 drop @_buf_index_read call
+        -
+
+    return
+
+buf_size_of:
+    # on stack: buf
+    @buf_capacity call
+
+    # on stack: capacity
+    3 + # capacity, read index, write index
+
+    return
+
+buf_is_empty:
+    0 copy @_buf_index_read call
+    1 copy 2 drop @_buf_index_write call
+        =
+
+    return
+
+buf_read:
+    # on stack: buf offset
+    @_buf_index_read 1 copy 2 drop @_buf_cell_addr call
+
+    # on stack: cell_addr
+    read
+
+    # on stack: value
+    return
+
+buf_drop:
+    @_buf_addr_index_read @_buf_inc_index call
+    return
+
+buf_consume:
+    # on stack: buf
+    0 copy 0 @buf_read call
+    1 copy 2 drop @buf_drop call
+
+    return
+
+buf_write:
+    # on stack: value buf
+    0 copy @_buf_index_write 0 @_buf_cell_addr call
+
+    # on stack: value buf cell_addr
+    2 copy 3 drop
+
+    # on stack: buf cell_addr value
+    write
+
+    # on stack: buf
+    @_buf_addr_index_write @_buf_inc_index call
+
+    return
+
+_buf_addr_capacity:
+    call 0 +
+    return
+
+_buf_addr_index_read:
+    call 1 +
+    return
+
+_buf_addr_index_write:
+    call 2 +
+    return
+
+_buf_addr_data:
+    call 3 +
+    return
+
+_buf_index_read:
+    @_buf_addr_index_read call read
+    return
+
+_buf_index_write:
+    @_buf_addr_index_write call read
+    return
+
+_buf_cell_addr:
+    # on stack: buf index_fn offset
+    2 copy
+    2 copy 3 drop
+
+    # on stack: buf offset buf index_fn
+    call +
+
+    # on stack: buf index
+    1 copy
+
+    # on stack: buf index buf
+    @_buf_mask_index call
+
+    # on stack: buf index_masked
+    1 copy 2 drop @_buf_addr_data call
+
+    # on stack: index_masked data_addr
+    +
+
+    # on stack: cell_addr
+    return
+
+_buf_mask_index:
+    # on stack: index buf
+    @buf_capacity call
+
+    # on stack: index capacity
+    1 -
+
+    # on stack: index mask
+    and
+
+    # on stack: index_masked
+    return
+
+_buf_inc_index:
+    # on stack: buf index_addr_fn
+    call
+
+    # on stack: index_addr
+    0 copy read
+
+    # on stack: index_addr index
+    1 +
+
+    # on stack index_addr index_inc
+    write
+
+    return
+
+# Utilities - vec2
+
+vec2_read:
+    0 copy read            # x
+    1 copy 1 + 2 drop read # y
+    return
+
+vec2_write:
+    0 copy        # copy base address
+    1 +           # compute y address
+    2 copy 3 drop # move y coordinate
+        write     # write y coordinate
+
+    # base address, which is the x address, is already in place
+    1 copy 2 drop # move x coordinate
+        write     # write x coordinate
+
+    return
+
+vec2_copy:
+    1 copy
+    1 copy
+    return
+
+vec2_add:
+    # on stack: x1 y1 x2 y2
+
+    # add x
+    1 copy 2 drop # move x2
+    3 copy 4 drop # move x1
+        +
+
+    # on stack: y1 y2 x
+    1 copy 2 drop # move y2
+    2 copy 3 drop # move y1
+        +
+
+    return
+
+vec2_equals:
+    # on stack: x1 y1 x2 y2
+    2 copy 3 drop =
+
+    # on stack: x1 x2 y_is_equal
+    2 copy 3 drop
+    2 copy 3 drop
+        =
+
+    # on stack: y_is_equal x_is_equal
+    and
+
+    return
+
+# Other utilities
+
+random_coordinate:
+    1 yield
+    @display_size call
+        /
+        1 drop
+
+    0 copy 0 >=
+    @random_coordinate_return
+        jump_if
+
+    -1 *
+
+    random_coordinate_return:
+        return

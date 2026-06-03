@@ -1,0 +1,18 @@
+[package]
+name = "stack-snake"
+edition = "2024"
+publish = false
+
+[dependencies]
+anyhow = "*"
+crossbeam-channel = "*"
+fastrand = "*"
+softbuffer = "*"
+winit = "*"
+
+[dependencies.notify]
+version = "*"
+features = ["crossbeam-channel"]
+
+[dependencies.stack-assembly]
+git = "https://github.com/hannobraun/stack-assembly.git"
