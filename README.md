@@ -58,7 +58,7 @@ With a working [Rust] setup, you can also build this documentation locally, by r
 [The initial design document][design] can serve as an introduction to the language, though it's not fully complete. The [test suite] covers the full language in all its detail, basically serving the role of a specification, but is not as friendly to approach.
 
 [design]: https://www.hannobraun.com/designing-stack-assembly/
-[test suite]: src/tests/
+[test suite]: crates/stack-assembly/src/tests/
 
 ## License
 
