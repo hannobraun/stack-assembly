@@ -1,0 +1,5 @@
+# Cargo
+/target
+
+# https://direnv.net/
+/.direnv

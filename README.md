@@ -40,6 +40,8 @@ Check out the `examples/` directory to see some StackAssembly code. To run a scr
 
 For example, to run the "control flow" example from the root directory of this repository, execute this command: `cargo run -- examples/control-flow.stack`
 
+For a larger-scale example of StackAssembly code, check out the [Snake game](snake/) in this repository.
+
 [Jujutsu]: https://github.com/jj-vcs/jj
 [Rust]: https://rust-lang.org/
 
