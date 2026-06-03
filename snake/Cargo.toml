@@ -1,3 +1,5 @@
+[workspace]
+
 [package]
 name = "stack-snake"
 edition = "2024"
