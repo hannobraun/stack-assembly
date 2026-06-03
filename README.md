@@ -47,7 +47,7 @@ For a larger-scale example of StackAssembly code, check out the [Snake game](sna
 
 ### Interpreter API
 
-The StackAssembly interpreter is packaged as a library. [That library's documentation][api] covers mainly the interpreter API, but also provides information on the language.
+The StackAssembly interpreter is packaged as a library. [That library's documentation][api] covers mainly the interpreter API, but also provides information about the language.
 
 [api]: https://docs.rs/stack-assembly/latest/stack_assembly/
 
@@ -55,7 +55,7 @@ With a working [Rust] setup, you can also build this documentation locally, by r
 
 ### Additional Documentation
 
-[The initial design document][design] can serve as a (not fully complete) introduction to the language. The [test suite] covers the full language in all its detail, basically serving the role of a specification, but is not as friendly to approach.
+[The initial design document][design] can serve as an introduction to the language, though it's not fully complete. The [test suite] covers the full language in all its detail, basically serving the role of a specification, but is not as friendly to approach.
 
 [design]: https://www.hannobraun.com/designing-stack-assembly/
 [test suite]: src/tests/
