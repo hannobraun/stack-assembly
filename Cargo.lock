@@ -162,14 +162,14 @@ dependencies = [
 
 [[package]]
 name = "stack-assembly"
-version = "0.1.0"
+version = "1.0.0"
 dependencies = [
  "bytemuck",
 ]
 
 [[package]]
 name = "stack-assembly-example-host"
-version = "0.1.0"
+version = "1.0.0"
 dependencies = [
  "anyhow",
  "clap",
