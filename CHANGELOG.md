@@ -1,5 +1,12 @@
 # Changelog
 
+## v1.0.2 (2026-06-04)
+
+- Fix (again, hopefully) README not being displayed on `crates.io` ([#129], [#130])
+
+[#129]: https://github.com/hannobraun/stack-assembly/pull/129
+[#130]: https://github.com/hannobraun/stack-assembly/pull/130
+
 ## v1.0.1 (2026-06-04)
 
 - Fix (hopefully) README not being displayed on `crates.io` ([#127])
