@@ -76,6 +76,8 @@
 [#124]: https://github.com/hannobraun/stack-assembly/pull/124
 [#125]: https://github.com/hannobraun/stack-assembly/pull/125
 
+See [release announcement](https://www.hannobraun.com/stack-assembly-1.0/) for more information.
+
 ## v0.1.0 (2025-12-15)
 
 Initial release. See [release announcement](https://www.hannobraun.com/stack-assembly-0.1/) for more information.
